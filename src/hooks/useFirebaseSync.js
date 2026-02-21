@@ -63,6 +63,7 @@ export const useFirebaseSync = () => {
         sosTickets,
         globalAlerts,
         telemetry,
+        systemRisk: telemetry.systemRisk,
         resources,
         loading
     };

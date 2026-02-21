@@ -21,6 +21,26 @@ const ZONE_COORDS = [
  */
 export async function fetchCurrentWeather() {
     try {
+        const timeline = localStorage.getItem('SIMULATION_TIMELINE');
+
+        if (timeline === 'critical') {
+            return {
+                temp: 26, feelsLike: 26, humidity: 95, wind: 55,
+                description: 'extremely heavy rain', icon: 'Rain',
+                rain1h: 120, rain3h: 350, clouds: 100, visibility: 2,
+                timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' }),
+                isRaining: true,
+            };
+        } else if (timeline === 'escalating') {
+            return {
+                temp: 28, feelsLike: 30, humidity: 85, wind: 35,
+                description: 'moderate rain', icon: 'Rain',
+                rain1h: 15, rain3h: 40, clouds: 90, visibility: 5,
+                timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' }),
+                isRaining: true,
+            };
+        }
+
         const res = await fetch(
             `${BASE}/weather?lat=${MUMBAI.lat}&lon=${MUMBAI.lon}&appid=${API_KEY}&units=metric`
         );
@@ -54,6 +74,26 @@ export async function fetchCurrentWeather() {
  */
 export async function fetchForecast() {
     try {
+        const timeline = localStorage.getItem('SIMULATION_TIMELINE');
+
+        if (timeline === 'critical') {
+            return [
+                { day: 'Today', date: 'Now', temp: 26, rainfall: 150, humidity: 95, wind: 55, icon: 'heavy', risk: 'HIGH' },
+                { day: 'Tomorrow', date: 'Next', temp: 27, rainfall: 80, humidity: 90, wind: 35, icon: 'heavy', risk: 'HIGH' },
+                { day: 'Day 3', date: 'Later', temp: 28, rainfall: 40, humidity: 85, wind: 20, icon: 'cloudy', risk: 'MEDIUM' },
+                { day: 'Day 4', date: 'Later', temp: 29, rainfall: 10, humidity: 80, wind: 15, icon: 'cloudy', risk: 'LOW' },
+                { day: 'Day 5', date: 'Later', temp: 30, rainfall: 0, humidity: 75, wind: 10, icon: 'sunny', risk: 'LOW' },
+            ];
+        } else if (timeline === 'escalating') {
+            return [
+                { day: 'Today', date: 'Now', temp: 28, rainfall: 45, humidity: 85, wind: 25, icon: 'heavy', risk: 'MEDIUM' },
+                { day: 'Tomorrow', date: 'Next', temp: 27, rainfall: 90, humidity: 90, wind: 35, icon: 'heavy', risk: 'HIGH' },
+                { day: 'Day 3', date: 'Later', temp: 26, rainfall: 120, humidity: 95, wind: 40, icon: 'heavy', risk: 'HIGH' },
+                { day: 'Day 4', date: 'Later', temp: 28, rainfall: 50, humidity: 85, wind: 20, icon: 'heavy', risk: 'MEDIUM' },
+                { day: 'Day 5', date: 'Later', temp: 29, rainfall: 10, humidity: 80, wind: 15, icon: 'cloudy', risk: 'LOW' },
+            ];
+        }
+
         const res = await fetch(
             `${BASE}/forecast?lat=${MUMBAI.lat}&lon=${MUMBAI.lon}&appid=${API_KEY}&units=metric`
         );
@@ -200,23 +240,36 @@ export function generateAlerts(current, forecast) {
 export async function fetchWardsData() {
     try {
         const promises = ZONE_COORDS.map(async (zone, index) => {
-            const res = await fetch(
-                `${BASE}/weather?lat=${zone.lat}&lon=${zone.lon}&appid=${API_KEY}&units=metric`
-            );
-            if (!res.ok) throw new Error(`API ${res.status}`);
-            const data = await res.json();
+            const timeline = localStorage.getItem('SIMULATION_TIMELINE');
+            let rain1h = 0;
+            let rain3h = 0;
 
-            let rain1h = data.rain?.['1h'] || 0;
-            let rain3h = data.rain?.['3h'] || 0;
-
-            if (localStorage.getItem('SIMULATE_CRISIS') === 'true') {
-                if (['Kurla', 'Andheri West', 'Sion'].includes(zone.name)) {
-                    rain1h = 145 + Math.random() * 30;
-                } else if (['Dadar', 'Bandra East', 'Malad'].includes(zone.name)) {
-                    rain1h = 75 + Math.random() * 20;
-                } else {
-                    rain1h = 10 + Math.random() * 10;
+            if (timeline === 'critical' || timeline === 'escalating') {
+                if (timeline === 'critical') {
+                    if (['Kurla', 'Andheri West', 'Sion'].includes(zone.name)) {
+                        rain1h = 145 + Math.random() * 30;
+                    } else if (['Dadar', 'Bandra East', 'Malad'].includes(zone.name)) {
+                        rain1h = 75 + Math.random() * 20;
+                    } else {
+                        rain1h = 20 + Math.random() * 10;
+                    }
+                } else if (timeline === 'escalating') {
+                    if (['Kurla', 'Andheri West', 'Sion'].includes(zone.name)) {
+                        rain1h = 60 + Math.random() * 20;
+                    } else if (['Dadar', 'Bandra East', 'Malad'].includes(zone.name)) {
+                        rain1h = 30 + Math.random() * 15;
+                    } else {
+                        rain1h = 5 + Math.random() * 5;
+                    }
                 }
+            } else {
+                const res = await fetch(
+                    `${BASE}/weather?lat=${zone.lat}&lon=${zone.lon}&appid=${API_KEY}&units=metric`
+                );
+                if (!res.ok) throw new Error(`API ${res.status}`);
+                const data = await res.json();
+                rain1h = data.rain?.['1h'] || 0;
+                rain3h = data.rain?.['3h'] || 0;
             }
 
             const totalRain = rain1h + rain3h;
