@@ -7,10 +7,14 @@ const RiskCard = ({ wardName, rainfall, riverLevel, riskLevel }) => {
     const rainfallPct = Math.min((rainfall / 200) * 100, 100);
 
     return (
-        <div style={{
+        <div className={riskLevel === 'HIGH' ? 'animate-pulse' : ''} style={{
             padding: '16px', borderRadius: '12px', border: '1px solid #f1f5f9',
             background: 'white', fontFamily: 'Outfit, sans-serif',
             transition: 'border-color 0.2s',
+            ...(riskLevel === 'HIGH' ? {
+                borderColor: '#fca5a5',
+                boxShadow: '0 4px 14px rgba(239,68,68,0.15)',
+            } : {})
         }}>
             {/* Ward name + Risk tag */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>

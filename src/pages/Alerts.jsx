@@ -6,18 +6,19 @@ import {
     ChevronRight, CheckCircle2, MessageSquare
 } from 'lucide-react';
 import { fetchCurrentWeather, fetchForecast, generateAlerts } from '../utils/weatherService';
-
-const mockSOS = [
-    { id: 1, caller: 'Ramesh Patil', location: 'Kurla West, Near Station', issue: 'Family stranded on 2nd floor', time: '2 min ago', urgent: true, phone: '+91 98XXX XXXXX' },
-    { id: 2, caller: 'Anjali Deshmukh', location: 'Sion Circle, Main Road', issue: 'Elderly person needs medical help', time: '8 min ago', urgent: true, phone: '+91 97XXX XXXXX' },
-    { id: 3, caller: 'Municipal Ward Office', location: 'Andheri Subway', issue: 'Water level rising rapidly', time: '15 min ago', urgent: false, phone: '022-2XXX XXXX' },
-    { id: 4, caller: 'Suresh Raina', location: 'Bandra Reclamation', issue: 'Car stalled in deep water', time: '22 min ago', urgent: true, phone: '+91 99XXX XXXXX' },
-];
+import { useFirebaseSync } from '../hooks/useFirebaseSync';
+import { updateSOSStatus } from '../services/firebaseService';
 
 const Alerts = ({ initialTab = 'sos' }) => {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState(initialTab); // 'sos' or 'weather'
-    const [sosAlerts, setSosAlerts] = useState(mockSOS);
+    const { sosTickets } = useFirebaseSync();
+    const sosAlerts = [...sosTickets].filter(a => a.status !== 'Resolved').sort((a, b) => {
+        if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+        if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+        return 0;
+    });
+
     const [weatherAlerts, setWeatherAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -37,14 +38,14 @@ const Alerts = ({ initialTab = 'sos' }) => {
     }, []);
 
     const handleAssign = (id) => {
-        setSosAlerts(prev => prev.map(a => a.id === id ? { ...a, assigned: true } : a));
+        updateSOSStatus(id, 'Assigned');
     };
 
     const handleResolve = (id) => {
-        setSosAlerts(prev => prev.filter(a => a.id !== id));
+        updateSOSStatus(id, 'Resolved');
     };
 
-    const urgentCount = sosAlerts.filter(a => a.urgent).length;
+    const urgentCount = sosAlerts.filter(a => a.urgent && a.status === 'Pending').length;
 
     return (
         <div style={{
@@ -159,7 +160,7 @@ const Alerts = ({ initialTab = 'sos' }) => {
                                         </p>
 
                                         <div style={{ display: 'flex', gap: '10px' }}>
-                                            {alert.assigned ? (
+                                            {alert.status === 'Assigned' ? (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: '#f0fdf4', borderRadius: '8px', border: '1px solid #bbf7d0' }}>
                                                     <UserCheck style={{ width: '16px', height: '16px', color: '#16a34a' }} />
                                                     <span style={{ fontSize: '14px', fontWeight: 700, color: '#16a34a' }}>Rescuer Dispatched</span>
@@ -213,7 +214,7 @@ const Alerts = ({ initialTab = 'sos' }) => {
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>Assigned</span>
-                                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#16a34a' }}>{sosAlerts.filter(a => a.assigned).length}</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#16a34a' }}>{sosAlerts.filter(a => a.status === 'Assigned').length}</span>
                                     </div>
                                 </div>
                             </div>

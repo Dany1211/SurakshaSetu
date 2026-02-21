@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import PlanPanel from '../components/PlanPanel';
+import ActionPlanMap from '../components/ActionPlanMap'; // Added
 import {
     MapPin, Users, Clock, Shield, Sparkles, AlertTriangle,
     Building2, Navigation, Phone, CheckCircle2
@@ -166,6 +167,22 @@ const EmergencyContacts = () => (
 // ===========================================================
 const EvacuationPlanning = () => {
     const { t } = useLanguage();
+    const [activePlan, setActivePlan] = useState(null);
+
+    // Mock geocoder for the hackathon
+    const getCoords = (locationStr) => {
+        if (!locationStr) return null;
+        const s = locationStr.toLowerCase();
+        if (s.includes('andheri')) return { lat: 19.1365, lng: 72.8296 };
+        if (s.includes('kurla')) return { lat: 19.0726, lng: 72.8845 };
+        if (s.includes('dadar')) return { lat: 19.0178, lng: 72.8478 };
+        if (s.includes('sports')) return { lat: 19.0500, lng: 72.8550 };
+        // Default to Town Hall / Kurla area
+        return { lat: 19.0800, lng: 72.8780 };
+    };
+
+    const startCoord = activePlan ? getCoords(activePlan.priorityOrder) : null;
+    const endCoord = activePlan ? getCoords(activePlan.shelters) : null;
 
     return (
         <div style={{
@@ -183,12 +200,25 @@ const EvacuationPlanning = () => {
                 </p>
             </div>
 
-            {/* ---- AI Plan (main component) ---- */}
-            <div style={{ marginBottom: '16px' }}>
-                <PlanPanel />
+            {/* ---- ROW: Plan + Map side by side ---- */}
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', height: '500px' }}>
+                <div style={{ flex: '0 0 55%', minWidth: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ flex: 1, overflow: 'auto' }}>
+                        <PlanPanel onPlanChange={setActivePlan} />
+                    </div>
+                </div>
+                <div style={{ flex: '0 0 45%', minWidth: 0, height: '100%' }}>
+                    {/* Real map component that we just built */}
+                    <ActionPlanMap
+                        startCoord={startCoord}
+                        endCoord={endCoord}
+                        startName={activePlan ? activePlan.priorityOrder.split('→')[0] : "Origin"}
+                        endName={activePlan ? activePlan.shelters.split(',')[0] : "Shelter"}
+                    />
+                </div>
             </div>
 
-            {/* ---- ROW: Shelters + Routes side by side ---- */}
+            {/* ---- ROW: Shelters side by side ---- */}
             <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                 {/* Shelters */}
                 <div style={{ flex: 1, minWidth: 0 }}>

@@ -44,17 +44,20 @@ const createShelterIcon = () => {
     });
 };
 
-// ---- DATA ----
-const floodZones = [
-    { id: 1, name: 'Andheri West', lat: 19.1365, lng: 72.8296, riskLevel: 'HIGH', rainfall: 145, riverLevel: 3.2 },
-    { id: 2, name: 'Dadar', lat: 19.0178, lng: 72.8478, riskLevel: 'MEDIUM', rainfall: 85, riverLevel: 2.1 },
-    { id: 3, name: 'Borivali', lat: 19.2307, lng: 72.8567, riskLevel: 'LOW', rainfall: 40, riverLevel: 1.5 },
-    { id: 4, name: 'Kurla', lat: 19.0726, lng: 72.8845, riskLevel: 'HIGH', rainfall: 160, riverLevel: 3.2 },
-    { id: 5, name: 'Bandra East', lat: 19.0596, lng: 72.8505, riskLevel: 'MEDIUM', rainfall: 110, riverLevel: 2.8 },
-    { id: 6, name: 'Colaba', lat: 18.9067, lng: 72.8147, riskLevel: 'LOW', rainfall: 30, riverLevel: 1.2 },
-    { id: 7, name: 'Sion', lat: 19.0436, lng: 72.8620, riskLevel: 'HIGH', rainfall: 155, riverLevel: 3.5 },
-    { id: 8, name: 'Malad', lat: 19.1874, lng: 72.8484, riskLevel: 'MEDIUM', rainfall: 95, riverLevel: 2.4 },
-];
+import { useFirebaseSync } from '../hooks/useFirebaseSync';
+
+// ---- COORDS MAP ----
+const ZONE_COORDS_MAP = {
+    'Andheri West': { lat: 19.1365, lng: 72.8296 },
+    'Dadar': { lat: 19.0178, lng: 72.8478 },
+    'Borivali': { lat: 19.2307, lng: 72.8567 },
+    'Kurla': { lat: 19.0726, lng: 72.8845 },
+    'Bandra East': { lat: 19.0596, lng: 72.8505 },
+    'Bandra': { lat: 19.0596, lng: 72.8505 }, // alias
+    'Colaba': { lat: 18.9067, lng: 72.8147 },
+    'Sion': { lat: 19.0436, lng: 72.8620 },
+    'Malad': { lat: 19.1874, lng: 72.8484 },
+};
 
 const shelters = [
     { id: 's1', name: 'Town Hall Community Center', lat: 19.0800, lng: 72.8780, capacity: 500, status: 'Open' },
@@ -73,11 +76,18 @@ const riskColors = {
 
 const filterOptions = ['ALL', 'HIGH', 'MEDIUM', 'LOW'];
 
-// ---- Component ----
 const FloodMap = () => {
     const center = [19.076, 72.8777];
     const controlsRef = useRef(null);
     const legendRef = useRef(null);
+
+    const { telemetry } = useFirebaseSync();
+    const floodZones = (telemetry?.wards || []).map((w, i) => ({
+        ...w,
+        id: w.id || i,
+        lat: ZONE_COORDS_MAP[w.name]?.lat || 19.076,
+        lng: ZONE_COORDS_MAP[w.name]?.lng || 72.8777,
+    }));
 
     const [showZones, setShowZones] = useState(true);
     const [activeFilter, setActiveFilter] = useState('ALL');

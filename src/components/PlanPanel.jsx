@@ -444,20 +444,57 @@ const SendPlanModal = ({ plan, onClose }) => {
 };
 
 // ---- Main Plan Panel (Dashboard version — core fields only) ----
-const PlanPanel = () => {
+import { generateActionPlan } from '../services/geminiService'; // New Gemini Service
+
+const PlanPanel = ({ onPlanChange }) => {
     const { t } = useLanguage();
     const [selectedPlan, setSelectedPlan] = useState('flood_heavy');
     const [isEditing, setIsEditing] = useState(false);
     const [showSendModal, setShowSendModal] = useState(false);
     const [plans, setPlans] = useState(preGeneratedPlans);
+    const [isGenerating, setIsGenerating] = useState(false); // New Loading State
 
     const currentPlan = plans[selectedPlan];
 
     const handleFieldChange = (fieldKey, value) => {
-        setPlans((prev) => ({
-            ...prev,
-            [selectedPlan]: { ...prev[selectedPlan], [fieldKey]: value },
-        }));
+        setPlans((prev) => {
+            const newPlans = {
+                ...prev,
+                [selectedPlan]: { ...prev[selectedPlan], [fieldKey]: value },
+            };
+            if (onPlanChange) onPlanChange(newPlans[selectedPlan]);
+            return newPlans;
+        });
+    };
+
+    // ---- New AI Generation Handler ----
+    const handleGenerateAIPlan = async () => {
+        setIsGenerating(true);
+        try {
+            // Hardcoded context for hackathon demo (Normally fetched from active alerts)
+            const mockContext = {
+                zone: 'Andheri West',
+                riskLevel: 'HIGH',
+                shelterName: 'Primary School #3',
+                shelterDistance: '15 mins drive'
+            };
+
+            const newAiPlan = await generateActionPlan(mockContext);
+
+            // Add the newly generated plan into our local state
+            setPlans(prev => ({
+                ...prev,
+                [newAiPlan.id]: newAiPlan
+            }));
+
+            // Switch view to the new plan
+            setSelectedPlan(newAiPlan.id);
+
+        } catch (error) {
+            alert("Error generating plan: " + error.message);
+        } finally {
+            setIsGenerating(false);
+        }
     };
 
     const severityAccent = {
@@ -498,11 +535,26 @@ const PlanPanel = () => {
                             <Sparkles style={{ width: '18px', height: '18px', color: '#2563eb' }} />
                         </div>
                         <div>
-                            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>AI Rescue Plan</h2>
-                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Ready now · Edit if needed</p>
+                            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>AI Action Plan</h2>
+                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Select a template or generate with Gemini AI.</p>
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                            onClick={handleGenerateAIPlan}
+                            disabled={isGenerating}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: '6px',
+                                padding: '8px 16px', borderRadius: '999px', fontSize: '13px', fontWeight: 700,
+                                fontFamily: 'Outfit, sans-serif', cursor: isGenerating ? 'not-allowed' : 'pointer', border: 'none',
+                                background: isGenerating ? '#cbd5e1' : '#f59e0b', color: 'white',
+                                boxShadow: '0 2px 8px rgba(245,158,11,0.2)',
+                                transition: 'all 0.2s',
+                            }}
+                        >
+                            {isGenerating ? <div style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : <Sparkles style={{ width: '15px', height: '15px' }} />}
+                            {isGenerating ? 'Generating...' : 'Gemini AI Plan'}
+                        </button>
                         <button
                             onClick={() => setIsEditing(!isEditing)}
                             style={{
@@ -539,7 +591,11 @@ const PlanPanel = () => {
                         return (
                             <button
                                 key={plan.id}
-                                onClick={() => { setSelectedPlan(plan.id); setIsEditing(false); }}
+                                onClick={() => {
+                                    setSelectedPlan(plan.id);
+                                    setIsEditing(false);
+                                    if (onPlanChange) onPlanChange(plan);
+                                }}
                                 style={{
                                     padding: '8px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 700,
                                     textTransform: 'uppercase', letterSpacing: '0.02em', cursor: 'pointer',
@@ -584,6 +640,15 @@ const PlanPanel = () => {
                     ))}
                 </div>
             </div>
+
+            {/* Run an initial onPlanChange so parent gets the default plan instantly */}
+            {(() => {
+                if (onPlanChange && !window.initialPlanFired) {
+                    window.initialPlanFired = true;
+                    setTimeout(() => onPlanChange(currentPlan), 100);
+                }
+                return null;
+            })()}
 
             {/* Send Modal */}
             {showSendModal && (

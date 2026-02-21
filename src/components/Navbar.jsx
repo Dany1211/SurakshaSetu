@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { User, Bell, Menu } from 'lucide-react';
 import Logo from './Logo';
@@ -8,8 +9,16 @@ const langFlags = {
     mr: '🇮🇳',
 };
 
-const Navbar = ({ toggleSidebar }) => {
+const Navbar = ({ toggleSidebar, isRedAlert }) => {
     const { language, setLanguage } = useLanguage();
+    const [simulationTimeline, setSimulationTimeline] = useState(() => localStorage.getItem('SIMULATION_TIMELINE') || 'live');
+
+    const handleSimulationChange = (e) => {
+        const val = e.target.value;
+        setSimulationTimeline(val);
+        localStorage.setItem('SIMULATION_TIMELINE', val);
+        window.location.reload();
+    };
 
     return (
         <nav style={{
@@ -31,11 +40,43 @@ const Navbar = ({ toggleSidebar }) => {
 
             {/* Right: Controls */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                {/* System Online */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: '#f0fdf4', borderRadius: '999px', border: '1px solid #dcfce7' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px rgba(34,197,94,0.5)' }} />
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Online</span>
+                {/* Simulation Timeline Selector */}
+                <div style={{
+                    display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 8px',
+                    background: simulationTimeline !== 'live' ? '#fef2f2' : '#f8fafc',
+                    borderRadius: '8px', border: `1px solid ${simulationTimeline !== 'live' ? '#fecaca' : '#e2e8f0'}`,
+                    transition: 'all 0.2s ease'
+                }}>
+                    <span style={{ fontSize: '14px' }}>{simulationTimeline === 'live' ? '🌤️' : '⛈️'}</span>
+                    <select
+                        value={simulationTimeline}
+                        onChange={handleSimulationChange}
+                        style={{
+                            background: 'transparent', border: 'none', outline: 'none',
+                            fontSize: '12px', fontWeight: 800,
+                            color: simulationTimeline !== 'live' ? '#dc2626' : '#64748b',
+                            textTransform: 'uppercase', letterSpacing: '0.02em', cursor: 'pointer',
+                            fontFamily: 'Outfit, sans-serif',
+                        }}
+                    >
+                        <option value="live">Live Data</option>
+                        <option value="escalating">Escalating (3 Days Ago)</option>
+                        <option value="critical">Critical Flood (7 Days Ago)</option>
+                    </select>
                 </div>
+
+                {/* System Online / CRITICAL Status */}
+                {isRedAlert ? (
+                    <div className="animate-pulse" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: '#fef2f2', borderRadius: '999px', border: '1px solid #fecaca' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#dc2626', boxShadow: '0 0 8px rgba(220,38,38,0.8)' }} />
+                        <span style={{ fontSize: '13px', fontWeight: 800, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.04em' }}>CRITICAL</span>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: '#f0fdf4', borderRadius: '999px', border: '1px solid #dcfce7' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px rgba(34,197,94,0.5)' }} />
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Online</span>
+                    </div>
+                )}
 
                 {/* Language Selector */}
                 <div style={{

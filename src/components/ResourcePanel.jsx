@@ -1,13 +1,15 @@
 import { useLanguage } from '../context/LanguageContext';
 import { Bus, Anchor, Truck } from 'lucide-react';
+import { useFirebaseSync } from '../hooks/useFirebaseSync';
 
 const ResourcePanel = () => {
     const { t } = useLanguage();
+    const { resources: fbResources } = useFirebaseSync();
 
     const resources = [
-        { label: t('resource.buses'), count: 42, icon: Bus, color: 'text-blue-500', bg: 'bg-blue-50' },
-        { label: t('resource.boats'), count: 15, icon: Anchor, color: 'text-cyan-500', bg: 'bg-cyan-50' },
-        { label: t('resource.ambulances'), count: 28, icon: Truck, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: t('resource.buses'), count: fbResources?.buses?.active || 42, icon: Bus, color: 'text-blue-500', bg: 'bg-blue-50' },
+        { label: t('resource.boats'), count: fbResources?.boats?.active || 15, icon: Anchor, color: 'text-cyan-500', bg: 'bg-cyan-50' },
+        { label: t('resource.ambulances'), count: fbResources?.ambulances?.active || 28, icon: Truck, color: 'text-emerald-500', bg: 'bg-emerald-50' },
     ];
 
     return (

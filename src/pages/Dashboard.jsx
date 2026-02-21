@@ -1,17 +1,40 @@
+import { useEffect } from 'react';
 import RiskCard from '../components/RiskCard';
 import PlanPanel from '../components/PlanPanel';
 import FloodMap from '../components/FloodMap';
 import SOSPanel from '../components/SOSPanel';
 import ResourcePanel from '../components/ResourcePanel';
+import { fetchWardsData } from '../utils/weatherService';
+import { Loader2 } from 'lucide-react';
+import { logTelemetry } from '../services/firebaseService';
+import { useFirebaseSync } from '../hooks/useFirebaseSync';
 
 const Dashboard = () => {
-    const mockWards = [
-        { id: 1, name: 'Andheri West', rainfall: 145, riverLevel: 3.2, riskLevel: 'HIGH' },
-        { id: 2, name: 'Dadar', rainfall: 85, riverLevel: 2.1, riskLevel: 'MEDIUM' },
-        { id: 3, name: 'Borivali', rainfall: 40, riverLevel: 1.5, riskLevel: 'LOW' },
-        { id: 4, name: 'Kurla', rainfall: 160, riverLevel: 3.2, riskLevel: 'HIGH' },
-        { id: 5, name: 'Bandra', rainfall: 110, riverLevel: 2.8, riskLevel: 'MEDIUM' },
-    ];
+    const { telemetry, loading } = useFirebaseSync();
+    const wards = telemetry.wards || [];
+
+    useEffect(() => {
+        const loadWards = async () => {
+            const data = await fetchWardsData();
+            if (data && data.length > 0) {
+                // Determine System Risk
+                let systemRisk = 'LOW';
+                if (data.some(w => w.riskLevel === 'HIGH')) {
+                    systemRisk = 'HIGH';
+                } else if (data.some(w => w.riskLevel === 'MEDIUM')) {
+                    systemRisk = 'MEDIUM';
+                }
+
+                // Write to Firebase (Master Node)
+                await logTelemetry(data, systemRisk);
+            }
+        };
+
+        loadWards();
+        // Poll every 5 minutes
+        const intervalId = setInterval(loadWards, 300000);
+        return () => clearInterval(intervalId);
+    }, []);
 
     return (
         <div style={{
@@ -76,17 +99,24 @@ const Dashboard = () => {
                     <div style={{ flex: 1, overflowY: 'auto', padding: '0 14px 14px' }}
                         className="custom-scrollbar"
                     >
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {mockWards.map((ward) => (
-                                <RiskCard
-                                    key={ward.id}
-                                    wardName={ward.name}
-                                    rainfall={ward.rainfall}
-                                    riverLevel={ward.riverLevel}
-                                    riskLevel={ward.riskLevel}
-                                />
-                            ))}
-                        </div>
+                        {loading ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '10px' }}>
+                                <Loader2 style={{ width: '24px', height: '24px', color: '#94a3b8', animation: 'spin 1s linear infinite' }} />
+                                <span style={{ fontSize: '13px', color: '#94a3b8', fontWeight: 600 }}>Fetching Live Data...</span>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {wards.map((ward) => (
+                                    <RiskCard
+                                        key={ward.id}
+                                        wardName={ward.name}
+                                        rainfall={ward.rainfall}
+                                        riverLevel={ward.riverLevel}
+                                        riskLevel={ward.riskLevel}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
