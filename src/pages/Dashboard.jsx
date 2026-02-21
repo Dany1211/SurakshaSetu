@@ -2,7 +2,7 @@ import RiskCard from '../components/RiskCard';
 import PlanPanel from '../components/PlanPanel';
 import FloodMap from '../components/FloodMap';
 import SOSPanel from '../components/SOSPanel';
-import { Layers, Filter } from 'lucide-react';
+import ResourcePanel from '../components/ResourcePanel';
 
 const Dashboard = () => {
     const mockWards = [
@@ -25,32 +25,8 @@ const Dashboard = () => {
                 {/* Flood Map */}
                 <div style={{
                     background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden', position: 'relative', flexShrink: 0,
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden', flexShrink: 0,
                 }}>
-                    {/* Map overlay buttons */}
-                    <div style={{ position: 'absolute', top: '14px', left: '14px', zIndex: 10, display: 'flex', gap: '8px' }}>
-                        <button style={{
-                            display: 'flex', alignItems: 'center', gap: '5px',
-                            padding: '6px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
-                            background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)',
-                            border: '1px solid #e2e8f0', color: '#334155', cursor: 'pointer',
-                            fontFamily: 'Outfit, sans-serif', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-                        }}>
-                            <Layers style={{ width: '12px', height: '12px', color: '#2563eb' }} />
-                            ZONES
-                        </button>
-                        <button style={{
-                            display: 'flex', alignItems: 'center', gap: '5px',
-                            padding: '6px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
-                            background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)',
-                            border: '1px solid #e2e8f0', color: '#334155', cursor: 'pointer',
-                            fontFamily: 'Outfit, sans-serif', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-                        }}>
-                            <Filter style={{ width: '12px', height: '12px', color: '#94a3b8' }} />
-                            FILTERS
-                        </button>
-                    </div>
-
                     <div style={{ height: '380px' }}>
                         <FloodMap />
                     </div>
@@ -62,7 +38,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Right: SOS + Ward Monitoring */}
+            {/* Right: SOS + Resources + Ward Monitoring */}
             <div style={{ width: '280px', flexShrink: 0, height: '100%' }}
                 className="hidden xl:block"
             >
@@ -73,6 +49,9 @@ const Dashboard = () => {
                 }}>
                     {/* SOS Alerts */}
                     <SOSPanel />
+
+                    {/* Resources Available (Buses, Boats, Ambulances) */}
+                    <ResourcePanel />
 
                     {/* Ward Monitoring Header */}
                     <div style={{

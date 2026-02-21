@@ -261,15 +261,15 @@ const Sidebar = ({ isOpen, onClose }) => {
 
             <aside style={{
                 width: '240px', background: 'white', borderRight: '1px solid #f1f5f9',
-                height: 'calc(100vh - 52px)', display: 'flex', flexDirection: 'column',
-                flexShrink: 0, zIndex: 40, position: 'sticky', top: '52px',
-                transition: 'transform 0.3s ease',
+                display: 'flex', flexDirection: 'column',
+                flexShrink: 0, transition: 'transform 0.3s ease',
             }} className={`
-                fixed md:sticky top-0 md:top-[52px] left-0
+                fixed md:relative top-0 md:top-auto left-0 z-[999] md:z-auto
+                h-screen md:h-full
                 ${isOpen ? 'translate-x-0 shadow-xl' : '-translate-x-full md:translate-x-0'}
             `}>
                 {/* Top section */}
-                <div style={{ padding: '16px 12px', flex: 1, overflowY: 'auto' }} className="custom-scrollbar">
+                <div style={{ padding: '16px 12px', flex: 1, overflow: 'hidden' }}>
                     {/* Mobile header */}
                     <div className="flex items-center justify-between mb-5 md:hidden px-2">
                         <Logo size="small" />

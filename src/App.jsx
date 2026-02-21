@@ -11,7 +11,7 @@ function App() {
     <LanguageProvider>
       <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
         <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        <div className="flex flex-1 overflow-hidden relative">
+        <div className="flex overflow-hidden relative" style={{ height: 'calc(100vh - 52px)' }}>
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
           <main className="flex-1 overflow-y-auto w-full">
             <Dashboard />

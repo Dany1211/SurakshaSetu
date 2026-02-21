@@ -1,6 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { useRef, useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { Layers, Filter } from 'lucide-react';
 
 // Fix default marker icon issue with bundlers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -51,9 +53,59 @@ const riskColors = {
 
 const FloodMap = () => {
     const center = [19.076, 72.8777]; // Mumbai
+    const controlsRef = useRef(null);
+    const legendRef = useRef(null);
+
+    // Prevent Leaflet from capturing click/scroll events on our overlay controls
+    useEffect(() => {
+        if (controlsRef.current) {
+            L.DomEvent.disableClickPropagation(controlsRef.current);
+            L.DomEvent.disableScrollPropagation(controlsRef.current);
+        }
+        if (legendRef.current) {
+            L.DomEvent.disableClickPropagation(legendRef.current);
+            L.DomEvent.disableScrollPropagation(legendRef.current);
+        }
+    }, []);
 
     return (
         <div className="map-wrapper w-full h-full" style={{ position: 'relative', overflow: 'clip', isolation: 'isolate', zIndex: 1 }}>
+            {/* Map overlay buttons — uses L.DomEvent to block Leaflet from stealing clicks */}
+            <div
+                ref={controlsRef}
+                style={{
+                    position: 'absolute', top: '14px', left: '14px', zIndex: 1000,
+                    display: 'flex', gap: '8px',
+                }}
+            >
+                <button
+                    onClick={() => { console.log('ZONES clicked'); }}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '5px',
+                        padding: '6px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
+                        background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)',
+                        border: '1px solid #e2e8f0', color: '#334155', cursor: 'pointer',
+                        fontFamily: 'Outfit, sans-serif', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+                    }}
+                >
+                    <Layers style={{ width: '12px', height: '12px', color: '#2563eb' }} />
+                    ZONES
+                </button>
+                <button
+                    onClick={() => { console.log('FILTERS clicked'); }}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '5px',
+                        padding: '6px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
+                        background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)',
+                        border: '1px solid #e2e8f0', color: '#334155', cursor: 'pointer',
+                        fontFamily: 'Outfit, sans-serif', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+                    }}
+                >
+                    <Filter style={{ width: '12px', height: '12px', color: '#94a3b8' }} />
+                    FILTERS
+                </button>
+            </div>
+
             <MapContainer
                 center={center}
                 zoom={12}
@@ -110,13 +162,16 @@ const FloodMap = () => {
                 ))}
             </MapContainer>
 
-            {/* Map Legend - inline styles to avoid Leaflet CSS conflicts */}
-            <div style={{
-                position: 'absolute', bottom: '16px', left: '16px', zIndex: 10,
-                background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)',
-                borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 12px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)', fontFamily: 'Outfit, sans-serif'
-            }}>
+            {/* Map Legend */}
+            <div
+                ref={legendRef}
+                style={{
+                    position: 'absolute', bottom: '16px', left: '16px', zIndex: 1000,
+                    background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)',
+                    borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)', fontFamily: 'Outfit, sans-serif'
+                }}
+            >
                 <p style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Risk Level</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {[
