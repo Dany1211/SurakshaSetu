@@ -1,34 +1,30 @@
 import { useLanguage } from '../context/LanguageContext';
-
-const ResourceCard = ({ label, count, colorClass }) => (
-    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-        <p className="text-sm text-gray-500 font-medium mb-1">{label}</p>
-        <p className={`text-2xl font-bold ${colorClass}`}>{count}</p>
-    </div>
-);
+import { Bus, Anchor, Truck } from 'lucide-react';
 
 const ResourcePanel = () => {
     const { t } = useLanguage();
 
+    const resources = [
+        { label: t('resource.buses'), count: 42, icon: Bus, color: 'text-blue-500', bg: 'bg-blue-50' },
+        { label: t('resource.boats'), count: 15, icon: Anchor, color: 'text-cyan-500', bg: 'bg-cyan-50' },
+        { label: t('resource.ambulances'), count: 28, icon: Truck, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    ];
+
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 h-full">
-            <h2 className="text-lg font-bold text-gray-800 mb-5">{t('resource.title')}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <ResourceCard
-                    label={t('resource.buses')}
-                    count="42"
-                    colorClass="text-blue-600"
-                />
-                <ResourceCard
-                    label={t('resource.boats')}
-                    count="15"
-                    colorClass="text-blue-600"
-                />
-                <ResourceCard
-                    label={t('resource.ambulances')}
-                    count="28"
-                    colorClass="text-blue-600"
-                />
+        <div className="p-4 border-b border-slate-50">
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-3">Resources Available</p>
+            <div className="space-y-2">
+                {resources.map((r, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className={`p-1.5 rounded-md ${r.bg} ${r.color}`}>
+                                <r.icon className="w-3 h-3" />
+                            </div>
+                            <span className="text-[11px] font-medium text-slate-600">{r.label}</span>
+                        </div>
+                        <span className="text-xs font-bold text-slate-900">{r.count}</span>
+                    </div>
+                ))}
             </div>
         </div>
     );
