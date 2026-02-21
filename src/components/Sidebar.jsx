@@ -228,20 +228,52 @@ Stay safe. Stay alert. Follow official instructions only.
 };
 
 // ---- Sidebar ----
-const Sidebar = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
     const { t } = useLanguage();
-    const [activeItem, setActiveItem] = useState('dashboard');
     const [showBroadcast, setShowBroadcast] = useState(false);
 
-    const menuItems = [
+    const mainItems = [
         { id: 'dashboard', label: 'menu.dashboard', icon: LayoutDashboard },
         { id: 'risk_monitoring', label: 'menu.risk_monitoring', icon: Activity },
         { id: 'evacuation_planning', label: 'menu.evacuation_planning', icon: Map },
         { id: 'resource_allocation', label: 'menu.resource_allocation', icon: Users },
         { id: 'alerts', label: 'menu.alerts', icon: AlertTriangle },
-        { id: 'cyclones', label: 'Cyclones (Info)', icon: CloudRain },
-        { id: 'wildfires', label: 'Wildfires (Info)', icon: Flame },
     ];
+
+    const infoItems = [
+        { id: 'cyclones', label: 'menu.cyclones', icon: CloudRain },
+        { id: 'wildfires', label: 'menu.wildfires', icon: Flame },
+    ];
+
+    const handleClick = (id) => {
+        onPageChange(id);
+        if (window.innerWidth < 768) onClose();
+    };
+
+    const renderItem = (item) => (
+        <li key={item.id}>
+            <button
+                onClick={() => handleClick(item.id)}
+                style={{
+                    width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
+                    padding: '9px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
+                    cursor: 'pointer', border: 'none', fontFamily: 'Outfit, sans-serif',
+                    textAlign: 'left', transition: 'all 0.15s ease',
+                    background: activePage === item.id ? '#eff6ff' : 'transparent',
+                    color: activePage === item.id ? '#2563eb' : '#64748b',
+                }}
+            >
+                <item.icon style={{
+                    width: '18px', height: '18px', strokeWidth: 1.8,
+                    color: activePage === item.id ? '#2563eb' : '#94a3b8',
+                }} />
+                {t(item.label)}
+                {activePage === item.id && (
+                    <div style={{ marginLeft: 'auto', width: '3px', height: '16px', background: '#2563eb', borderRadius: '999px' }} />
+                )}
+            </button>
+        </li>
+    );
 
     return (
         <>
@@ -278,35 +310,23 @@ const Sidebar = ({ isOpen, onClose }) => {
                         </button>
                     </div>
 
-                    {/* Menu */}
+                    {/* Main Operations */}
+                    <p style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 12px', marginBottom: '6px' }}>
+                        Operations
+                    </p>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        {menuItems.map((item) => (
-                            <li key={item.id}>
-                                <button
-                                    onClick={() => {
-                                        setActiveItem(item.id);
-                                        if (window.innerWidth < 768) onClose();
-                                    }}
-                                    style={{
-                                        width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-                                        padding: '9px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
-                                        cursor: 'pointer', border: 'none', fontFamily: 'Outfit, sans-serif',
-                                        textAlign: 'left', transition: 'all 0.15s ease',
-                                        background: activeItem === item.id ? '#eff6ff' : 'transparent',
-                                        color: activeItem === item.id ? '#2563eb' : '#64748b',
-                                    }}
-                                >
-                                    <item.icon style={{
-                                        width: '18px', height: '18px', strokeWidth: 1.8,
-                                        color: activeItem === item.id ? '#2563eb' : '#94a3b8',
-                                    }} />
-                                    {t(item.label)}
-                                    {activeItem === item.id && (
-                                        <div style={{ marginLeft: 'auto', width: '3px', height: '16px', background: '#2563eb', borderRadius: '999px' }} />
-                                    )}
-                                </button>
-                            </li>
-                        ))}
+                        {mainItems.map(renderItem)}
+                    </ul>
+
+                    {/* Divider */}
+                    <div style={{ height: '1px', background: '#f1f5f9', margin: '14px 12px' }} />
+
+                    {/* Info-Only Hazards */}
+                    <p style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 12px', marginBottom: '6px' }}>
+                        Hazard Info
+                    </p>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        {infoItems.map(renderItem)}
                     </ul>
                 </div>
 

@@ -85,6 +85,16 @@
   }
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ---- Force Tailwind button styles over Leaflet resets ---- */
 button[class*="bg-suraksha"],
 button[class*="bg-slate"],
