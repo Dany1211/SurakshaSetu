@@ -72,9 +72,20 @@
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* ---- Pulse animation for LIVE indicators ---- */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
 /* ---- Force Tailwind button styles over Leaflet resets ---- */
-/* Leaflet sets `button { cursor: pointer }` and other resets that sometimes
-   interfere with Tailwind. These ensure our UI buttons always render correctly. */
 button[class*="bg-suraksha"],
 button[class*="bg-slate"],
 button[class*="bg-emerald"],

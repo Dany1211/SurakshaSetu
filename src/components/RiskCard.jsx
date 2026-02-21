@@ -1,53 +1,51 @@
-import { useLanguage } from '../context/LanguageContext';
-import { Droplets, Waves, TrendingUp } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Droplets, Waves } from 'lucide-react';
 
 const RiskCard = ({ wardName, rainfall, riverLevel, riskLevel }) => {
-    const { t } = useLanguage();
-
-    const getRiskStyles = (level) => {
-        switch (level) {
-            case 'LOW': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-            case 'MEDIUM': return 'bg-amber-50 text-amber-600 border-amber-100';
-            case 'HIGH': return 'bg-red-50 text-red-600 border-red-100';
-            default: return 'bg-slate-50 text-slate-500 border-slate-100';
-        }
-    };
+    const riskColor = riskLevel === 'HIGH' ? '#ef4444' : riskLevel === 'MEDIUM' ? '#f59e0b' : '#22c55e';
+    const riskBg = riskLevel === 'HIGH' ? '#fef2f2' : riskLevel === 'MEDIUM' ? '#fffbeb' : '#f0fdf4';
+    const riskBorder = riskLevel === 'HIGH' ? '#fecaca' : riskLevel === 'MEDIUM' ? '#fde68a' : '#bbf7d0';
+    const rainfallPct = Math.min((rainfall / 200) * 100, 100);
 
     return (
-        <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm transition-all hover:border-suraksha-200 group">
-            <div className="flex justify-between items-start mb-2">
-                <h3 className="text-[11px] font-bold text-slate-700 tracking-tight group-hover:text-suraksha-600 transition-colors uppercase">
+        <div style={{
+            padding: '12px', borderRadius: '12px', border: '1px solid #f1f5f9',
+            background: 'white', fontFamily: 'Outfit, sans-serif',
+            transition: 'border-color 0.2s',
+        }}>
+            {/* Ward name + Risk tag */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b', letterSpacing: '-0.01em' }}>
                     {wardName}
-                </h3>
-                <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold border uppercase tracking-tighter ${getRiskStyles(riskLevel)}`}>
+                </span>
+                <span style={{
+                    padding: '2px 8px', borderRadius: '6px', fontSize: '9px', fontWeight: 700,
+                    textTransform: 'uppercase', letterSpacing: '0.04em',
+                    background: riskBg, color: riskColor, border: `1px solid ${riskBorder}`,
+                }}>
                     {riskLevel}
                 </span>
             </div>
 
-            <div className="space-y-2">
-                <div className="grid grid-cols-2 gap-3 pb-1">
-                    <div className="flex flex-col">
-                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter flex items-center gap-1">
-                            <Droplets className="w-2.5 h-2.5" /> RAIN
-                        </span>
-                        <span className="text-xs font-bold text-slate-900">{rainfall}mm</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter flex items-center gap-1">
-                            <Waves className="w-2.5 h-2.5" /> RIVER
-                        </span>
-                        <span className="text-xs font-bold text-slate-900">{riverLevel}m</span>
-                    </div>
+            {/* Stats row */}
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Droplets style={{ width: '12px', height: '12px', color: '#94a3b8', strokeWidth: 1.8 }} />
+                    <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 600 }}>Rain</span>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#1e293b', marginLeft: '2px' }}>{rainfall}mm</span>
                 </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Waves style={{ width: '12px', height: '12px', color: '#94a3b8', strokeWidth: 1.8 }} />
+                    <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 600 }}>River</span>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#1e293b', marginLeft: '2px' }}>{riverLevel}m</span>
+                </div>
+            </div>
 
-                <div className="w-full bg-slate-50 rounded-full h-1 overflow-hidden">
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${Math.min((rainfall / 200) * 100, 100)}%` }}
-                        className={`h-full rounded-full transition-colors ${riskLevel === 'HIGH' ? 'bg-red-500' : 'bg-suraksha-500'}`}
-                    />
-                </div>
+            {/* Thin progress bar */}
+            <div style={{ width: '100%', height: '3px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
+                <div style={{
+                    width: `${rainfallPct}%`, height: '100%', borderRadius: '999px',
+                    background: riskColor, transition: 'width 0.6s ease',
+                }} />
             </div>
         </div>
     );
