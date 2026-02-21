@@ -193,3 +193,61 @@ export function generateAlerts(current, forecast) {
 
     return alerts;
 }
+
+/**
+ * Get current weather for all configured wards/zones
+ */
+export async function fetchWardsData() {
+    try {
+        const promises = ZONE_COORDS.map(async (zone, index) => {
+            const res = await fetch(
+                `${BASE}/weather?lat=${zone.lat}&lon=${zone.lon}&appid=${API_KEY}&units=metric`
+            );
+            if (!res.ok) throw new Error(`API ${res.status}`);
+            const data = await res.json();
+
+            let rain1h = data.rain?.['1h'] || 0;
+            let rain3h = data.rain?.['3h'] || 0;
+
+            if (localStorage.getItem('SIMULATE_CRISIS') === 'true') {
+                if (['Kurla', 'Andheri West', 'Sion'].includes(zone.name)) {
+                    rain1h = 145 + Math.random() * 30;
+                } else if (['Dadar', 'Bandra East', 'Malad'].includes(zone.name)) {
+                    rain1h = 75 + Math.random() * 20;
+                } else {
+                    rain1h = 10 + Math.random() * 10;
+                }
+            }
+
+            const totalRain = rain1h + rain3h;
+
+            // Basic risk logic for mapping
+            let riskLevel = 'LOW';
+            if (totalRain > 20) riskLevel = 'HIGH';
+            else if (totalRain > 5) riskLevel = 'MEDIUM';
+            else if (['Kurla', 'Sion'].includes(zone.name) && totalRain > 0) riskLevel = 'MEDIUM'; // High vulnerability areas
+
+            // Simulated river level response based on rain
+            const baseRiverLevel = ['Kurla', 'Sion'].includes(zone.name) ? 2.5 : 1.2;
+            const riverLevel = (baseRiverLevel + (totalRain * 0.15)).toFixed(1);
+
+            return {
+                id: index + 1,
+                name: zone.name,
+                rainfall: Math.round(totalRain * 10) / 10,
+                riverLevel: parseFloat(riverLevel),
+                riskLevel
+            };
+        });
+
+        const results = await Promise.all(promises);
+
+        // Let's sort them so HIGH risk is on top
+        const riskWeights = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+        return results.sort((a, b) => riskWeights[b.riskLevel] - riskWeights[a.riskLevel]);
+
+    } catch (err) {
+        console.error('Wards fetch failed:', err);
+        return [];
+    }
+}
