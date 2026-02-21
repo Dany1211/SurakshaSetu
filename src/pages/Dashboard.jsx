@@ -15,7 +15,7 @@ const Dashboard = () => {
 
     return (
         <div style={{
-            padding: '16px', height: '100%', maxWidth: '1600px', margin: '0 auto',
+            padding: '20px', height: '100%', maxWidth: '1600px', margin: '0 auto',
             overflow: 'hidden', display: 'flex', gap: '16px', fontFamily: 'Outfit, sans-serif',
         }}>
             {/* Left: Map + Plan */}
@@ -39,7 +39,7 @@ const Dashboard = () => {
             </div>
 
             {/* Right: SOS + Resources + Ward Monitoring */}
-            <div style={{ width: '280px', flexShrink: 0, height: '100%' }}
+            <div style={{ width: '320px', flexShrink: 0, height: '100%' }}
                 className="hidden xl:block"
             >
                 <div style={{
@@ -50,33 +50,33 @@ const Dashboard = () => {
                     {/* SOS Alerts */}
                     <SOSPanel />
 
-                    {/* Resources Available (Buses, Boats, Ambulances) */}
+                    {/* Resources Available */}
                     <ResourcePanel />
 
                     {/* Ward Monitoring Header */}
                     <div style={{
-                        padding: '12px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     }}>
                         <div>
-                            <h2 style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                            <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: 0, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
                                 Ward Monitoring
                             </h2>
-                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Live Updates</p>
+                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Live Updates</p>
                         </div>
                         <div style={{
                             display: 'flex', alignItems: 'center', gap: '5px',
-                            padding: '2px 8px', background: '#fef2f2', borderRadius: '6px',
+                            padding: '4px 10px', background: '#fef2f2', borderRadius: '6px',
                         }}>
-                            <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#ef4444', animation: 'pulse 2s infinite' }} />
-                            <span style={{ fontSize: '9px', fontWeight: 700, color: '#dc2626' }}>LIVE</span>
+                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444', animation: 'pulse 2s infinite' }} />
+                            <span style={{ fontSize: '12px', fontWeight: 700, color: '#dc2626' }}>LIVE</span>
                         </div>
                     </div>
 
                     {/* Ward Cards */}
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px 12px' }}
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 14px 14px' }}
                         className="custom-scrollbar"
                     >
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {mockWards.map((ward) => (
                                 <RiskCard
                                     key={ward.id}

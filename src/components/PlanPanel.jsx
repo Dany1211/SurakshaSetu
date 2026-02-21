@@ -63,12 +63,12 @@ const recipientGroups = [
 const PlanField = ({ label, value, icon: Icon, isEditing, onChange, fieldKey }) => (
     <div style={{
         display: 'flex', alignItems: 'flex-start', gap: '14px',
-        padding: '10px 0', borderBottom: '1px solid #f8fafc',
+        padding: '12px 0', borderBottom: '1px solid #f8fafc',
         fontFamily: 'Outfit, sans-serif',
     }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '100px', paddingTop: '2px', flexShrink: 0 }}>
-            <Icon style={{ width: '14px', height: '14px', color: '#94a3b8', strokeWidth: 1.8 }} />
-            <span style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.03em' }}>{label}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '110px', paddingTop: '2px', flexShrink: 0 }}>
+            <Icon style={{ width: '16px', height: '16px', color: '#94a3b8', strokeWidth: 1.8 }} />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.03em' }}>{label}</span>
         </div>
         {isEditing ? (
             <input
@@ -76,15 +76,15 @@ const PlanField = ({ label, value, icon: Icon, isEditing, onChange, fieldKey }) 
                 value={value}
                 onChange={(e) => onChange(fieldKey, e.target.value)}
                 style={{
-                    flex: 1, fontSize: '13px', fontWeight: 500, color: '#1e293b',
+                    flex: 1, fontSize: '15px', fontWeight: 500, color: '#1e293b',
                     background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '8px',
-                    padding: '4px 10px', outline: 'none', fontFamily: 'Outfit, sans-serif',
+                    padding: '6px 12px', outline: 'none', fontFamily: 'Outfit, sans-serif',
                 }}
                 onFocus={(e) => { e.target.style.borderColor = '#2563eb'; }}
                 onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; }}
             />
         ) : (
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b', flex: 1 }}>{value}</span>
+            <span style={{ fontSize: '15px', fontWeight: 600, color: '#1e293b', flex: 1 }}>{value}</span>
         )}
     </div>
 );
@@ -121,8 +121,8 @@ ${plan.foodSupply}
 ${plan.communication}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚡ This is an AI-generated plan.
-Review and confirm before dispatch.
+⚡ This plan was made by AI.
+Check details before sending.
 — Suraksha Setu Command Center`;
 };
 
@@ -198,16 +198,16 @@ const SendPlanModal = ({ plan, onClose }) => {
                     }}>
                         <CheckCircle2 style={{ width: '36px', height: '36px', color: 'white' }} />
                     </div>
-                    <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', margin: '0 0 6px' }}>
-                        Plan Dispatched!
+                    <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', margin: '0 0 8px' }}>
+                        Plan Sent!
                     </h2>
-                    <p style={{ fontSize: '14px', color: '#64748b', margin: 0, fontWeight: 500 }}>
-                        Sent to {selected.length} team{selected.length !== 1 ? 's' : ''} successfully
+                    <p style={{ fontSize: '16px', color: '#64748b', margin: 0, fontWeight: 500 }}>
+                        Sent to {selected.length} team{selected.length !== 1 ? 's' : ''}
                     </p>
                     <div style={{
-                        marginTop: '16px', padding: '8px 20px', borderRadius: '8px',
+                        marginTop: '16px', padding: '10px 22px', borderRadius: '8px',
                         background: '#f0fdf4', border: '1px solid #bbf7d0',
-                        fontSize: '12px', fontWeight: 600, color: '#16a34a',
+                        fontSize: '14px', fontWeight: 600, color: '#16a34a',
                     }}>
                         {plan.title} — {plan.severity} severity
                     </div>
@@ -253,18 +253,18 @@ const SendPlanModal = ({ plan, onClose }) => {
                             <Send style={{ width: '20px', height: '20px', color: 'white' }} />
                         </div>
                         <div>
-                            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                                Dispatch Evacuation Plan
+                            <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                                Send Plan
                             </h3>
-                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: '2px 0 0', fontWeight: 500 }}>
-                                Review, customize & send to response teams
+                            <p style={{ fontSize: '14px', color: '#94a3b8', margin: '2px 0 0', fontWeight: 500 }}>
+                                Review and send to teams
                             </p>
                         </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         {/* Severity badge */}
                         <span style={{
-                            padding: '6px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 800,
+                            padding: '6px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: 800,
                             textTransform: 'uppercase', letterSpacing: '0.05em',
                             background: sev.badge, color: sev.text, border: `1.5px solid ${sev.border}`,
                         }}>
@@ -284,14 +284,14 @@ const SendPlanModal = ({ plan, onClose }) => {
                 <div style={{ flex: 1, overflowY: 'auto', display: 'flex' }} className="custom-scrollbar">
                     {/* LEFT: Dispatch Message */}
                     <div style={{ flex: 1, borderRight: '1px solid #f1f5f9', padding: '24px 28px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <MessageSquare style={{ width: '14px', height: '14px', color: '#2563eb' }} />
-                                <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <MessageSquare style={{ width: '18px', height: '18px', color: '#2563eb' }} />
+                                <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
                                     Dispatch Message
                                 </h4>
                             </div>
-                            <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 500 }}>
+                            <span style={{ fontSize: '13px', color: '#94a3b8', fontWeight: 500 }}>
                                 Editable • {message.length} chars
                             </span>
                         </div>
@@ -300,38 +300,38 @@ const SendPlanModal = ({ plan, onClose }) => {
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             style={{
-                                width: '100%', flex: 1, minHeight: '260px', padding: '16px',
-                                fontFamily: "'Outfit', sans-serif", fontSize: '12px', lineHeight: '1.7',
+                                width: '100%', flex: 1, minHeight: '260px', padding: '18px',
+                                fontFamily: "'Outfit', sans-serif", fontSize: '14px', lineHeight: '1.7',
                                 color: '#1e293b', background: '#f8fafc', border: '1.5px solid #e2e8f0',
                                 borderRadius: '12px', resize: 'vertical', outline: 'none',
                             }}
                             onFocus={(e) => { e.target.style.borderColor = '#2563eb'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.08)'; }}
                             onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none'; }}
                         />
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
                             <button
                                 onClick={() => setMessage(generateDispatchMessage(plan))}
                                 style={{
-                                    fontSize: '10px', fontWeight: 700, color: '#2563eb',
+                                    fontSize: '13px', fontWeight: 700, color: '#2563eb',
                                     background: 'none', border: 'none', cursor: 'pointer',
                                     fontFamily: 'Outfit, sans-serif', textDecoration: 'underline',
                                 }}
                             >
-                                Reset to AI-generated
+                                Reset to AI version
                             </button>
                         </div>
                     </div>
 
                     {/* RIGHT: Recipients */}
-                    <div style={{ width: '320px', flexShrink: 0, padding: '24px 24px', background: '#fafbfc' }}>
+                    <div style={{ width: '340px', flexShrink: 0, padding: '24px 24px', background: '#fafbfc' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                            <p style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                                Select Recipients
+                            <p style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                                Send To
                             </p>
                             <button
                                 onClick={selectAll}
                                 style={{
-                                    fontSize: '10px', fontWeight: 700, color: '#2563eb',
+                                    fontSize: '13px', fontWeight: 700, color: '#2563eb',
                                     background: 'none', border: 'none', cursor: 'pointer',
                                     fontFamily: 'Outfit, sans-serif', textDecoration: 'underline',
                                 }}
@@ -359,17 +359,17 @@ const SendPlanModal = ({ plan, onClose }) => {
                                         }}
                                     >
                                         <div className={`p-2 rounded-xl border ${group.color}`}>
-                                            <group.icon style={{ width: '18px', height: '18px' }} />
+                                            <group.icon style={{ width: '20px', height: '20px' }} />
                                         </div>
                                         <div style={{ flex: 1 }}>
-                                            <span style={{ fontSize: '12px', fontWeight: 700, color: isActive ? '#1d4ed8' : '#334155', display: 'block' }}>
+                                            <span style={{ fontSize: '14px', fontWeight: 700, color: isActive ? '#1d4ed8' : '#334155', display: 'block' }}>
                                                 {group.label}
                                             </span>
-                                            <span style={{ fontSize: '9px', color: '#94a3b8', fontWeight: 500 }}>
-                                                {isActive ? '✓ Selected' : 'Click to select'}
+                                            <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>
+                                                {isActive ? '✓ Selected' : 'Tap to select'}
                                             </span>
                                         </div>
-                                        {isActive && <CheckCircle2 style={{ width: '18px', height: '18px', color: '#2563eb', flexShrink: 0 }} />}
+                                        {isActive && <CheckCircle2 style={{ width: '20px', height: '20px', color: '#2563eb', flexShrink: 0 }} />}
                                     </button>
                                 );
                             })}
@@ -377,12 +377,12 @@ const SendPlanModal = ({ plan, onClose }) => {
 
                         {/* Selection count */}
                         <div style={{
-                            marginTop: '16px', padding: '10px 14px', borderRadius: '10px',
+                            marginTop: '16px', padding: '12px 16px', borderRadius: '10px',
                             background: selected.length > 0 ? '#eff6ff' : '#f8fafc',
                             border: `1px solid ${selected.length > 0 ? '#bfdbfe' : '#e2e8f0'}`,
                             textAlign: 'center',
                         }}>
-                            <span style={{ fontSize: '12px', fontWeight: 700, color: selected.length > 0 ? '#2563eb' : '#94a3b8' }}>
+                            <span style={{ fontSize: '14px', fontWeight: 700, color: selected.length > 0 ? '#2563eb' : '#94a3b8' }}>
                                 {selected.length} of {recipientGroups.length} teams selected
                             </span>
                         </div>
@@ -394,14 +394,14 @@ const SendPlanModal = ({ plan, onClose }) => {
                     padding: '18px 28px', borderTop: '1px solid #f1f5f9', background: '#f8fafc',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0,
                 }}>
-                    <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>
+                    <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>
                         <span style={{ fontWeight: 700, color: '#0f172a' }}>{plan.title}</span> — {new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <button
                             onClick={onClose}
                             style={{
-                                padding: '10px 22px', fontSize: '13px', fontWeight: 700,
+                                padding: '12px 24px', fontSize: '14px', fontWeight: 700,
                                 color: '#475569', background: 'white', border: '1px solid #e2e8f0',
                                 borderRadius: '10px', cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
                                 transition: 'all 0.15s ease',
@@ -413,7 +413,7 @@ const SendPlanModal = ({ plan, onClose }) => {
                             onClick={handleSend}
                             disabled={selected.length === 0 || sending}
                             style={{
-                                padding: '10px 28px', fontSize: '13px', fontWeight: 800,
+                                padding: '12px 30px', fontSize: '14px', fontWeight: 800,
                                 color: 'white', borderRadius: '10px', border: 'none',
                                 cursor: selected.length === 0 ? 'not-allowed' : 'pointer',
                                 display: 'flex', alignItems: 'center', gap: '8px',
@@ -433,7 +433,7 @@ const SendPlanModal = ({ plan, onClose }) => {
                                     Dispatching...
                                 </>
                             ) : (
-                                <><Send style={{ width: '15px', height: '15px' }} /> Dispatch Now</>
+                                <><Send style={{ width: '15px', height: '15px' }} /> Send Now</>
                             )}
                         </button>
                     </div>
@@ -498,8 +498,8 @@ const PlanPanel = () => {
                             <Sparkles style={{ width: '18px', height: '18px', color: '#2563eb' }} />
                         </div>
                         <div>
-                            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>AI Evacuation Plan</h2>
-                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Pre-generated · Admin Editable</p>
+                            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>AI Rescue Plan</h2>
+                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Ready now · Edit if needed</p>
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -507,26 +507,26 @@ const PlanPanel = () => {
                             onClick={() => setIsEditing(!isEditing)}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '6px',
-                                padding: '6px 14px', borderRadius: '999px', fontSize: '11px', fontWeight: 700,
+                                padding: '8px 16px', borderRadius: '999px', fontSize: '13px', fontWeight: 700,
                                 fontFamily: 'Outfit, sans-serif', cursor: 'pointer', border: 'none',
                                 background: isEditing ? '#2563eb' : '#f1f5f9',
                                 color: isEditing ? 'white' : '#64748b',
                             }}
                         >
-                            {isEditing ? <Check style={{ width: '13px', height: '13px' }} /> : <Edit3 style={{ width: '13px', height: '13px' }} />}
+                            {isEditing ? <Check style={{ width: '15px', height: '15px' }} /> : <Edit3 style={{ width: '15px', height: '15px' }} />}
                             {isEditing ? 'Save' : 'Edit Plan'}
                         </button>
                         <button
                             onClick={() => setShowSendModal(true)}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '6px',
-                                padding: '6px 14px', borderRadius: '999px', fontSize: '11px', fontWeight: 700,
+                                padding: '8px 16px', borderRadius: '999px', fontSize: '13px', fontWeight: 700,
                                 fontFamily: 'Outfit, sans-serif', cursor: 'pointer', border: 'none',
                                 background: '#2563eb', color: 'white',
                                 boxShadow: '0 2px 8px rgba(37,99,235,0.2)',
                             }}
                         >
-                            <Send style={{ width: '13px', height: '13px' }} />
+                            <Send style={{ width: '15px', height: '15px' }} />
                             Send Plan
                         </button>
                     </div>
@@ -541,7 +541,7 @@ const PlanPanel = () => {
                                 key={plan.id}
                                 onClick={() => { setSelectedPlan(plan.id); setIsEditing(false); }}
                                 style={{
-                                    padding: '6px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
+                                    padding: '8px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 700,
                                     textTransform: 'uppercase', letterSpacing: '0.02em', cursor: 'pointer',
                                     fontFamily: 'Outfit, sans-serif',
                                     background: isActive ? '#eff6ff' : 'white',
@@ -557,9 +557,9 @@ const PlanPanel = () => {
 
                 {/* Title + Badge */}
                 <div style={{ padding: '10px 20px 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{currentPlan.title}</h3>
+                    <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{currentPlan.title}</h3>
                     <span style={{
-                        padding: '3px 10px', borderRadius: '6px', fontSize: '9px', fontWeight: 700,
+                        padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 700,
                         textTransform: 'uppercase',
                         background: severityBadge[currentPlan.severity].bg,
                         color: severityBadge[currentPlan.severity].color,

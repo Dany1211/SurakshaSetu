@@ -19,12 +19,12 @@ const createRiskIcon = (riskLevel) => {
     return L.divIcon({
         className: 'custom-marker',
         html: `<div style="
-            width: 14px; height: 14px; background: ${color};
+            width: 16px; height: 16px; background: ${color};
             border: 2.5px solid white; border-radius: 50%;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         "></div>`,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7],
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
     });
 };
 
@@ -33,14 +33,14 @@ const createShelterIcon = () => {
     return L.divIcon({
         className: 'shelter-marker',
         html: `<div style="
-            width: 22px; height: 22px; background: #22c55e;
+            width: 24px; height: 24px; background: #22c55e;
             border: 2.5px solid white; border-radius: 6px;
             box-shadow: 0 2px 8px rgba(34,197,94,0.4);
             display: flex; align-items: center; justify-content: center;
-            font-size: 11px; color: white;
+            font-size: 13px; color: white;
         ">🏠</div>`,
-        iconSize: [22, 22],
-        iconAnchor: [11, 11],
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
     });
 };
 
@@ -113,8 +113,8 @@ const FloodMap = () => {
 
     // Shared button style helper
     const btnStyle = (active, activeColor, activeBorder) => ({
-        display: 'flex', alignItems: 'center', gap: '5px',
-        padding: '6px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
+        display: 'flex', alignItems: 'center', gap: '6px',
+        padding: '8px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: 700,
         background: active ? activeColor : 'rgba(255,255,255,0.95)',
         color: active ? 'white' : '#334155',
         backdropFilter: 'blur(8px)',
@@ -129,12 +129,12 @@ const FloodMap = () => {
             {/* ---- Controls ---- */}
             <div ref={controlsRef} style={{ position: 'absolute', top: '14px', left: '14px', zIndex: 1000, display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 <button onClick={() => setShowZones(!showZones)} style={btnStyle(showZones, '#2563eb', '#1d4ed8')}>
-                    <Layers style={{ width: '12px', height: '12px' }} />
+                    <Layers style={{ width: '14px', height: '14px' }} />
                     ZONES {showZones ? 'ON' : 'OFF'}
                 </button>
 
                 <button onClick={cycleFilter} style={btnStyle(activeFilter !== 'ALL', '#0f172a', '#0f172a')}>
-                    <Filter style={{ width: '12px', height: '12px' }} />
+                    <Filter style={{ width: '14px', height: '14px' }} />
                     {filterLabel[activeFilter]}
                 </button>
 
@@ -188,17 +188,17 @@ const FloodMap = () => {
                 {visibleZones.map((zone) => (
                     <Marker key={zone.id} position={[zone.lat, zone.lng]} icon={createRiskIcon(zone.riskLevel)}>
                         <Popup>
-                            <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '150px', fontSize: '12px' }}>
-                                <p style={{ fontWeight: 700, color: '#0f172a', fontSize: '14px', marginBottom: '4px' }}>{zone.name}</p>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                            <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '160px', fontSize: '14px' }}>
+                                <p style={{ fontWeight: 700, color: '#0f172a', fontSize: '16px', marginBottom: '6px' }}>{zone.name}</p>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                                     <span style={{
-                                        display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%',
+                                        display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%',
                                         background: zone.riskLevel === 'HIGH' ? '#ef4444' : zone.riskLevel === 'MEDIUM' ? '#f59e0b' : '#22c55e'
                                     }} />
-                                    <span style={{ fontWeight: 600, fontSize: '10px', textTransform: 'uppercase' }}>{zone.riskLevel} RISK</span>
+                                    <span style={{ fontWeight: 600, fontSize: '12px', textTransform: 'uppercase' }}>{zone.riskLevel} RISK</span>
                                 </div>
-                                <p style={{ color: '#64748b' }}>Rainfall: <strong style={{ color: '#0f172a' }}>{zone.rainfall}mm</strong></p>
-                                <p style={{ color: '#64748b' }}>River: <strong style={{ color: '#0f172a' }}>{zone.riverLevel}m</strong></p>
+                                <p style={{ color: '#64748b', fontSize: '14px' }}>Rainfall: <strong style={{ color: '#0f172a' }}>{zone.rainfall}mm</strong></p>
+                                <p style={{ color: '#64748b', fontSize: '14px' }}>River: <strong style={{ color: '#0f172a' }}>{zone.riverLevel}m</strong></p>
                             </div>
                         </Popup>
                     </Marker>
@@ -208,12 +208,12 @@ const FloodMap = () => {
                 {showShelters && shelters.map((shelter) => (
                     <Marker key={shelter.id} position={[shelter.lat, shelter.lng]} icon={createShelterIcon()}>
                         <Popup>
-                            <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '150px', fontSize: '12px' }}>
-                                <p style={{ fontWeight: 700, color: '#0f172a', fontSize: '13px', marginBottom: '2px' }}>🏠 {shelter.name}</p>
-                                <p style={{ fontSize: '10px', fontWeight: 600, color: shelter.status === 'Open' ? '#16a34a' : '#d97706', textTransform: 'uppercase', marginBottom: '4px' }}>
+                            <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '160px', fontSize: '14px' }}>
+                                <p style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px', marginBottom: '4px' }}>🏠 {shelter.name}</p>
+                                <p style={{ fontSize: '12px', fontWeight: 600, color: shelter.status === 'Open' ? '#16a34a' : '#d97706', textTransform: 'uppercase', marginBottom: '6px' }}>
                                     SAFE SHELTER — {shelter.status}
                                 </p>
-                                <p style={{ color: '#64748b' }}>Capacity: <strong style={{ color: '#0f172a' }}>{shelter.capacity} people</strong></p>
+                                <p style={{ color: '#64748b', fontSize: '14px' }}>Capacity: <strong style={{ color: '#0f172a' }}>{shelter.capacity} people</strong></p>
                             </div>
                         </Popup>
                     </Marker>
@@ -224,27 +224,27 @@ const FloodMap = () => {
             <div ref={legendRef} style={{
                 position: 'absolute', bottom: '16px', left: '16px', zIndex: 1000,
                 background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)',
-                borderRadius: '10px', border: '1px solid #e2e8f0', padding: '12px 14px',
+                borderRadius: '10px', border: '1px solid #e2e8f0', padding: '14px 16px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.08)', fontFamily: 'Outfit, sans-serif',
             }}>
-                <p style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Legend</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <p style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Legend</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     {[
                         { label: 'High Risk', color: '#ef4444', shape: 'circle' },
                         { label: 'Medium Risk', color: '#f59e0b', shape: 'circle' },
                         { label: 'Low Risk', color: '#22c55e', shape: 'circle' },
                     ].map((item) => (
                         <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: item.color, border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.15)', flexShrink: 0 }} />
-                            <span style={{ fontSize: '10px', fontWeight: 600, color: '#334155' }}>{item.label}</span>
+                            <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: item.color, border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.15)', flexShrink: 0 }} />
+                            <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>{item.label}</span>
                         </div>
                     ))}
                     {showShelters && (
                         <>
                             <div style={{ height: '1px', background: '#f1f5f9', margin: '2px 0' }} />
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: '#22c55e', flexShrink: 0 }} />
-                                <span style={{ fontSize: '10px', fontWeight: 600, color: '#334155' }}>Safe Shelter</span>
+                                <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#22c55e', flexShrink: 0 }} />
+                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Safe Shelter</span>
                             </div>
                         </>
                     )}
@@ -252,8 +252,8 @@ const FloodMap = () => {
                         <>
                             <div style={{ height: '1px', background: '#f1f5f9', margin: '2px 0' }} />
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(109,40,217,0.2)', border: '1px solid rgba(109,40,217,0.3)', flexShrink: 0 }} />
-                                <span style={{ fontSize: '10px', fontWeight: 600, color: '#334155' }}>Rainfall Intensity</span>
+                                <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'rgba(109,40,217,0.2)', border: '1px solid rgba(109,40,217,0.3)', flexShrink: 0 }} />
+                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Rainfall Intensity</span>
                             </div>
                         </>
                     )}

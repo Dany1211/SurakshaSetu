@@ -238,6 +238,7 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
         { id: 'evacuation_planning', label: 'menu.evacuation_planning', icon: Map },
         { id: 'resource_allocation', label: 'menu.resource_allocation', icon: Users },
         { id: 'alerts', label: 'menu.alerts', icon: AlertTriangle },
+        { id: 'sos', label: 'SOS', icon: AlertCircle, urgent: true },
     ];
 
     const infoItems = [
@@ -250,30 +251,38 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
         if (window.innerWidth < 768) onClose();
     };
 
-    const renderItem = (item) => (
-        <li key={item.id}>
-            <button
-                onClick={() => handleClick(item.id)}
-                style={{
-                    width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-                    padding: '9px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
-                    cursor: 'pointer', border: 'none', fontFamily: 'Outfit, sans-serif',
-                    textAlign: 'left', transition: 'all 0.15s ease',
-                    background: activePage === item.id ? '#eff6ff' : 'transparent',
-                    color: activePage === item.id ? '#2563eb' : '#64748b',
-                }}
-            >
-                <item.icon style={{
-                    width: '18px', height: '18px', strokeWidth: 1.8,
-                    color: activePage === item.id ? '#2563eb' : '#94a3b8',
-                }} />
-                {t(item.label)}
-                {activePage === item.id && (
-                    <div style={{ marginLeft: 'auto', width: '3px', height: '16px', background: '#2563eb', borderRadius: '999px' }} />
-                )}
-            </button>
-        </li>
-    );
+    const renderItem = (item) => {
+        const isSOS = item.id === 'sos';
+        return (
+            <li key={item.id}>
+                <motion.button
+                    onClick={() => handleClick(item.id)}
+                    animate={isSOS ? {
+                        backgroundColor: activePage === 'sos' ? '#fef2f2' : ['transparent', '#fee2e2', 'transparent'],
+                        transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                    } : {}}
+                    style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
+                        padding: '11px 14px', borderRadius: '10px', fontSize: '14px', fontWeight: 600,
+                        cursor: 'pointer', border: 'none', fontFamily: 'Outfit, sans-serif',
+                        textAlign: 'left', transition: 'all 0.15s ease',
+                        background: activePage === item.id ? (isSOS ? '#fef2f2' : '#eff6ff') : 'transparent',
+                        color: activePage === item.id ? (isSOS ? '#dc2626' : '#2563eb') : (isSOS ? '#dc2626' : '#64748b'),
+                    }}
+                >
+                    <item.icon style={{
+                        width: '20px', height: '20px', strokeWidth: 2,
+                        color: activePage === item.id ? (isSOS ? '#dc2626' : '#2563eb') : (isSOS ? '#dc2626' : '#94a3b8'),
+                    }} />
+                    <span>{isSOS ? 'SOS' : t(item.label)}</span>
+                    {isSOS && <span style={{ marginLeft: 'auto', background: '#dc2626', color: 'white', fontSize: '10px', padding: '1px 6px', borderRadius: '999px', fontWeight: 800 }}>LIVE</span>}
+                    {activePage === item.id && !isSOS && (
+                        <div style={{ marginLeft: 'auto', width: '3px', height: '18px', background: '#2563eb', borderRadius: '999px' }} />
+                    )}
+                </motion.button>
+            </li>
+        );
+    };
 
     return (
         <>
@@ -292,7 +301,7 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
             </AnimatePresence>
 
             <aside style={{
-                width: '240px', background: 'white', borderRight: '1px solid #f1f5f9',
+                width: '260px', background: 'white', borderRight: '1px solid #f1f5f9',
                 display: 'flex', flexDirection: 'column',
                 flexShrink: 0, transition: 'transform 0.3s ease',
             }} className={`
@@ -311,7 +320,7 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
                     </div>
 
                     {/* Main Operations */}
-                    <p style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 12px', marginBottom: '6px' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 14px', marginBottom: '8px' }}>
                         Operations
                     </p>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -322,7 +331,7 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
                     <div style={{ height: '1px', background: '#f1f5f9', margin: '14px 12px' }} />
 
                     {/* Info-Only Hazards */}
-                    <p style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 12px', marginBottom: '6px' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 14px', marginBottom: '8px' }}>
                         Hazard Info
                     </p>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -336,9 +345,9 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
                         onClick={() => setShowBroadcast(true)}
                         style={{
                             width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                            padding: '10px 16px', borderRadius: '999px', border: 'none', cursor: 'pointer',
+                            padding: '12px 18px', borderRadius: '999px', border: 'none', cursor: 'pointer',
                             background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
-                            color: 'white', fontSize: '11px', fontWeight: 700, fontFamily: 'Outfit, sans-serif',
+                            color: 'white', fontSize: '13px', fontWeight: 700, fontFamily: 'Outfit, sans-serif',
                             textTransform: 'uppercase', letterSpacing: '0.06em',
                             boxShadow: '0 4px 14px -2px rgba(220, 38, 38, 0.4)',
                         }}
@@ -346,7 +355,7 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
                         <Radio style={{ width: '14px', height: '14px' }} />
                         Emergency Broadcast
                     </button>
-                    <p style={{ fontSize: '9px', color: '#94a3b8', textAlign: 'center', marginTop: '6px', fontWeight: 500 }}>
+                    <p style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center', marginTop: '6px', fontWeight: 500 }}>
                         Sends mass SMS to all residents
                     </p>
                 </div>

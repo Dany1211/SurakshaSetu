@@ -31,7 +31,7 @@ const ForecastCard = ({ data, isToday }) => {
 
     return (
         <div style={{
-            minWidth: '140px', padding: '16px 14px', borderRadius: '14px',
+            minWidth: '150px', padding: '18px 16px', borderRadius: '14px',
             background: isToday ? 'linear-gradient(135deg, #eff6ff, #dbeafe)' : 'white',
             border: isToday ? '1.5px solid #93c5fd' : '1px solid #f1f5f9',
             boxShadow: isToday ? '0 4px 16px rgba(37,99,235,0.08)' : '0 1px 3px rgba(0,0,0,0.03)',
@@ -41,34 +41,34 @@ const ForecastCard = ({ data, isToday }) => {
             flexShrink: 0,
         }}>
             <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: '13px', fontWeight: 700, color: isToday ? '#2563eb' : '#0f172a', margin: 0 }}>
+                <p style={{ fontSize: '15px', fontWeight: 700, color: isToday ? '#2563eb' : '#0f172a', margin: 0 }}>
                     {isToday ? 'Today' : data.day}
                 </p>
-                <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>{data.date}</p>
+                <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>{data.date}</p>
             </div>
 
-            <Icon style={{ width: '28px', height: '28px', color: isToday ? '#2563eb' : '#64748b', strokeWidth: 1.6 }} />
-            <p style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{data.temp}°</p>
+            <Icon style={{ width: '32px', height: '32px', color: isToday ? '#2563eb' : '#64748b', strokeWidth: 1.6 }} />
+            <p style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{data.temp}°</p>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Droplets style={{ width: '11px', height: '11px', color: '#3b82f6' }} />
-                <span style={{ fontSize: '11px', fontWeight: 600, color: '#64748b' }}>{data.rainfall}mm</span>
+                <Droplets style={{ width: '13px', height: '13px', color: '#3b82f6' }} />
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>{data.rainfall}mm</span>
             </div>
 
             {/* Extra: wind + humidity */}
-            <div style={{ display: 'flex', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    <Wind style={{ width: '9px', height: '9px', color: '#94a3b8' }} />
-                    <span style={{ fontSize: '9px', color: '#94a3b8', fontWeight: 500 }}>{data.wind}km/h</span>
+            <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <Wind style={{ width: '12px', height: '12px', color: '#94a3b8' }} />
+                    <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>{data.wind}km/h</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    <Thermometer style={{ width: '9px', height: '9px', color: '#94a3b8' }} />
-                    <span style={{ fontSize: '9px', color: '#94a3b8', fontWeight: 500 }}>{data.humidity}%</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <Thermometer style={{ width: '12px', height: '12px', color: '#94a3b8' }} />
+                    <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>{data.humidity}%</span>
                 </div>
             </div>
 
             <span style={{
-                fontSize: '9px', fontWeight: 700, padding: '3px 10px', borderRadius: '999px',
+                fontSize: '12px', fontWeight: 700, padding: '4px 12px', borderRadius: '999px',
                 background: pill.bg, color: pill.color, border: `1px solid ${pill.border}`,
                 textTransform: 'uppercase', letterSpacing: '0.05em',
             }}>
@@ -83,26 +83,26 @@ const ForecastCard = ({ data, isToday }) => {
 // ===========================================================
 const AlertBanner = ({ alert }) => (
     <div style={{
-        padding: '12px 16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px',
+        padding: '14px 18px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px',
         background: alert.bg, border: `1px solid ${alert.border}`,
         fontFamily: 'Outfit, sans-serif',
     }}>
         <div style={{
-            width: '8px', height: '8px', borderRadius: '50%', background: alert.color,
+            width: '10px', height: '10px', borderRadius: '50%', background: alert.color,
             boxShadow: `0 0 6px ${alert.color}40`, flexShrink: 0,
         }} />
         <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: '12px', fontWeight: 700, color: alert.color, margin: 0, marginBottom: '2px' }}>
+            <p style={{ fontSize: '14px', fontWeight: 700, color: alert.color, margin: 0, marginBottom: '2px' }}>
                 {alert.title}
             </p>
-            <p style={{ fontSize: '11px', color: '#64748b', margin: 0, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <p style={{ fontSize: '13px', color: '#64748b', margin: 0, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {alert.summary}
             </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <span style={{ fontSize: '9px', color: '#94a3b8', fontWeight: 600 }}>{alert.time}</span>
+            <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>{alert.time}</span>
             <span style={{
-                fontSize: '8px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px',
+                fontSize: '12px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px',
                 background: '#f8fafc', color: '#94a3b8', border: '1px solid #e2e8f0',
             }}>LIVE</span>
         </div>
@@ -118,30 +118,30 @@ const RainfallChart = ({ forecast }) => {
     return (
         <div style={{
             background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-            padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
+            padding: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
         }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <div>
-                    <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Rainfall Trend</h3>
-                    <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>5-day forecast (mm)</p>
+                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Rainfall Trend</h3>
+                    <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>5-day forecast (mm)</p>
                 </div>
-                <Droplets style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
+                <Droplets style={{ width: '18px', height: '18px', color: '#3b82f6' }} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '100px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px', height: '120px' }}>
                 {forecast.map((d, i) => {
                     const height = maxRain > 0 ? (d.rainfall / maxRain) * 100 : 5;
                     const barColor = d.risk === 'HIGH' ? '#ef4444' : d.risk === 'MEDIUM' ? '#f59e0b' : '#22c55e';
                     return (
                         <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ fontSize: '9px', fontWeight: 600, color: '#94a3b8' }}>{d.rainfall}</span>
+                            <span style={{ fontSize: '12px', fontWeight: 600, color: '#94a3b8' }}>{d.rainfall}</span>
                             <div style={{
-                                width: '100%', maxWidth: '32px', height: `${Math.max(height, 4)}%`, minHeight: '4px',
+                                width: '100%', maxWidth: '36px', height: `${Math.max(height, 4)}%`, minHeight: '4px',
                                 borderRadius: '6px 6px 4px 4px',
                                 background: `linear-gradient(180deg, ${barColor}90, ${barColor}50)`,
                                 transition: 'height 0.5s ease',
                             }} />
-                            <span style={{ fontSize: '9px', fontWeight: 600, color: '#64748b' }}>{d.day}</span>
+                            <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>{d.day}</span>
                         </div>
                     );
                 })}
@@ -156,29 +156,29 @@ const RainfallChart = ({ forecast }) => {
 const IMDStatusWidget = ({ apiOnline, lastUpdated, onRefresh, refreshing }) => (
     <div style={{
         background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-        padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
+        padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
     }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Weather Data Source</h3>
-            <Eye style={{ width: '14px', height: '14px', color: '#94a3b8' }} />
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Weather Data Source</h3>
+            <Eye style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
             <div style={{
-                width: '8px', height: '8px', borderRadius: '50%',
+                width: '10px', height: '10px', borderRadius: '50%',
                 background: apiOnline ? '#22c55e' : '#ef4444',
                 boxShadow: apiOnline ? '0 0 6px rgba(34,197,94,0.4)' : '0 0 6px rgba(239,68,68,0.4)',
             }} />
-            <span style={{ fontSize: '11px', fontWeight: 600, color: apiOnline ? '#16a34a' : '#dc2626' }}>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: apiOnline ? '#16a34a' : '#dc2626' }}>
                 {apiOnline ? 'API Online' : 'API Offline — Using Cache'}
             </span>
-            {apiOnline ? <Wifi style={{ width: '12px', height: '12px', color: '#16a34a' }} /> : <WifiOff style={{ width: '12px', height: '12px', color: '#dc2626' }} />}
+            {apiOnline ? <Wifi style={{ width: '14px', height: '14px', color: '#16a34a' }} /> : <WifiOff style={{ width: '14px', height: '14px', color: '#dc2626' }} />}
         </div>
 
-        <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, marginBottom: '4px', fontWeight: 500 }}>
+        <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, marginBottom: '4px', fontWeight: 500 }}>
             Source: OpenWeatherMap API (Mumbai, IN)
         </p>
-        <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, marginBottom: '12px', fontWeight: 500 }}>
+        <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, marginBottom: '14px', fontWeight: 500 }}>
             Last updated: {lastUpdated}
         </p>
 
@@ -186,15 +186,15 @@ const IMDStatusWidget = ({ apiOnline, lastUpdated, onRefresh, refreshing }) => (
             onClick={onRefresh}
             disabled={refreshing}
             style={{
-                width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0',
+                width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0',
                 background: refreshing ? '#f8fafc' : 'white', cursor: refreshing ? 'wait' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                fontSize: '11px', fontWeight: 600, color: '#64748b', fontFamily: 'Outfit, sans-serif',
+                fontSize: '13px', fontWeight: 600, color: '#64748b', fontFamily: 'Outfit, sans-serif',
                 transition: 'all 0.15s ease',
             }}
         >
             <RefreshCw style={{
-                width: '12px', height: '12px',
+                width: '14px', height: '14px',
                 animation: refreshing ? 'spin 1s linear infinite' : 'none',
             }} />
             {refreshing ? 'Refreshing...' : 'Refresh Data'}
@@ -208,24 +208,24 @@ const IMDStatusWidget = ({ apiOnline, lastUpdated, onRefresh, refreshing }) => (
 const AIInterpretation = ({ summary, timestamp }) => (
     <div style={{
         background: 'linear-gradient(135deg, #eff6ff, #f0f9ff)',
-        borderRadius: '14px', border: '1px solid #bfdbfe', padding: '16px',
+        borderRadius: '14px', border: '1px solid #bfdbfe', padding: '18px',
         fontFamily: 'Outfit, sans-serif',
     }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
             <div style={{
-                width: '24px', height: '24px', borderRadius: '8px',
+                width: '28px', height: '28px', borderRadius: '8px',
                 background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '12px', color: 'white',
+                fontSize: '14px', color: 'white',
             }}>✦</div>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 AI Risk Analysis
             </span>
         </div>
-        <p style={{ fontSize: '13px', fontWeight: 600, color: '#1e3a5f', margin: 0, lineHeight: 1.5 }}>
+        <p style={{ fontSize: '15px', fontWeight: 600, color: '#1e3a5f', margin: 0, lineHeight: 1.6 }}>
             {summary}
         </p>
-        <p style={{ fontSize: '9px', color: '#94a3b8', margin: 0, marginTop: '8px', fontWeight: 500 }}>
+        <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0, marginTop: '10px', fontWeight: 500 }}>
             Based on live OpenWeatherMap data • {timestamp}
         </p>
     </div>
@@ -237,24 +237,24 @@ const AIInterpretation = ({ summary, timestamp }) => (
 const CurrentWeatherBanner = ({ current }) => (
     <div style={{
         background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-        padding: '16px 20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+        padding: '18px 22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
         fontFamily: 'Outfit, sans-serif', marginBottom: '16px',
         display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap',
     }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{
-                width: '48px', height: '48px', borderRadius: '14px',
+                width: '52px', height: '52px', borderRadius: '14px',
                 background: current.isRaining ? 'linear-gradient(135deg, #dbeafe, #bfdbfe)' : 'linear-gradient(135deg, #fef3c7, #fde68a)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
                 {current.isRaining
-                    ? <CloudRain style={{ width: '24px', height: '24px', color: '#2563eb' }} />
-                    : <Sun style={{ width: '24px', height: '24px', color: '#f59e0b' }} />
+                    ? <CloudRain style={{ width: '28px', height: '28px', color: '#2563eb' }} />
+                    : <Sun style={{ width: '28px', height: '28px', color: '#f59e0b' }} />
                 }
             </div>
             <div>
-                <p style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', margin: 0 }}>{current.temp}°C</p>
-                <p style={{ fontSize: '11px', color: '#64748b', margin: 0, fontWeight: 500, textTransform: 'capitalize' }}>{current.description}</p>
+                <p style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', margin: 0 }}>{current.temp}°C</p>
+                <p style={{ fontSize: '14px', color: '#64748b', margin: 0, fontWeight: 500, textTransform: 'capitalize' }}>{current.description}</p>
             </div>
         </div>
 
@@ -265,19 +265,19 @@ const CurrentWeatherBanner = ({ current }) => (
             { icon: Eye, label: 'Visibility', value: `${current.visibility} km`, color: '#8b5cf6' },
             { icon: CloudRain, label: 'Rain (1h)', value: `${current.rain1h}mm`, color: '#0ea5e9' },
         ].map((s, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                <s.icon style={{ width: '14px', height: '14px', color: s.color }} />
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
+                <s.icon style={{ width: '16px', height: '16px', color: s.color }} />
                 <div>
-                    <p style={{ fontSize: '9px', color: '#94a3b8', fontWeight: 600, margin: 0, textTransform: 'uppercase' }}>{s.label}</p>
-                    <p style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{s.value}</p>
+                    <p style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600, margin: 0, textTransform: 'uppercase' }}>{s.label}</p>
+                    <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{s.value}</p>
                 </div>
             </div>
         ))}
 
         {/* Live badge */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }} />
-            <span style={{ fontSize: '10px', fontWeight: 700, color: '#16a34a' }}>LIVE</span>
+            <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }} />
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#16a34a' }}>LIVE</span>
         </div>
     </div>
 );
@@ -325,9 +325,9 @@ const RiskMonitoring = () => {
             <div style={{
                 padding: '20px', fontFamily: 'Outfit, sans-serif',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                height: '100%', color: '#94a3b8', fontSize: '14px', fontWeight: 600,
+                height: '100%', color: '#94a3b8', fontSize: '16px', fontWeight: 600,
             }}>
-                <RefreshCw style={{ width: '18px', height: '18px', animation: 'spin 1s linear infinite', marginRight: '10px' }} />
+                <RefreshCw style={{ width: '20px', height: '20px', animation: 'spin 1s linear infinite', marginRight: '10px' }} />
                 Fetching live weather data from OpenWeatherMap...
             </div>
         );
@@ -335,15 +335,15 @@ const RiskMonitoring = () => {
 
     return (
         <div style={{
-            padding: '20px', maxWidth: '1400px', margin: '0 auto',
+            padding: '24px', maxWidth: '1400px', margin: '0 auto',
             fontFamily: 'Outfit, sans-serif',
         }}>
             {/* Page Header */}
-            <div style={{ marginBottom: '20px' }}>
-                <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+            <div style={{ marginBottom: '22px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
                     {t('imd.page.title')}
                 </h1>
-                <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0, marginTop: '4px', fontWeight: 500 }}>
+                <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0, marginTop: '4px', fontWeight: 500 }}>
                     {apiOnline ? 'Live data from OpenWeatherMap API • Mumbai, Maharashtra' : 'API offline — showing cached data'}
                 </p>
             </div>
@@ -355,19 +355,19 @@ const RiskMonitoring = () => {
             {forecast && (
                 <div style={{
                     background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                    padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', marginBottom: '16px',
+                    padding: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', marginBottom: '16px',
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                         <div>
-                            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
                                 {t('imd.forecast.title')}
                             </h2>
-                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
+                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
                                 5-day forecast • OpenWeatherMap
                             </p>
                         </div>
                         <span style={{
-                            fontSize: '8px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
+                            fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px',
                             background: apiOnline ? '#f0fdf4' : '#fef2f2',
                             color: apiOnline ? '#16a34a' : '#dc2626',
                             border: `1px solid ${apiOnline ? '#bbf7d0' : '#fecaca'}`,
@@ -388,25 +388,25 @@ const RiskMonitoring = () => {
                 <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
                         background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                        padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', height: '100%',
+                        padding: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', height: '100%',
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                             <div>
-                                <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                                <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
                                     {t('imd.alerts.title')}
                                 </h2>
-                                <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
+                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
                                     Auto-generated from live weather data
                                 </p>
                             </div>
-                            <AlertTriangle style={{ width: '16px', height: '16px', color: '#f59e0b' }} />
+                            <AlertTriangle style={{ width: '18px', height: '18px', color: '#f59e0b' }} />
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {alerts.length > 0 ? alerts.map(alert => (
                                 <AlertBanner key={alert.id} alert={alert} />
                             )) : (
-                                <p style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
+                                <p style={{ fontSize: '14px', color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
                                     No active alerts
                                 </p>
                             )}
@@ -415,7 +415,7 @@ const RiskMonitoring = () => {
                 </div>
 
                 {/* Side column */}
-                <div style={{ width: '280px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <IMDStatusWidget
                         apiOnline={apiOnline}
                         lastUpdated={lastUpdated}

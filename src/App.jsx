@@ -6,6 +6,9 @@ import Dashboard from './pages/Dashboard';
 import RiskMonitoring from './pages/RiskMonitoring';
 import EvacuationPlanning from './pages/EvacuationPlanning';
 import ResourceAllocation from './pages/ResourceAllocation';
+import Alerts from './pages/Alerts';
+import CycloneMonitoring from './pages/CycloneMonitoring';
+import WildfireMonitoring from './pages/WildfireMonitoring';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -19,6 +22,13 @@ function App() {
         return <EvacuationPlanning />;
       case 'resource_allocation':
         return <ResourceAllocation />;
+      case 'cyclones':
+        return <CycloneMonitoring />;
+      case 'wildfires':
+        return <WildfireMonitoring />;
+      case 'alerts':
+      case 'sos':
+        return <Alerts initialTab={activePage === 'alerts' ? 'weather' : 'sos'} />;
       case 'dashboard':
       default:
         return <Dashboard />;

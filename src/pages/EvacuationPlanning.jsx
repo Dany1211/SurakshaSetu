@@ -41,24 +41,24 @@ const ShelterCard = ({ shelter }) => {
             border: '1px solid #f1f5f9', fontFamily: 'Outfit, sans-serif',
             boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
         }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Building2 style={{ width: '14px', height: '14px', color: '#64748b' }} />
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>{shelter.name}</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Building2 style={{ width: '18px', height: '18px', color: '#64748b' }} />
+                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>{shelter.name}</span>
                 </div>
                 <span style={{
-                    fontSize: '9px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px',
+                    fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '6px',
                     color: statusColor, background: `${statusColor}10`, border: `1px solid ${statusColor}30`,
-                    textTransform: 'uppercase',
+                    textTransform: 'uppercase', letterSpacing: '0.05em'
                 }}>
                     {shelter.status}
                 </span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                <MapPin style={{ width: '10px', height: '10px', color: '#94a3b8' }} />
-                <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 500 }}>{shelter.area}</span>
-                <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600, marginLeft: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <MapPin style={{ width: '14px', height: '14px', color: '#94a3b8' }} />
+                <span style={{ fontSize: '13px', color: '#94a3b8', fontWeight: 500 }}>{shelter.area}</span>
+                <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 600, marginLeft: 'auto' }}>
                     {shelter.current} / {shelter.capacity} people
                 </span>
             </div>
@@ -72,14 +72,14 @@ const ShelterCard = ({ shelter }) => {
             </div>
 
             {/* Tags */}
-            <div style={{ display: 'flex', gap: '6px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
                 {shelter.supplies && (
-                    <span style={{ fontSize: '8px', fontWeight: 600, padding: '2px 6px', borderRadius: '4px', background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', textTransform: 'uppercase' }}>
                         ✓ Supplies
                     </span>
                 )}
                 {shelter.medical && (
-                    <span style={{ fontSize: '8px', fontWeight: 600, padding: '2px 6px', borderRadius: '4px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', textTransform: 'uppercase' }}>
                         ✓ Medical
                     </span>
                 )}
@@ -110,17 +110,17 @@ const RouteCard = ({ route }) => {
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a' }}>{route.from} → {route.to}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>{route.from} → {route.to}</span>
                 </div>
-                <p style={{ fontSize: '10px', color: '#64748b', margin: 0, fontWeight: 500 }}>
+                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, fontWeight: 500 }}>
                     via {route.road} • {route.distance} • ~{route.time}
                 </p>
             </div>
 
             <span style={{
-                fontSize: '8px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
-                textTransform: 'uppercase', flexShrink: 0,
+                fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '6px',
+                textTransform: 'uppercase', flexShrink: 0, letterSpacing: '0.04em',
                 background: isBlocked ? '#fef3c7' : '#f0fdf4',
                 color: isBlocked ? '#d97706' : '#16a34a',
                 border: `1px solid ${isBlocked ? '#fde68a' : '#bbf7d0'}`,
@@ -139,22 +139,22 @@ const RouteCard = ({ route }) => {
 const EmergencyContacts = () => (
     <div style={{
         background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-        padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
+        padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
     }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <Phone style={{ width: '14px', height: '14px', color: '#dc2626' }} />
-            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Emergency Helplines</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+            <Phone style={{ width: '18px', height: '18px', color: '#dc2626' }} />
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Emergency Helplines</h3>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
                 { name: 'NDRF Control Room', number: '011-24363260' },
                 { name: 'Mumbai BMC Disaster', number: '1916' },
                 { name: 'Police Emergency', number: '100' },
                 { name: 'Ambulance', number: '108' },
             ].map((c, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 500, color: '#64748b' }}>{c.name}</span>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{c.number}</span>
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>{c.name}</span>
+                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{c.number}</span>
                 </div>
             ))}
         </div>
@@ -173,12 +173,12 @@ const EvacuationPlanning = () => {
             fontFamily: 'Outfit, sans-serif',
         }}>
             {/* Page Header */}
-            <div style={{ marginBottom: '20px' }}>
-                <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Sparkles style={{ width: '22px', height: '22px', color: '#2563eb' }} />
+            <div style={{ marginBottom: '24px' }}>
+                <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Sparkles style={{ width: '28px', height: '28px', color: '#2563eb' }} />
                     {t('menu.evacuation_planning')}
                 </h1>
-                <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0, marginTop: '4px', fontWeight: 500 }}>
+                <p style={{ fontSize: '15px', color: '#94a3b8', margin: 0, marginTop: '8px', fontWeight: 500 }}>
                     AI-generated evacuation plans, shelter status, routes & resource deployment
                 </p>
             </div>
@@ -196,16 +196,16 @@ const EvacuationPlanning = () => {
                         background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
                         padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', height: '100%',
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
                             <div>
-                                <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
                                     Designated Shelters
                                 </h2>
-                                <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
+                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
                                     {shelters.length} shelters • {shelters.reduce((a, s) => a + s.capacity, 0)} total capacity
                                 </p>
                             </div>
-                            <Building2 style={{ width: '16px', height: '16px', color: '#64748b' }} />
+                            <Building2 style={{ width: '20px', height: '20px', color: '#64748b' }} />
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             {shelters.map(s => (
@@ -222,16 +222,16 @@ const EvacuationPlanning = () => {
                         background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
                         padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
                             <div>
-                                <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
                                     Evacuation Routes
                                 </h2>
-                                <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
+                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
                                     Road status for each ward → shelter path
                                 </p>
                             </div>
-                            <Navigation style={{ width: '16px', height: '16px', color: '#64748b' }} />
+                            <Navigation style={{ width: '20px', height: '20px', color: '#64748b' }} />
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             {evacuationRoutes.map(r => (

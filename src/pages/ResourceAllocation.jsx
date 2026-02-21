@@ -76,8 +76,9 @@ const StatusBadge = ({ status }) => {
     const s = styles[status] || styles.Monitoring;
     return (
         <span style={{
-            fontSize: '9px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px',
+            fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '6px',
             background: s.bg, color: s.color, border: `1px solid ${s.border}`, textTransform: 'uppercase',
+            letterSpacing: '0.05em'
         }}>{status}</span>
     );
 };
@@ -91,8 +92,9 @@ const RiskBadge = ({ risk }) => {
     const s = styles[risk] || styles.LOW;
     return (
         <span style={{
-            fontSize: '9px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px',
+            fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '6px',
             background: s.bg, color: s.color, border: `1px solid ${s.border}`, textTransform: 'uppercase',
+            letterSpacing: '0.05em'
         }}>{risk}</span>
     );
 };
@@ -104,9 +106,10 @@ const TypeBadge = ({ type }) => {
     };
     return (
         <span style={{
-            fontSize: '8px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px',
+            fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px',
             background: `${colors[type] || '#64748b'}10`, color: colors[type] || '#64748b',
             border: `1px solid ${colors[type] || '#64748b'}30`,
+            textTransform: 'uppercase', letterSpacing: '0.06em'
         }}>{type}</span>
     );
 };
@@ -131,12 +134,12 @@ const ResourceAllocation = () => {
             fontFamily: 'Outfit, sans-serif',
         }}>
             {/* Page Header */}
-            <div style={{ marginBottom: '20px' }}>
-                <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Users style={{ width: '22px', height: '22px', color: '#2563eb' }} />
+            <div style={{ marginBottom: '24px' }}>
+                <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Users style={{ width: '28px', height: '28px', color: '#2563eb' }} />
                     {t('menu.resource_allocation')}
                 </h1>
-                <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0, marginTop: '4px', fontWeight: 500 }}>
+                <p style={{ fontSize: '15px', color: '#94a3b8', margin: 0, marginTop: '10px', fontWeight: 500 }}>
                     Vehicle fleet, supplies, personnel deployment & ward-level allocation
                 </p>
             </div>
@@ -145,25 +148,25 @@ const ResourceAllocation = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
                 {summaryStats.map((stat, i) => (
                     <div key={i} style={{
-                        padding: '16px 18px', borderRadius: '14px', background: 'white',
+                        padding: '20px 24px', borderRadius: '16px', background: 'white',
                         border: '1px solid #f1f5f9', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                             <div style={{
-                                width: '36px', height: '36px', borderRadius: '10px',
+                                width: '42px', height: '42px', borderRadius: '12px',
                                 background: stat.bg, border: `1px solid ${stat.border}`,
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                             }}>
-                                <stat.icon style={{ width: '18px', height: '18px', color: stat.color }} />
+                                <stat.icon style={{ width: '20px', height: '20px', color: stat.color }} />
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }} />
-                                <span style={{ fontSize: '8px', fontWeight: 700, color: '#16a34a' }}>LIVE</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }} />
+                                <span style={{ fontSize: '11px', fontWeight: 800, color: '#16a34a' }}>LIVE</span>
                             </div>
                         </div>
-                        <p style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', margin: 0 }}>{stat.value}</p>
-                        <p style={{ fontSize: '11px', fontWeight: 700, color: '#334155', margin: '2px 0 0' }}>{stat.label}</p>
-                        <p style={{ fontSize: '10px', color: '#94a3b8', margin: '2px 0 0', fontWeight: 500 }}>{stat.sub}</p>
+                        <p style={{ fontSize: '30px', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>{stat.value}</p>
+                        <p style={{ fontSize: '14px', fontWeight: 700, color: '#334155', margin: '4px 0 0' }}>{stat.label}</p>
+                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '2px 0 0', fontWeight: 500 }}>{stat.sub}</p>
                     </div>
                 ))}
             </div>
@@ -178,7 +181,7 @@ const ResourceAllocation = () => {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         style={{
-                            padding: '8px 18px', borderRadius: '8px', fontSize: '12px', fontWeight: 700,
+                            padding: '10px 24px', borderRadius: '8px', fontSize: '14px', fontWeight: 700,
                             cursor: 'pointer', border: 'none', fontFamily: 'Outfit, sans-serif',
                             background: activeTab === tab.id ? 'white' : 'transparent',
                             color: activeTab === tab.id ? '#2563eb' : '#64748b',
@@ -202,38 +205,38 @@ const ResourceAllocation = () => {
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                                 <div>
-                                    <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Ward-Level Allocation</h2>
-                                    <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Resources assigned per ward</p>
+                                    <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Ward-Level Allocation</h2>
+                                    <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Resources assigned per ward</p>
                                 </div>
-                                <MapPin style={{ width: '16px', height: '16px', color: '#64748b' }} />
+                                <MapPin style={{ width: '20px', height: '20px', color: '#64748b' }} />
                             </div>
 
                             {/* Table Header */}
                             <div style={{
-                                display: 'grid', gridTemplateColumns: '140px 60px 50px 50px 50px 50px 70px 60px',
-                                gap: '8px', padding: '8px 12px', borderRadius: '8px', background: '#f8fafc',
-                                marginBottom: '4px',
+                                display: 'grid', gridTemplateColumns: '160px 80px 60px 60px 60px 60px 90px 70px',
+                                gap: '10px', padding: '12px 14px', borderRadius: '8px', background: '#f8fafc',
+                                marginBottom: '6px',
                             }}>
                                 {['Ward', 'Risk', 'Buses', 'Boats', 'Amb.', 'Teams', 'Status', 'ETA'].map(h => (
-                                    <span key={h} style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</span>
+                                    <span key={h} style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{h}</span>
                                 ))}
                             </div>
 
                             {/* Table Rows */}
                             {wardAllocations.map((w, i) => (
                                 <div key={i} style={{
-                                    display: 'grid', gridTemplateColumns: '140px 60px 50px 50px 50px 50px 70px 60px',
-                                    gap: '8px', padding: '10px 12px', alignItems: 'center',
+                                    display: 'grid', gridTemplateColumns: '160px 80px 60px 60px 60px 60px 90px 70px',
+                                    gap: '10px', padding: '14px 14px', alignItems: 'center',
                                     borderBottom: i < wardAllocations.length - 1 ? '1px solid #f8fafc' : 'none',
                                 }}>
-                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>{w.ward}</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>{w.ward}</span>
                                     <RiskBadge risk={w.risk} />
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: w.buses > 0 ? '#0f172a' : '#cbd5e1' }}>{w.buses}</span>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: w.boats > 0 ? '#0f172a' : '#cbd5e1' }}>{w.boats}</span>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: w.ambulances > 0 ? '#0f172a' : '#cbd5e1' }}>{w.ambulances}</span>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: w.teams > 0 ? '#0f172a' : '#cbd5e1' }}>{w.teams}</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 600, color: w.buses > 0 ? '#0f172a' : '#cbd5e1' }}>{w.buses}</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 600, color: w.boats > 0 ? '#0f172a' : '#cbd5e1' }}>{w.boats}</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 600, color: w.ambulances > 0 ? '#0f172a' : '#cbd5e1' }}>{w.ambulances}</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 600, color: w.teams > 0 ? '#0f172a' : '#cbd5e1' }}>{w.teams}</span>
                                     <StatusBadge status={w.status} />
-                                    <span style={{ fontSize: '11px', fontWeight: 500, color: '#64748b' }}>{w.eta}</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>{w.eta}</span>
                                 </div>
                             ))}
                         </div>
@@ -244,24 +247,24 @@ const ResourceAllocation = () => {
                         {/* Vehicle Summary */}
                         <div style={{
                             background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                            padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                            padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                         }}>
-                            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Truck style={{ width: '14px', height: '14px', color: '#2563eb' }} /> Fleet Status
+                            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Truck style={{ width: '18px', height: '18px', color: '#2563eb' }} /> Fleet Status
                             </h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                 {vehicles.slice(0, 4).map((v, i) => {
                                     const pct = Math.round((v.deployed / v.total) * 100);
                                     return (
                                         <div key={i}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                    <v.icon style={{ width: '12px', height: '12px', color: v.color }} />
-                                                    <span style={{ fontSize: '11px', fontWeight: 600, color: '#334155' }}>{v.type}</span>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                    <v.icon style={{ width: '16px', height: '16px', color: v.color }} />
+                                                    <span style={{ fontSize: '15px', fontWeight: 600, color: '#334155' }}>{v.type}</span>
                                                 </div>
-                                                <span style={{ fontSize: '11px', fontWeight: 800, color: v.color }}>{v.deployed}/{v.total}</span>
+                                                <span style={{ fontSize: '15px', fontWeight: 800, color: v.color }}>{v.deployed}/{v.total}</span>
                                             </div>
-                                            <div style={{ height: '4px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden' }}>
+                                            <div style={{ height: '5px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden' }}>
                                                 <div style={{ height: '100%', width: `${pct}%`, borderRadius: '999px', background: v.color, transition: 'width 0.5s ease' }} />
                                             </div>
                                         </div>
@@ -273,19 +276,19 @@ const ResourceAllocation = () => {
                         {/* Critical Supplies */}
                         <div style={{
                             background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                            padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                            padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                         }}>
-                            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Package style={{ width: '14px', height: '14px', color: '#0ea5e9' }} /> Supply Levels
+                            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Package style={{ width: '18px', height: '18px', color: '#0ea5e9' }} /> Supply Levels
                             </h3>
                             {supplies.slice(0, 4).map((s, i) => {
                                 const pct = Math.round((s.available / s.needed) * 100);
                                 const isLow = pct < 50;
                                 return (
-                                    <div key={i} style={{ marginBottom: i < 3 ? '10px' : 0 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                            <span style={{ fontSize: '11px', fontWeight: 600, color: '#334155' }}>{s.name}</span>
-                                            <span style={{ fontSize: '10px', fontWeight: 600, color: isLow ? '#dc2626' : '#64748b' }}>
+                                    <div key={i} style={{ marginBottom: i < 3 ? '12px' : 0 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                            <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{s.name}</span>
+                                            <span style={{ fontSize: '13px', fontWeight: 600, color: isLow ? '#dc2626' : '#64748b' }}>
                                                 {s.available.toLocaleString()}/{s.needed.toLocaleString()} {s.unit}
                                             </span>
                                         </div>
@@ -303,11 +306,11 @@ const ResourceAllocation = () => {
                         {/* Emergency Contacts */}
                         <div style={{
                             background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                            padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                            padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                         }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                                <Phone style={{ width: '14px', height: '14px', color: '#dc2626' }} />
-                                <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Helplines</h3>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                                <Phone style={{ width: '20px', height: '20px', color: '#dc2626' }} />
+                                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Helplines</h3>
                             </div>
                             {[
                                 { name: 'NDRF Control Room', number: '011-24363260' },
@@ -315,9 +318,9 @@ const ResourceAllocation = () => {
                                 { name: 'Police Emergency', number: '100' },
                                 { name: 'Ambulance', number: '108' },
                             ].map((c, i) => (
-                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none' }}>
-                                    <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>{c.name}</span>
-                                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{c.number}</span>
+                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none' }}>
+                                    <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>{c.name}</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{c.number}</span>
                                 </div>
                             ))}
                         </div>
@@ -331,47 +334,47 @@ const ResourceAllocation = () => {
                     background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
                     padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                         <div>
-                            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Vehicle Fleet Breakdown</h2>
-                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>All vehicles with deployment locations</p>
+                            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Vehicle Fleet Breakdown</h2>
+                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>All vehicles with deployment locations</p>
                         </div>
-                        <Truck style={{ width: '16px', height: '16px', color: '#64748b' }} />
+                        <Truck style={{ width: '20px', height: '20px', color: '#64748b' }} />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                         {vehicles.map((v, i) => {
                             const pct = Math.round((v.deployed / v.total) * 100);
                             const remaining = v.total - v.deployed;
                             return (
                                 <div key={i} style={{
-                                    padding: '16px', borderRadius: '12px', border: '1px solid #f1f5f9',
+                                    padding: '18px', borderRadius: '12px', border: '1px solid #f1f5f9',
                                     background: '#fafbfc',
                                 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                             <div style={{
-                                                width: '34px', height: '34px', borderRadius: '10px',
+                                                width: '48px', height: '48px', borderRadius: '12px',
                                                 background: `${v.color}10`, border: `1px solid ${v.color}25`,
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             }}>
-                                                <v.icon style={{ width: '16px', height: '16px', color: v.color }} />
+                                                <v.icon style={{ width: '22px', height: '22px', color: v.color }} />
                                             </div>
                                             <div>
-                                                <p style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{v.type}</p>
-                                                <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
+                                                <p style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{v.type}</p>
+                                                <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
                                                     {remaining > 0 ? `${remaining} in reserve` : 'All deployed'}
                                                 </p>
                                             </div>
                                         </div>
-                                        <span style={{ fontSize: '18px', fontWeight: 800, color: v.color }}>{v.deployed}<span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>/{v.total}</span></span>
+                                        <span style={{ fontSize: '28px', fontWeight: 800, color: v.color }}>{v.deployed}<span style={{ fontSize: '16px', color: '#94a3b8', fontWeight: 500 }}>/{v.total}</span></span>
                                     </div>
-                                    <div style={{ height: '6px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden', marginBottom: '8px' }}>
+                                    <div style={{ height: '8px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden', marginBottom: '12px' }}>
                                         <div style={{ height: '100%', width: `${pct}%`, borderRadius: '999px', background: v.color, transition: 'width 0.5s ease' }} />
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                        <MapPin style={{ width: '10px', height: '10px', color: '#94a3b8' }} />
-                                        <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>{v.locations}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <MapPin style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
+                                        <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>{v.locations}</span>
                                     </div>
                                 </div>
                             );
@@ -386,49 +389,49 @@ const ResourceAllocation = () => {
                     background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
                     padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                         <div>
-                            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Supply Inventory</h2>
-                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Stock levels at all relief points</p>
+                            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Supply Inventory</h2>
+                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Stock levels at all relief points</p>
                         </div>
-                        <Package style={{ width: '16px', height: '16px', color: '#64748b' }} />
+                        <Package style={{ width: '20px', height: '20px', color: '#64748b' }} />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
                         {supplies.map((s, i) => {
                             const pct = Math.round((s.available / s.needed) * 100);
                             const isLow = pct < 50;
                             const isCritical = pct < 30;
                             return (
                                 <div key={i} style={{
-                                    padding: '18px', borderRadius: '12px',
+                                    padding: '20px', borderRadius: '12px',
                                     border: `1px solid ${isCritical ? '#fecaca' : '#f1f5f9'}`,
                                     background: isCritical ? '#fef2f2' : '#fafbfc',
                                 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <s.icon style={{ width: '16px', height: '16px', color: s.color }} />
-                                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>{s.name}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <s.icon style={{ width: '22px', height: '22px', color: s.color }} />
+                                            <span style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a' }}>{s.name}</span>
                                         </div>
                                         {isCritical && (
                                             <span style={{
-                                                fontSize: '8px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px',
+                                                fontSize: '12px', fontWeight: 700, padding: '4px 8px', borderRadius: '4px',
                                                 background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca',
                                             }}>LOW STOCK</span>
                                         )}
                                     </div>
-                                    <p style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                                    <p style={{ fontSize: '32px', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>
                                         {s.available.toLocaleString()}
-                                        <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}> / {s.needed.toLocaleString()} {s.unit}</span>
+                                        <span style={{ fontSize: '16px', color: '#94a3b8', fontWeight: 600 }}> / {s.needed.toLocaleString()} {s.unit}</span>
                                     </p>
-                                    <div style={{ height: '6px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden', marginTop: '10px' }}>
+                                    <div style={{ height: '8px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden', marginTop: '16px' }}>
                                         <div style={{
                                             height: '100%', width: `${pct}%`, borderRadius: '999px',
                                             background: isCritical ? '#ef4444' : isLow ? '#f59e0b' : '#22c55e',
                                             transition: 'width 0.5s ease',
                                         }} />
                                     </div>
-                                    <p style={{ fontSize: '10px', color: isLow ? '#dc2626' : '#64748b', margin: '6px 0 0', fontWeight: 600 }}>
+                                    <p style={{ fontSize: '14px', color: isLow ? '#dc2626' : '#64748b', margin: '12px 0 0', fontWeight: 600 }}>
                                         {pct}% stocked {isLow ? '— needs replenishment' : ''}
                                     </p>
                                 </div>
@@ -444,39 +447,39 @@ const ResourceAllocation = () => {
                     background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
                     padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                         <div>
-                            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Team Deployment</h2>
-                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>{teams.length} teams • {teams.reduce((a, t) => a + t.members, 0)} total personnel</p>
+                            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Team Deployment</h2>
+                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>{teams.length} teams • {teams.reduce((a, t) => a + t.members, 0)} total personnel</p>
                         </div>
-                        <Shield style={{ width: '16px', height: '16px', color: '#64748b' }} />
+                        <Shield style={{ width: '20px', height: '20px', color: '#64748b' }} />
                     </div>
 
                     {/* Table Header */}
                     <div style={{
-                        display: 'grid', gridTemplateColumns: '200px 80px 70px 160px 80px',
-                        gap: '12px', padding: '8px 14px', borderRadius: '8px', background: '#f8fafc', marginBottom: '4px',
+                        display: 'grid', gridTemplateColumns: '220px 100px 100px 180px 100px',
+                        gap: '12px', padding: '12px 14px', borderRadius: '8px', background: '#f8fafc', marginBottom: '8px',
                     }}>
                         {['Team Name', 'Members', 'Type', 'Location', 'Status'].map(h => (
-                            <span key={h} style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</span>
+                            <span key={h} style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{h}</span>
                         ))}
                     </div>
 
                     {teams.map((team, i) => (
                         <div key={i} style={{
-                            display: 'grid', gridTemplateColumns: '200px 80px 70px 160px 80px',
-                            gap: '12px', padding: '12px 14px', alignItems: 'center',
+                            display: 'grid', gridTemplateColumns: '220px 100px 100px 180px 100px',
+                            gap: '12px', padding: '16px 14px', alignItems: 'center',
                             borderBottom: i < teams.length - 1 ? '1px solid #f8fafc' : 'none',
                         }}>
-                            <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>{team.name}</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <Users style={{ width: '11px', height: '11px', color: '#94a3b8' }} />
-                                <span style={{ fontSize: '12px', fontWeight: 600, color: '#334155' }}>{team.members}</span>
+                            <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>{team.name}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Users style={{ width: '14px', height: '14px', color: '#94a3b8' }} />
+                                <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{team.members}</span>
                             </div>
                             <TypeBadge type={team.type} />
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <MapPin style={{ width: '10px', height: '10px', color: '#94a3b8' }} />
-                                <span style={{ fontSize: '11px', fontWeight: 500, color: '#64748b' }}>{team.location}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <MapPin style={{ width: '14px', height: '14px', color: '#94a3b8' }} />
+                                <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>{team.location}</span>
                             </div>
                             <StatusBadge status={team.status} />
                         </div>
