@@ -6,7 +6,16 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased bg-slate-50 text-slate-900;
+    font-family: 'Outfit', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f8fafc;
+    /* slate-50 */
+    color: #0f172a;
+    /* slate-900 */
+    font-size: 14px;
+    /* Global increase for readability */
+    line-height: 1.5;
   }
 }
 
@@ -65,16 +74,52 @@
 
 /* ---- Utility classes ---- */
 .glass {
-  @apply bg-white/70 backdrop-blur-md border border-white/20;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .soft-shadow {
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* ---- Pulse animation for LIVE indicators ---- */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* ---- Force Tailwind button styles over Leaflet resets ---- */
-/* Leaflet sets `button { cursor: pointer }` and other resets that sometimes
-   interfere with Tailwind. These ensure our UI buttons always render correctly. */
 button[class*="bg-suraksha"],
 button[class*="bg-slate"],
 button[class*="bg-emerald"],

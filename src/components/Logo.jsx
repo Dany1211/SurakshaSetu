@@ -1,8 +1,8 @@
 const Logo = ({ size = 'default' }) => {
     const sizes = {
-        small: { icon: 28, text: 'text-sm', sub: 'text-[7px]' },
-        default: { icon: 34, text: 'text-base sm:text-lg', sub: 'text-[8px]' },
-        large: { icon: 48, text: 'text-xl', sub: 'text-[10px]' },
+        small: { icon: 28, text: 'text-base', sub: 'text-[9px]' },
+        default: { icon: 34, text: 'text-lg sm:text-xl', sub: 'text-[11px]' },
+        large: { icon: 48, text: 'text-2xl', sub: 'text-[13px]' },
     };
 
     const s = sizes[size] || sizes.default;
