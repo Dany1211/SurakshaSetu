@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import PlanPanel from '../components/PlanPanel';
 import {
     MapPin, Users, Clock, Shield, Sparkles, AlertTriangle,
-    Building2, Navigation, Truck, Phone, CheckCircle2, HeartPulse
+    Building2, Navigation, Phone, CheckCircle2
 } from 'lucide-react';
 
 // ---- Shelter Data ----
@@ -25,13 +25,7 @@ const evacuationRoutes = [
     { id: 5, from: 'Bandra East', to: 'Bandra Community Hall', distance: '2.0 km', time: '7 min', road: 'Swami Vivekanand Rd', status: 'Clear' },
 ];
 
-// ---- Resource Readiness ----
-const resources = [
-    { label: 'Buses Deployed', value: 18, total: 24, icon: Truck, color: '#2563eb' },
-    { label: 'Rescue Boats', value: 8, total: 12, icon: Navigation, color: '#0ea5e9' },
-    { label: 'Ambulances', value: 6, total: 10, icon: HeartPulse, color: '#dc2626' },
-    { label: 'Relief Teams', value: 4, total: 6, icon: Shield, color: '#7c3aed' },
-];
+
 
 // ===========================================================
 //  Shelter Card
@@ -137,31 +131,7 @@ const RouteCard = ({ route }) => {
     );
 };
 
-// ===========================================================
-//  Resource Readiness Bar
-// ===========================================================
-const ResourceBar = ({ item }) => {
-    const pct = Math.round((item.value / item.total) * 100);
-    return (
-        <div style={{
-            padding: '12px 16px', borderRadius: '10px', background: 'white',
-            border: '1px solid #f1f5f9', fontFamily: 'Outfit, sans-serif',
-        }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <item.icon style={{ width: '14px', height: '14px', color: item.color }} />
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a' }}>{item.label}</span>
-                </div>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: item.color }}>
-                    {item.value}<span style={{ color: '#94a3b8', fontWeight: 500, fontSize: '10px' }}>/{item.total}</span>
-                </span>
-            </div>
-            <div style={{ height: '4px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${pct}%`, borderRadius: '999px', background: item.color, transition: 'width 0.5s ease' }} />
-            </div>
-        </div>
-    );
-};
+
 
 // ===========================================================
 //  Emergency Contacts
@@ -270,28 +240,7 @@ const EvacuationPlanning = () => {
                         </div>
                     </div>
 
-                    {/* Resource Readiness */}
-                    <div style={{
-                        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                        padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                            <div>
-                                <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                                    Resource Deployment
-                                </h2>
-                                <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                                    Current deployment status
-                                </p>
-                            </div>
-                            <Truck style={{ width: '16px', height: '16px', color: '#64748b' }} />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {resources.map((r, i) => (
-                                <ResourceBar key={i} item={r} />
-                            ))}
-                        </div>
-                    </div>
+
 
                     {/* Emergency Contacts */}
                     <EmergencyContacts />

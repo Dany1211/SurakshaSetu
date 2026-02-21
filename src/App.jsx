@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import RiskMonitoring from './pages/RiskMonitoring';
 import EvacuationPlanning from './pages/EvacuationPlanning';
+import ResourceAllocation from './pages/ResourceAllocation';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,6 +17,8 @@ function App() {
         return <RiskMonitoring />;
       case 'evacuation_planning':
         return <EvacuationPlanning />;
+      case 'resource_allocation':
+        return <ResourceAllocation />;
       case 'dashboard':
       default:
         return <Dashboard />;
