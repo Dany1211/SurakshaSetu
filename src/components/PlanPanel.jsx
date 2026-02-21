@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import {
     Sparkles, MapPin, Clock, Edit3, Check,
-    AlertTriangle, Bus, Send, X,
+    AlertTriangle, Bus, Send, X, MessageSquare,
     Shield, Siren, Flame, HeartPulse, Radio, Users, CheckCircle2, ChevronDown
 } from 'lucide-react';
 
@@ -282,80 +282,44 @@ const SendPlanModal = ({ plan, onClose }) => {
 
                 {/* ---- Body (two columns) ---- */}
                 <div style={{ flex: 1, overflowY: 'auto', display: 'flex' }} className="custom-scrollbar">
-                    {/* LEFT: Plan Details */}
-                    <div style={{ flex: 1, borderRight: '1px solid #f1f5f9', padding: '24px 28px', minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                            <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Sparkles style={{ width: '14px', height: '14px', color: '#2563eb' }} />
-                                {plan.title}
-                            </h4>
+                    {/* LEFT: Dispatch Message */}
+                    <div style={{ flex: 1, borderRight: '1px solid #f1f5f9', padding: '24px 28px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <MessageSquare style={{ width: '14px', height: '14px', color: '#2563eb' }} />
+                                <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                                    Dispatch Message
+                                </h4>
+                            </div>
                             <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 500 }}>
-                                AI-generated • Editable
+                                Editable • {message.length} chars
                             </span>
                         </div>
 
-                        {/* All plan fields */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '20px' }}>
-                            {allPlanFields.map((f) => (
-                                <div key={f.label} style={{
-                                    display: 'flex', alignItems: 'flex-start', gap: '12px',
-                                    padding: '10px 0', borderBottom: '1px solid #f8fafc',
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: '120px', flexShrink: 0, paddingTop: '2px' }}>
-                                        <f.icon style={{ width: '12px', height: '12px', color: '#94a3b8' }} />
-                                        <span style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.03em' }}>{f.label}</span>
-                                    </div>
-                                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>{f.value}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Full dispatch message */}
-                        <button
-                            onClick={() => setShowFullMessage(!showFullMessage)}
+                        <textarea
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
                             style={{
-                                display: 'flex', alignItems: 'center', gap: '6px', width: '100%',
-                                padding: '10px 14px', borderRadius: '10px', border: '1px dashed #e2e8f0',
-                                background: '#f8fafc', cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
-                                fontSize: '11px', fontWeight: 700, color: '#64748b', textAlign: 'left',
+                                width: '100%', flex: 1, minHeight: '260px', padding: '16px',
+                                fontFamily: "'Outfit', sans-serif", fontSize: '12px', lineHeight: '1.7',
+                                color: '#1e293b', background: '#f8fafc', border: '1.5px solid #e2e8f0',
+                                borderRadius: '12px', resize: 'vertical', outline: 'none',
                             }}
-                        >
-                            <ChevronDown style={{
-                                width: '12px', height: '12px', transition: 'transform 0.2s',
-                                transform: showFullMessage ? 'rotate(180deg)' : 'rotate(0deg)',
-                            }} />
-                            {showFullMessage ? 'Hide dispatch message' : 'View & edit dispatch message'}
-                        </button>
-
-                        {showFullMessage && (
-                            <div style={{ marginTop: '12px' }}>
-                                <textarea
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    style={{
-                                        width: '100%', minHeight: '200px', padding: '16px',
-                                        fontFamily: "'Outfit', sans-serif", fontSize: '12px', lineHeight: '1.7',
-                                        color: '#1e293b', background: '#f8fafc', border: '1.5px solid #e2e8f0',
-                                        borderRadius: '12px', resize: 'vertical', outline: 'none',
-                                    }}
-                                    onFocus={(e) => { e.target.style.borderColor = '#2563eb'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.08)'; }}
-                                    onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none'; }}
-                                />
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
-                                    <span style={{ fontSize: '10px', color: '#94a3b8' }}>{message.length} characters</span>
-                                    <button
-                                        onClick={() => setMessage(generateDispatchMessage(plan))}
-                                        style={{
-                                            fontSize: '10px', fontWeight: 700, color: '#2563eb',
-                                            background: 'none', border: 'none', cursor: 'pointer',
-                                            fontFamily: 'Outfit, sans-serif', textDecoration: 'underline',
-                                        }}
-                                    >
-                                        Reset to AI-generated
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                            onFocus={(e) => { e.target.style.borderColor = '#2563eb'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.08)'; }}
+                            onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none'; }}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                            <button
+                                onClick={() => setMessage(generateDispatchMessage(plan))}
+                                style={{
+                                    fontSize: '10px', fontWeight: 700, color: '#2563eb',
+                                    background: 'none', border: 'none', cursor: 'pointer',
+                                    fontFamily: 'Outfit, sans-serif', textDecoration: 'underline',
+                                }}
+                            >
+                                Reset to AI-generated
+                            </button>
+                        </div>
                     </div>
 
                     {/* RIGHT: Recipients */}
