@@ -15,7 +15,7 @@ const Navbar = ({ toggleSidebar }) => {
         <nav style={{
             background: 'white', borderBottom: '1px solid #f1f5f9',
             padding: '0 20px', height: '52px', display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50,
+            justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 1000,
             fontFamily: 'Outfit, sans-serif',
         }}>
             {/* Left: Logo */}

@@ -53,14 +53,14 @@ const FloodMap = () => {
     const center = [19.076, 72.8777]; // Mumbai
 
     return (
-        <div className="map-wrapper w-full h-full" style={{ position: 'relative', overflow: 'clip' }}>
+        <div className="map-wrapper w-full h-full" style={{ position: 'relative', overflow: 'clip', isolation: 'isolate', zIndex: 1 }}>
             <MapContainer
                 center={center}
                 zoom={12}
                 scrollWheelZoom={true}
                 zoomControl={false}
                 className="w-full h-full"
-                style={{ background: '#f1f5f9', zIndex: 1 }}
+                style={{ background: '#f1f5f9' }}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
@@ -112,7 +112,7 @@ const FloodMap = () => {
 
             {/* Map Legend - inline styles to avoid Leaflet CSS conflicts */}
             <div style={{
-                position: 'absolute', bottom: '16px', left: '16px', zIndex: 500,
+                position: 'absolute', bottom: '16px', left: '16px', zIndex: 10,
                 background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)',
                 borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 12px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.08)', fontFamily: 'Outfit, sans-serif'

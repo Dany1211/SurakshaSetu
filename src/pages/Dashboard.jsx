@@ -28,7 +28,7 @@ const Dashboard = () => {
                     boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden', position: 'relative', flexShrink: 0,
                 }}>
                     {/* Map overlay buttons */}
-                    <div style={{ position: 'absolute', top: '14px', left: '14px', zIndex: 500, display: 'flex', gap: '8px' }}>
+                    <div style={{ position: 'absolute', top: '14px', left: '14px', zIndex: 10, display: 'flex', gap: '8px' }}>
                         <button style={{
                             display: 'flex', alignItems: 'center', gap: '5px',
                             padding: '6px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 700,
