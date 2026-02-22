@@ -3,8 +3,10 @@ import { useLanguage } from '../context/LanguageContext';
 import {
     Wind, Activity, ArrowUpRight, ShieldAlert,
     Navigation, Thermometer, CloudRain, Clock,
-    AlertTriangle, Droplets, MapPin, CheckCircle2
+    AlertTriangle, Droplets, MapPin, CheckCircle2,
+    Eye, Radar, Target, Info
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const CycloneMonitoring = () => {
     const { t } = useLanguage();
@@ -15,150 +17,195 @@ const CycloneMonitoring = () => {
     }, []);
 
     const cycloneStats = [
-        { label: 'Wind Speed', value: '185 km/h', sub: 'Category 3', color: '#dc2626', icon: Wind, bg: '#fef2f2' },
-        { label: 'Pressure', value: '965 hPa', sub: 'Falling', color: '#2563eb', icon: Activity, bg: '#eff6ff' },
-        { label: 'Movement', value: 'NNW @ 15 km/h', sub: 'Heading to Coast', color: '#7c3aed', icon: Navigation, bg: '#f5f3ff' },
-        { label: 'Wave Height', value: '4.5 Meters', sub: 'Severe Surge', color: '#0891b2', icon: CloudRain, bg: '#ecfeff' },
+        { label: 'Sustained Winds', value: '185 km/h', sub: 'Extremely Severe', color: 'text-red-600', icon: Wind, bg: 'bg-red-50', border: 'border-red-100' },
+        { label: 'Central Pressure', value: '965 hPa', sub: 'Barometric Trend: Dec', color: 'text-blue-600', icon: Activity, bg: 'bg-blue-50', border: 'border-blue-100' },
+        { label: 'Velocity Vector', value: 'NNW @ 15 km/h', sub: 'Coastal Trajectory', color: 'text-violet-600', icon: Navigation, bg: 'bg-violet-50', border: 'border-violet-100' },
+        { label: 'Surge Magnitude', value: '4.5 Meters', sub: 'Coastal Inundation Risk', color: 'text-cyan-600', icon: CloudRain, bg: 'bg-cyan-50', border: 'border-cyan-100' },
     ];
 
     const alerts = [
-        { id: 1, type: 'RED', title: 'Mandatory Evacuation', zone: 'Sector A-D (Coastal)', time: '10m ago' },
-        { id: 2, type: 'ORANGE', title: 'Port Warning Level 4', zone: 'Bandra/Worli Port', time: '25m ago' },
-        { id: 3, type: 'YELLOW', title: 'Power Grid Shutdown', zone: 'Kurla West Region', time: '40m ago' },
+        { id: 1, level: 'RED', title: 'Mandatory Coastal Evacuation', zone: 'Sector A-D (Coastal Zones)', time: '10m ago' },
+        { id: 2, level: 'ORANGE', title: 'Port Operations Suspension', zone: 'JNPT & Bandra/Worli Port', time: '25m ago' },
+        { id: 3, level: 'YELLOW', title: 'Regional Grid Proactive Cut', zone: 'Low-lying Kurla Region', time: '40m ago' },
     ];
 
     return (
-        <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', fontFamily: 'Outfit, sans-serif' }}>
+        <div className="p-8 max-w-[1700px] mx-auto space-y-8 animate-fadeInUp">
+
             {/* Page Header */}
-            <div style={{ marginBottom: '26px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Wind style={{ width: '32px', height: '32px', color: '#2563eb' }} />
-                        Cyclone Monitoring: <span style={{ color: '#dc2626' }}>"TAUKTAE"</span>
-                    </h1>
-                    <p style={{ fontSize: '15px', color: '#94a3b8', margin: 0, marginTop: '8px', fontWeight: 500 }}>
-                        Real-time tracking, landfall prediction & coordinate deployment
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-1.5 h-6 bg-red-600 rounded-full" />
+                        <h1 className="text-[28px] font-black text-slate-900 tracking-tight leading-none uppercase">
+                            Cyclonic Intelligence: <span className="text-red-600 italic">"TAUKTAE"</span>
+                        </h1>
+                    </div>
+                    <p className="text-[14px] font-bold text-slate-400 flex items-center gap-2">
+                        <Radar className="w-4 h-4 text-red-500" />
+                        Doppler Trajectory & Landfall Probability Matrix
                     </p>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'white', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }} />
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#16a34a' }}>LIVE TRACKING</span>
+
+                <div className="flex items-center gap-3 px-5 py-2.5 bg-red-50 rounded-[20px] border border-red-100 shadow-sm relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-red-600/5 group-hover:bg-red-600/10 transition-colors" />
+                    <div className="w-2 h-2 rounded-full bg-red-600 animate-ping relative z-10" />
+                    <span className="text-[11px] font-black text-red-600 uppercase tracking-widest relative z-10">Active Tracking: Phase 4</span>
                 </div>
             </div>
 
             {/* Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cycloneStats.map((stat, i) => (
-                    <div key={i} style={{ padding: '20px', borderRadius: '16px', background: 'white', border: '1px solid #f1f5f9', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                            <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: stat.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <stat.icon style={{ width: '20px', height: '20px', color: stat.color }} />
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:translate-y-[-4px] transition-all"
+                    >
+                        <div className="flex items-center justify-between mb-6">
+                            <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color} border ${stat.border}`}>
+                                <stat.icon className="w-6 h-6" />
                             </div>
-                            <span style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>IMD-Source</span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">WMO-IMD SYNC</span>
                         </div>
-                        <p style={{ fontSize: '30px', fontWeight: 800, color: '#0f172a', margin: 0 }}>{stat.value}</p>
-                        <p style={{ fontSize: '14px', fontWeight: 700, color: '#64748b', margin: '4px 0 0' }}>{stat.label}</p>
-                        <p style={{ fontSize: '13px', color: stat.color, margin: '2px 0 0', fontWeight: 600 }}>{stat.sub}</p>
-                    </div>
+                        <p className="text-[32px] font-black text-slate-900 tracking-tighter mb-1">{stat.value}</p>
+                        <p className="text-[13px] font-black text-slate-800 uppercase tracking-tight">{stat.label}</p>
+                        <p className={`text-[11px] font-bold mt-1 ${stat.color} uppercase tracking-tight`}>{stat.sub}</p>
+                    </motion.div>
                 ))}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '24px' }}>
-                {/* Visual Tracking Area */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    <div style={{
-                        height: '450px', background: 'white', border: '1px solid #f1f5f9', borderRadius: '20px',
-                        overflow: 'hidden', position: 'relative', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
-                    }}>
-                        <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10, background: 'rgba(255,255,255,0.9)', padding: '12px 18px', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
-                            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Projected Path</h3>
-                            <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Landfall expected: ~4h 30m</p>
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+
+                {/* Visual Tracking Intelligence */}
+                <div className="xl:col-span-8 flex flex-col gap-6">
+                    <div className="bg-slate-900 rounded-[40px] h-[520px] relative overflow-hidden group shadow-2xl">
+                        {/* Radar Backdrop Pattern */}
+                        <div className="absolute inset-0 opacity-10 pointer-events-none"
+                            style={{ backgroundImage: 'radial-gradient(circle, #334155 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+
+                        {/* Header Overlay */}
+                        <div className="absolute top-8 left-8 z-10 flex flex-col gap-2">
+                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10">
+                                <Target className="w-4 h-4 text-red-400" />
+                                <span className="text-[11px] font-black text-white/90 uppercase tracking-widest">Ground-Zero Intersection</span>
+                            </div>
+                            <p className="text-[12px] font-bold text-blue-300 ml-2 uppercase tracking-tight">Landfall ETA: T-Minus 4h 22m</p>
                         </div>
 
-                        {/* Placeholder for Map visualization */}
-                        <div style={{ width: '100%', height: '100%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                            <div style={{
-                                width: '120px', height: '120px', borderRadius: '50%',
-                                border: '4px dashed #0369a1', animation: 'spin 10s linear infinite',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                            }}>
-                                <Wind style={{ width: '40px', height: '40px', color: '#0369a1' }} />
+                        {/* Radial Radar Visual - Pure CSS/Tailwind */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div className="w-[400px] h-[400px] rounded-full border border-blue-500/10 flex items-center justify-center">
+                                <div className="w-[300px] h-[300px] rounded-full border border-blue-500/20 flex items-center justify-center">
+                                    <div className="w-[200px] h-[200px] rounded-full border border-blue-500/30 flex items-center justify-center">
+                                        <div className="relative">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_20px_#ef4444]" />
+                                            <div className="absolute w-[200px] h-px bg-gradient-to-r from-red-500/60 to-transparent top-1/2 left-1/2 -translate-y-1/2 origin-left animate-radar-sweep" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div style={{ position: 'absolute', width: '300px', height: '4px', background: 'linear-gradient(90deg, transparent, #0369a1, transparent)', transform: 'rotate(-45deg)', opacity: 0.3 }} />
-                            <p style={{ position: 'absolute', bottom: '20px', color: '#0369a1', fontSize: '14px', fontWeight: 700 }}>LIVE DOPPLER RADAR FEED (SIMULATED)</p>
+                        </div>
+
+                        <div className="absolute bottom-10 left-10 flex flex-col gap-1 opacity-40">
+                            <p className="text-[9px] font-black text-white uppercase tracking-[0.4em]">Integrated Satellite Feed</p>
+                            <p className="text-[14px] font-black text-blue-400 tabular-nums">LAT: 18.9°N | LON: 72.8°E</p>
                         </div>
                     </div>
 
-                    <div style={{ background: 'white', padding: '24px', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <ShieldAlert style={{ width: '20px', height: '20px', color: '#dc2626' }} /> Preparedness Protocol
+                    <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
+                        <Activity className="w-24 h-24 absolute top-0 right-0 text-slate-50 -mr-8 rotate-12" />
+                        <h3 className="text-[18px] font-black text-slate-900 tracking-tight flex items-center gap-3 mb-8">
+                            <ShieldAlert className="w-6 h-6 text-red-500" />
+                            Counter-Disaster Protocol
                         </h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                             {[
-                                'Secure all glass windows & loose outdoor objects',
-                                'Mandatory power cut in Category-A risk zones',
-                                'Pre-position 450 NDRF personnel at Colaba Port',
-                                'Emergency transport standby for coastal slums',
-                                'Activate sea-link closure protocols immediately',
-                                'Verify fuel reserves for hospital generators'
+                                'Establish mandatory radius perimeter in Coastal Zone Alpha',
+                                'Proactive blackout command sent to sub-stations (22:00)',
+                                'Fleet pre-positioned at 450 coordinate (Colaba Terminal)',
+                                'Emergency evacuation vans standby for informal settlements',
+                                'Bandra-Worli sea link shutdown status: ACTIVE',
+                                'Fuel reserves check for Tier 1 Medical facilities: NOMINAL'
                             ].map((item, i) => (
-                                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                                    <CheckCircle2 style={{ width: '16px', height: '16px', color: '#22c55e', flexShrink: 0 }} />
-                                    <span style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>{item}</span>
+                                <div key={i} className="flex items-start gap-3 py-3 border-b border-slate-50 last:border-0">
+                                    <div className="p-1 rounded bg-emerald-50 text-emerald-600 mt-0.5 shrink-0">
+                                        <CheckCircle2 className="w-3.5 h-3.5" />
+                                    </div>
+                                    <span className="text-[13px] font-bold text-slate-600 leading-snug">{item}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
 
-                {/* Sidebar: Announcements & Risk Zones */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    <div style={{ background: '#fef2f2', padding: '20px', borderRadius: '16px', border: '1px solid #fecaca' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-                            <AlertTriangle style={{ width: '18px', height: '18px', color: '#dc2626' }} />
-                            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#991b1b' }}>Critical Alerts</h3>
+                {/* Sidebar: Strategic Intelligence */}
+                <div className="xl:col-span-4 space-y-6 flex flex-col">
+
+                    {/* Live Warning Feed */}
+                    <div className="bg-red-600 rounded-[32px] p-8 text-white shadow-xl shadow-red-200">
+                        <div className="flex items-center gap-3 mb-8">
+                            <AlertTriangle className="w-5 h-5" />
+                            <h3 className="text-[15px] font-black uppercase tracking-tight">Priority Mandates</h3>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div className="space-y-4">
                             {alerts.map(alert => (
-                                <div key={alert.id} style={{ padding: '12px', background: 'white', borderRadius: '10px', border: '1px solid #fecaca' }}>
-                                    <p style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: '0 0 2px' }}>{alert.title}</p>
-                                    <p style={{ fontSize: '12px', color: '#64748b', margin: 0, fontWeight: 500 }}>{alert.zone} • {alert.time}</p>
+                                <div key={alert.id} className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 hover:bg-white/15 transition-all group cursor-pointer">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <p className="text-[14px] font-black tracking-tight group-hover:text-red-100 transition-colors uppercase">{alert.title}</p>
+                                        <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md ${alert.level === 'RED' ? 'bg-white text-red-600' : 'bg-amber-500 text-white'}`}>{alert.level}</span>
+                                    </div>
+                                    <p className="text-[11px] font-bold text-red-100 opacity-70 uppercase tracking-widest leading-none">{alert.zone} • {alert.time}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
-                        <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', marginBottom: '16px' }}>Impacted Wards (Predicted)</h3>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {/* Zone Vulnerability Mapping */}
+                    <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm flex-1">
+                        <h3 className="text-[16px] font-black text-slate-900 tracking-tight uppercase mb-8">Inundation Probabilities</h3>
+                        <div className="space-y-8">
                             {[
-                                { name: 'Colaba Waterfront', risk: '95%', color: '#dc2626' },
-                                { name: 'Worli Village', risk: '88%', color: '#dc2626' },
-                                { name: 'Bandra Reclamation', risk: '72%', color: '#ea580c' },
-                                { name: 'Juhu Beach Area', risk: '65%', color: '#ea580c' },
-                                { name: 'Versova Creek', risk: '45%', color: '#d97706' },
+                                { name: 'Colaba Waterfront', risk: 95, color: 'bg-red-600' },
+                                { name: 'Worli Village', risk: 88, color: 'bg-red-600' },
+                                { name: 'Bandra West', risk: 72, color: 'bg-amber-500' },
+                                { name: 'Juhu Outpost', risk: 65, color: 'bg-amber-500' },
+                                { name: 'Versova Reach', risk: 45, color: 'bg-emerald-500' },
                             ].map((w, i) => (
                                 <div key={i}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>{w.name}</span>
-                                        <span style={{ fontSize: '13px', fontWeight: 700, color: w.color }}>{w.risk}</span>
+                                    <div className="flex justify-between items-end mb-3">
+                                        <span className="text-[13px] font-black text-slate-800 tracking-tight uppercase">{w.name}</span>
+                                        <span className="text-[14px] font-black text-slate-900 tabular-nums">{w.risk}%</span>
                                     </div>
-                                    <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '99px', overflow: 'hidden' }}>
-                                        <div style={{ width: w.risk, height: '100%', background: w.color, borderRadius: '99px' }} />
+                                    <div className="h-1.5 bg-slate-50 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${w.risk}%` }}
+                                            transition={{ duration: 1, delay: 0.5 + i * 0.1 }}
+                                            className={`h-full ${w.color}`}
+                                        />
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', padding: '20px', borderRadius: '16px', color: 'white' }}>
-                        <h3 style={{ fontSize: '15px', fontWeight: 700, margin: '0 0 10px' }}>IMD Official Outlook</h3>
-                        <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
-                            Cyclone "TAUKTAE" has intensified into a Very Severe Cyclonic Storm. Expected to brush Mumbai coast at 22:00 IST. High tide of 4.2m will coincide with peak intensity. Extreme caution advised.
+                    {/* IMD Outlook Meta Card */}
+                    <div className="bg-slate-900 rounded-[32px] p-8 text-white">
+                        <div className="flex items-center gap-3 mb-4">
+                            <Info className="w-5 h-5 text-blue-400" />
+                            <h4 className="text-[13px] font-black uppercase tracking-widest text-blue-300">Executive Outlook</h4>
+                        </div>
+                        <p className="text-[13px] font-bold text-slate-400 leading-relaxed uppercase tracking-tight">
+                            "TC Tauktae" has transitioned to VSCS category. High tide (4.2m) at 22:15 coincides with eye-wall approach. Wind gusting to 210km/h expected at Colaba headlands.
                         </p>
                     </div>
+
                 </div>
             </div>
+
         </div>
     );
 };

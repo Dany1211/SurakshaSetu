@@ -3,22 +3,21 @@ import { useLanguage } from '../context/LanguageContext';
 import {
     Users, Truck, Navigation, HeartPulse, Shield, Package,
     MapPin, AlertTriangle, CheckCircle2, Clock, Phone,
-    Droplets, Utensils, Zap, Radio, Wrench, Building2
+    Droplets, Utensils, Zap, Radio, Wrench, Building2, ChevronRight, Activity, Globe
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ===========================================================
 //  DATA
 // ===========================================================
 
-// Summary stats
 const summaryStats = [
-    { label: 'Total Vehicles', value: 46, sub: 'Buses, Boats, Ambulances', icon: Truck, color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
-    { label: 'Active Personnel', value: 184, sub: '23 teams deployed', icon: Users, color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
-    { label: 'Supply Points', value: 6, sub: '4 active, 2 standby', icon: Package, color: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd' },
-    { label: 'Response Time', value: '18 min', sub: 'avg across all wards', icon: Clock, color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
+    { label: 'Fleet Assets', value: 46, sub: 'Buses, Boats, Specialty', icon: Truck, color: 'text-blue-600', bg: 'bg-blue-50/50', border: 'border-blue-100/50' },
+    { label: 'Active Personnel', value: 184, sub: '23 teams deployed', icon: Users, color: 'text-violet-600', bg: 'bg-violet-50/50', border: 'border-violet-100/50' },
+    { label: 'Distribution Points', value: 6, sub: '4 active, 2 standby', icon: Package, color: 'text-cyan-600', bg: 'bg-cyan-50/50', border: 'border-cyan-100/50' },
+    { label: 'Avg Latency', value: '18 min', sub: 'Response time (all wards)', icon: Clock, color: 'text-emerald-600', bg: 'bg-emerald-50/50', border: 'border-emerald-100/50' },
 ];
 
-// Vehicle fleet
 const vehicles = [
     { type: 'Municipal Buses', deployed: 18, total: 24, icon: Truck, color: '#2563eb', locations: 'Kurla (6), Andheri (5), Sion (4), Dadar (3)' },
     { type: 'Rescue Boats', deployed: 8, total: 12, icon: Navigation, color: '#0ea5e9', locations: 'Kurla (3), Sion (3), Bandra (2)' },
@@ -28,7 +27,6 @@ const vehicles = [
     { type: 'Relief Vans', deployed: 3, total: 4, icon: Package, color: '#8b5cf6', locations: 'Town Hall (1), School #3 (1), Sports Complex (1)' },
 ];
 
-// Ward allocation
 const wardAllocations = [
     { ward: 'Kurla West', risk: 'HIGH', buses: 6, boats: 3, ambulances: 2, teams: 6, status: 'Active', eta: '8 min' },
     { ward: 'Andheri West', risk: 'HIGH', buses: 5, boats: 0, ambulances: 1, teams: 4, status: 'Active', eta: '12 min' },
@@ -36,456 +34,356 @@ const wardAllocations = [
     { ward: 'Dadar', risk: 'MEDIUM', buses: 3, boats: 0, ambulances: 1, teams: 3, status: 'Standby', eta: '15 min' },
     { ward: 'Bandra East', risk: 'MEDIUM', buses: 0, boats: 2, ambulances: 0, teams: 3, status: 'Standby', eta: '18 min' },
     { ward: 'Borivali', risk: 'LOW', buses: 0, boats: 0, ambulances: 0, teams: 2, status: 'Monitoring', eta: '25 min' },
-    { ward: 'Colaba', risk: 'LOW', buses: 0, boats: 0, ambulances: 0, teams: 1, status: 'Monitoring', eta: '30 min' },
 ];
 
-// Supply inventory
 const supplies = [
-    { name: 'Meal Packs', available: 3200, needed: 5000, unit: 'packs', icon: Utensils, color: '#f59e0b' },
-    { name: 'Drinking Water', available: 8500, needed: 10000, unit: 'liters', icon: Droplets, color: '#0ea5e9' },
-    { name: 'First Aid Kits', available: 120, needed: 150, unit: 'kits', icon: HeartPulse, color: '#dc2626' },
-    { name: 'Blankets', available: 800, needed: 1200, unit: 'units', icon: Package, color: '#7c3aed' },
-    { name: 'Tarpaulins', available: 200, needed: 300, unit: 'sheets', icon: Building2, color: '#64748b' },
-    { name: 'Power Banks', available: 90, needed: 200, unit: 'units', icon: Zap, color: '#16a34a' },
+    { name: 'Emergency Rations', available: 3200, needed: 5000, unit: 'packs', icon: Utensils, color: '#f59e0b' },
+    { name: 'Potable Water', available: 8500, needed: 10000, unit: 'liters', icon: Droplets, color: '#0ea5e9' },
+    { name: 'Trauma Kits', available: 120, needed: 150, unit: 'kits', icon: HeartPulse, color: '#dc2626' },
+    { name: 'Shelter Kits', available: 800, needed: 1200, unit: 'units', icon: Package, color: '#7c3aed' },
+    { name: 'Survival Gear', available: 200, needed: 300, unit: 'sheets', icon: Shield, color: '#64748b' },
+    { name: 'Power Units', available: 90, needed: 200, unit: 'units', icon: Zap, color: '#16a34a' },
 ];
 
-// Personnel teams
 const teams = [
     { name: 'NDRF Alpha Team', members: 12, location: 'Kurla West', status: 'Active', type: 'Rescue' },
     { name: 'NDRF Bravo Team', members: 12, location: 'Sion', status: 'Active', type: 'Rescue' },
     { name: 'BMC Rescue Unit 1', members: 8, location: 'Andheri West', status: 'Active', type: 'Rescue' },
     { name: 'BMC Rescue Unit 2', members: 8, location: 'Bandra East', status: 'Standby', type: 'Rescue' },
     { name: 'Medical Team A', members: 6, location: 'Town Hall Shelter', status: 'Active', type: 'Medical' },
-    { name: 'Medical Team B', members: 6, location: 'Sports Complex', status: 'Active', type: 'Medical' },
     { name: 'Police Patrol Unit', members: 15, location: 'Dadar', status: 'Active', type: 'Security' },
-    { name: 'Fire Brigade Unit', members: 10, location: 'Borivali', status: 'Standby', type: 'Fire' },
-    { name: 'Volunteer Group 1', members: 20, location: 'Primary School #3', status: 'Active', type: 'Support' },
-    { name: 'Comm Relay Team', members: 4, location: 'Command Center', status: 'Active', type: 'Comms' },
 ];
 
 // ===========================================================
-//  SUB-COMPONENTS
+//  HELPER COMPONENTS
 // ===========================================================
 
-const StatusBadge = ({ status }) => {
-    const styles = {
-        Active: { bg: '#f0fdf4', color: '#16a34a', border: '#bbf7d0' },
-        Standby: { bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
-        Monitoring: { bg: '#f8fafc', color: '#64748b', border: '#e2e8f0' },
+const StatusPill = ({ status }) => {
+    const config = {
+        Active: 'text-emerald-600 bg-emerald-50 border-emerald-100',
+        Standby: 'text-amber-600 bg-amber-50 border-amber-100',
+        Monitoring: 'text-slate-500 bg-slate-50 border-slate-100',
     };
-    const s = styles[status] || styles.Monitoring;
     return (
-        <span style={{
-            fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '6px',
-            background: s.bg, color: s.color, border: `1px solid ${s.border}`, textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-        }}>{status}</span>
+        <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${config[status] || config.Monitoring}`}>
+            {status}
+        </span>
     );
 };
 
-const RiskBadge = ({ risk }) => {
-    const styles = {
-        HIGH: { bg: '#fef2f2', color: '#dc2626', border: '#fecaca' },
-        MEDIUM: { bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
-        LOW: { bg: '#f0fdf4', color: '#16a34a', border: '#bbf7d0' },
-    };
-    const s = styles[risk] || styles.LOW;
-    return (
-        <span style={{
-            fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '6px',
-            background: s.bg, color: s.color, border: `1px solid ${s.border}`, textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-        }}>{risk}</span>
-    );
-};
-
-const TypeBadge = ({ type }) => {
-    const colors = {
-        Rescue: '#2563eb', Medical: '#dc2626', Security: '#7c3aed',
-        Fire: '#f59e0b', Support: '#16a34a', Comms: '#0ea5e9',
-    };
-    return (
-        <span style={{
-            fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px',
-            background: `${colors[type] || '#64748b'}10`, color: colors[type] || '#64748b',
-            border: `1px solid ${colors[type] || '#64748b'}30`,
-            textTransform: 'uppercase', letterSpacing: '0.06em'
-        }}>{type}</span>
-    );
-};
-
-// ===========================================================
-//  MAIN PAGE
-// ===========================================================
 const ResourceAllocation = () => {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('overview');
 
     const tabs = [
-        { id: 'overview', label: 'Overview' },
-        { id: 'vehicles', label: 'Vehicle Fleet' },
-        { id: 'supplies', label: 'Supplies' },
-        { id: 'personnel', label: 'Personnel' },
+        { id: 'overview', label: 'METRICS' },
+        { id: 'vehicles', label: 'FLEET' },
+        { id: 'supplies', label: 'INVENTORY' },
+        { id: 'personnel', label: 'DEPLOYMENT' },
     ];
 
     return (
-        <div style={{
-            padding: '20px', maxWidth: '1400px', margin: '0 auto',
-            fontFamily: 'Outfit, sans-serif',
-        }}>
+        <div className="p-8 max-w-[1700px] mx-auto space-y-8 animate-fadeInUp">
+
             {/* Page Header */}
-            <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Users style={{ width: '28px', height: '28px', color: '#2563eb' }} />
-                    {t('menu.resource_allocation')}
-                </h1>
-                <p style={{ fontSize: '15px', color: '#94a3b8', margin: 0, marginTop: '10px', fontWeight: 500 }}>
-                    Vehicle fleet, supplies, personnel deployment & ward-level allocation
-                </p>
-            </div>
-
-            {/* Summary Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
-                {summaryStats.map((stat, i) => (
-                    <div key={i} style={{
-                        padding: '20px 24px', borderRadius: '16px', background: 'white',
-                        border: '1px solid #f1f5f9', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                            <div style={{
-                                width: '42px', height: '42px', borderRadius: '12px',
-                                background: stat.bg, border: `1px solid ${stat.border}`,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            }}>
-                                <stat.icon style={{ width: '20px', height: '20px', color: stat.color }} />
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }} />
-                                <span style={{ fontSize: '11px', fontWeight: 800, color: '#16a34a' }}>LIVE</span>
-                            </div>
-                        </div>
-                        <p style={{ fontSize: '30px', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>{stat.value}</p>
-                        <p style={{ fontSize: '14px', fontWeight: 700, color: '#334155', margin: '4px 0 0' }}>{stat.label}</p>
-                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '2px 0 0', fontWeight: 500 }}>{stat.sub}</p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
+                        <h1 className="text-[28px] font-black text-slate-900 tracking-tight leading-none">
+                            Operational Logistics
+                        </h1>
                     </div>
-                ))}
-            </div>
-
-            {/* Tab Bar */}
-            <div style={{
-                display: 'flex', gap: '4px', marginBottom: '16px', padding: '4px',
-                background: '#f8fafc', borderRadius: '10px', border: '1px solid #f1f5f9', width: 'fit-content',
-            }}>
-                {tabs.map(tab => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        style={{
-                            padding: '10px 24px', borderRadius: '8px', fontSize: '14px', fontWeight: 700,
-                            cursor: 'pointer', border: 'none', fontFamily: 'Outfit, sans-serif',
-                            background: activeTab === tab.id ? 'white' : 'transparent',
-                            color: activeTab === tab.id ? '#2563eb' : '#64748b',
-                            boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
-                            transition: 'all 0.15s ease',
-                        }}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-
-            {/* =============== TAB: OVERVIEW =============== */}
-            {activeTab === 'overview' && (
-                <div style={{ display: 'flex', gap: '16px' }}>
-                    {/* Ward Allocation Table */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{
-                            background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                            padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                <div>
-                                    <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Ward-Level Allocation</h2>
-                                    <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Resources assigned per ward</p>
-                                </div>
-                                <MapPin style={{ width: '20px', height: '20px', color: '#64748b' }} />
-                            </div>
-
-                            {/* Table Header */}
-                            <div style={{
-                                display: 'grid', gridTemplateColumns: '160px 80px 60px 60px 60px 60px 90px 70px',
-                                gap: '10px', padding: '12px 14px', borderRadius: '8px', background: '#f8fafc',
-                                marginBottom: '6px',
-                            }}>
-                                {['Ward', 'Risk', 'Buses', 'Boats', 'Amb.', 'Teams', 'Status', 'ETA'].map(h => (
-                                    <span key={h} style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{h}</span>
-                                ))}
-                            </div>
-
-                            {/* Table Rows */}
-                            {wardAllocations.map((w, i) => (
-                                <div key={i} style={{
-                                    display: 'grid', gridTemplateColumns: '160px 80px 60px 60px 60px 60px 90px 70px',
-                                    gap: '10px', padding: '14px 14px', alignItems: 'center',
-                                    borderBottom: i < wardAllocations.length - 1 ? '1px solid #f8fafc' : 'none',
-                                }}>
-                                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>{w.ward}</span>
-                                    <RiskBadge risk={w.risk} />
-                                    <span style={{ fontSize: '15px', fontWeight: 600, color: w.buses > 0 ? '#0f172a' : '#cbd5e1' }}>{w.buses}</span>
-                                    <span style={{ fontSize: '15px', fontWeight: 600, color: w.boats > 0 ? '#0f172a' : '#cbd5e1' }}>{w.boats}</span>
-                                    <span style={{ fontSize: '15px', fontWeight: 600, color: w.ambulances > 0 ? '#0f172a' : '#cbd5e1' }}>{w.ambulances}</span>
-                                    <span style={{ fontSize: '15px', fontWeight: 600, color: w.teams > 0 ? '#0f172a' : '#cbd5e1' }}>{w.teams}</span>
-                                    <StatusBadge status={w.status} />
-                                    <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>{w.eta}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Quick Resource Sidebar */}
-                    <div style={{ width: '320px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {/* Vehicle Summary */}
-                        <div style={{
-                            background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                            padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                        }}>
-                            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Truck style={{ width: '18px', height: '18px', color: '#2563eb' }} /> Fleet Status
-                            </h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                {vehicles.slice(0, 4).map((v, i) => {
-                                    const pct = Math.round((v.deployed / v.total) * 100);
-                                    return (
-                                        <div key={i}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                    <v.icon style={{ width: '16px', height: '16px', color: v.color }} />
-                                                    <span style={{ fontSize: '15px', fontWeight: 600, color: '#334155' }}>{v.type}</span>
-                                                </div>
-                                                <span style={{ fontSize: '15px', fontWeight: 800, color: v.color }}>{v.deployed}/{v.total}</span>
-                                            </div>
-                                            <div style={{ height: '5px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden' }}>
-                                                <div style={{ height: '100%', width: `${pct}%`, borderRadius: '999px', background: v.color, transition: 'width 0.5s ease' }} />
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Critical Supplies */}
-                        <div style={{
-                            background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                            padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                        }}>
-                            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Package style={{ width: '18px', height: '18px', color: '#0ea5e9' }} /> Supply Levels
-                            </h3>
-                            {supplies.slice(0, 4).map((s, i) => {
-                                const pct = Math.round((s.available / s.needed) * 100);
-                                const isLow = pct < 50;
-                                return (
-                                    <div key={i} style={{ marginBottom: i < 3 ? '12px' : 0 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                                            <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{s.name}</span>
-                                            <span style={{ fontSize: '13px', fontWeight: 600, color: isLow ? '#dc2626' : '#64748b' }}>
-                                                {s.available.toLocaleString()}/{s.needed.toLocaleString()} {s.unit}
-                                            </span>
-                                        </div>
-                                        <div style={{ height: '4px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden' }}>
-                                            <div style={{
-                                                height: '100%', width: `${pct}%`, borderRadius: '999px',
-                                                background: isLow ? '#ef4444' : '#22c55e', transition: 'width 0.5s ease',
-                                            }} />
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {/* Emergency Contacts */}
-                        <div style={{
-                            background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                            padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                                <Phone style={{ width: '20px', height: '20px', color: '#dc2626' }} />
-                                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Helplines</h3>
-                            </div>
-                            {[
-                                { name: 'NDRF Control Room', number: '011-24363260' },
-                                { name: 'BMC Disaster Cell', number: '1916' },
-                                { name: 'Police Emergency', number: '100' },
-                                { name: 'Ambulance', number: '108' },
-                            ].map((c, i) => (
-                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none' }}>
-                                    <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>{c.name}</span>
-                                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{c.number}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <p className="text-[14px] font-bold text-slate-400 flex items-center gap-2">
+                        <Globe className="w-4 h-4" />
+                        Resource Distribution & Capability Mapping
+                    </p>
                 </div>
-            )}
 
-            {/* =============== TAB: VEHICLES =============== */}
-            {activeTab === 'vehicles' && (
-                <div style={{
-                    background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                    padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                        <div>
-                            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Vehicle Fleet Breakdown</h2>
-                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>All vehicles with deployment locations</p>
-                        </div>
-                        <Truck style={{ width: '20px', height: '20px', color: '#64748b' }} />
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                        {vehicles.map((v, i) => {
-                            const pct = Math.round((v.deployed / v.total) * 100);
-                            const remaining = v.total - v.deployed;
-                            return (
-                                <div key={i} style={{
-                                    padding: '18px', borderRadius: '12px', border: '1px solid #f1f5f9',
-                                    background: '#fafbfc',
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div style={{
-                                                width: '48px', height: '48px', borderRadius: '12px',
-                                                background: `${v.color}10`, border: `1px solid ${v.color}25`,
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            }}>
-                                                <v.icon style={{ width: '22px', height: '22px', color: v.color }} />
-                                            </div>
-                                            <div>
-                                                <p style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{v.type}</p>
-                                                <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                                                    {remaining > 0 ? `${remaining} in reserve` : 'All deployed'}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <span style={{ fontSize: '28px', fontWeight: 800, color: v.color }}>{v.deployed}<span style={{ fontSize: '16px', color: '#94a3b8', fontWeight: 500 }}>/{v.total}</span></span>
-                                    </div>
-                                    <div style={{ height: '8px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden', marginBottom: '12px' }}>
-                                        <div style={{ height: '100%', width: `${pct}%`, borderRadius: '999px', background: v.color, transition: 'width 0.5s ease' }} />
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <MapPin style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
-                                        <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>{v.locations}</span>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
-
-            {/* =============== TAB: SUPPLIES =============== */}
-            {activeTab === 'supplies' && (
-                <div style={{
-                    background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                    padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                        <div>
-                            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Supply Inventory</h2>
-                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Stock levels at all relief points</p>
-                        </div>
-                        <Package style={{ width: '20px', height: '20px', color: '#64748b' }} />
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-                        {supplies.map((s, i) => {
-                            const pct = Math.round((s.available / s.needed) * 100);
-                            const isLow = pct < 50;
-                            const isCritical = pct < 30;
-                            return (
-                                <div key={i} style={{
-                                    padding: '20px', borderRadius: '12px',
-                                    border: `1px solid ${isCritical ? '#fecaca' : '#f1f5f9'}`,
-                                    background: isCritical ? '#fef2f2' : '#fafbfc',
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <s.icon style={{ width: '22px', height: '22px', color: s.color }} />
-                                            <span style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a' }}>{s.name}</span>
-                                        </div>
-                                        {isCritical && (
-                                            <span style={{
-                                                fontSize: '12px', fontWeight: 700, padding: '4px 8px', borderRadius: '4px',
-                                                background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca',
-                                            }}>LOW STOCK</span>
-                                        )}
-                                    </div>
-                                    <p style={{ fontSize: '32px', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>
-                                        {s.available.toLocaleString()}
-                                        <span style={{ fontSize: '16px', color: '#94a3b8', fontWeight: 600 }}> / {s.needed.toLocaleString()} {s.unit}</span>
-                                    </p>
-                                    <div style={{ height: '8px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden', marginTop: '16px' }}>
-                                        <div style={{
-                                            height: '100%', width: `${pct}%`, borderRadius: '999px',
-                                            background: isCritical ? '#ef4444' : isLow ? '#f59e0b' : '#22c55e',
-                                            transition: 'width 0.5s ease',
-                                        }} />
-                                    </div>
-                                    <p style={{ fontSize: '14px', color: isLow ? '#dc2626' : '#64748b', margin: '12px 0 0', fontWeight: 600 }}>
-                                        {pct}% stocked {isLow ? '— needs replenishment' : ''}
-                                    </p>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
-
-            {/* =============== TAB: PERSONNEL =============== */}
-            {activeTab === 'personnel' && (
-                <div style={{
-                    background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                    padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                        <div>
-                            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Team Deployment</h2>
-                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>{teams.length} teams • {teams.reduce((a, t) => a + t.members, 0)} total personnel</p>
-                        </div>
-                        <Shield style={{ width: '20px', height: '20px', color: '#64748b' }} />
-                    </div>
-
-                    {/* Table Header */}
-                    <div style={{
-                        display: 'grid', gridTemplateColumns: '220px 100px 100px 180px 100px',
-                        gap: '12px', padding: '12px 14px', borderRadius: '8px', background: '#f8fafc', marginBottom: '8px',
-                    }}>
-                        {['Team Name', 'Members', 'Type', 'Location', 'Status'].map(h => (
-                            <span key={h} style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{h}</span>
-                        ))}
-                    </div>
-
-                    {teams.map((team, i) => (
-                        <div key={i} style={{
-                            display: 'grid', gridTemplateColumns: '220px 100px 100px 180px 100px',
-                            gap: '12px', padding: '16px 14px', alignItems: 'center',
-                            borderBottom: i < teams.length - 1 ? '1px solid #f8fafc' : 'none',
-                        }}>
-                            <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>{team.name}</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <Users style={{ width: '14px', height: '14px', color: '#94a3b8' }} />
-                                <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{team.members}</span>
-                            </div>
-                            <TypeBadge type={team.type} />
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <MapPin style={{ width: '14px', height: '14px', color: '#94a3b8' }} />
-                                <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>{team.location}</span>
-                            </div>
-                            <StatusBadge status={team.status} />
-                        </div>
+                <div className="flex p-1 bg-slate-100/50 rounded-2xl border border-slate-100 backdrop-blur-sm self-start">
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`
+                                px-6 py-2 rounded-xl text-[11px] font-black tracking-widest transition-all
+                                ${activeTab === tab.id ? 'bg-white text-blue-600 shadow-sm border border-slate-200/50' : 'text-slate-400 hover:text-slate-600'}
+                            `}
+                        >
+                            {tab.label}
+                        </button>
                     ))}
                 </div>
-            )}
+            </div>
+
+            {/* Summary Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {summaryStats.map((stat, i) => (
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm hover:shadow-md transition-all group"
+                    >
+                        <div className="flex items-center justify-between mb-6">
+                            <div className={`p-3 rounded-2xl border ${stat.bg} ${stat.color} ${stat.border}`}>
+                                <stat.icon className="w-6 h-6" />
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-[8px] font-black text-emerald-600 tracking-widest border border-emerald-100">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                LIVE
+                            </div>
+                        </div>
+                        <p className="text-[34px] font-black text-slate-900 leading-none tracking-tighter mb-2">{stat.value}</p>
+                        <p className="text-[13px] font-black text-slate-800 uppercase tracking-tight">{stat.label}</p>
+                        <p className="text-[12px] font-bold text-slate-400 mt-1">{stat.sub}</p>
+                    </motion.div>
+                ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+                {/* OVERVIEW TAB */}
+                {activeTab === 'overview' && (
+                    <motion.div
+                        key="overview"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+                    >
+                        {/* Main Table Area */}
+                        <div className="lg:col-span-8 bg-white rounded-[32px] border border-slate-100 shadow-sm p-8 overflow-hidden">
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h3 className="text-[18px] font-black text-slate-900 tracking-tight">Ward Capability matrix</h3>
+                                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Assigned Payload per Administrative Zone</p>
+                                </div>
+                                <MapPin className="w-5 h-5 text-slate-300" />
+                            </div>
+
+                            <div className="overflow-x-auto no-scrollbar">
+                                <table className="w-full text-left border-separate border-spacing-y-3">
+                                    <thead>
+                                        <tr className="bg-slate-50/50 rounded-xl overflow-hidden">
+                                            {['Zone', 'Risk', 'Buses', 'Boats', 'Teams', 'Status', ''].map(h => (
+                                                <th key={h} className="px-5 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] first:rounded-l-2xl last:rounded-r-2xl border-y border-slate-50">{h}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {wardAllocations.map((w, idx) => (
+                                            <tr key={idx} className="group hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-5 py-4 first:rounded-l-[20px] bg-white border-y border-l border-slate-100">
+                                                    <span className="text-[15px] font-black text-slate-900">{w.ward}</span>
+                                                </td>
+                                                <td className="px-5 py-4 border-y border-slate-100">
+                                                    <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border ${w.risk === 'HIGH' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                                                        {w.risk}
+                                                    </span>
+                                                </td>
+                                                <td className="px-5 py-4 border-y border-slate-100">
+                                                    <span className="text-[15px] font-black text-slate-700">{w.buses}</span>
+                                                </td>
+                                                <td className="px-5 py-4 border-y border-slate-100">
+                                                    <span className="text-[15px] font-black text-slate-700">{w.boats}</span>
+                                                </td>
+                                                <td className="px-5 py-4 border-y border-slate-100">
+                                                    <span className="text-[15px] font-black text-slate-700">{w.teams}</span>
+                                                </td>
+                                                <td className="px-5 py-4 border-y border-slate-100">
+                                                    <StatusPill status={w.status} />
+                                                </td>
+                                                <td className="px-5 py-4 last:rounded-r-[20px] bg-white border-y border-r border-slate-100 text-right">
+                                                    <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 group-hover:text-blue-600 transition-all">
+                                                        <ChevronRight className="w-4 h-4" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* Side Column Data */}
+                        <div className="lg:col-span-4 space-y-6">
+                            {/* Inventory Progress */}
+                            <div className="bg-slate-900 rounded-[32px] p-8 text-white shadow-xl shadow-slate-200 relative overflow-hidden">
+                                <Activity className="w-24 h-24 absolute -bottom-8 -right-8 text-white/5 rotate-12" />
+                                <h3 className="text-[16px] font-black tracking-tight mb-8">Supply Criticality</h3>
+                                <div className="space-y-6">
+                                    {supplies.slice(0, 3).map((s, i) => {
+                                        const pct = (s.available / s.needed) * 100;
+                                        return (
+                                            <div key={i}>
+                                                <div className="flex justify-between items-center mb-3">
+                                                    <div className="flex items-center gap-2.5">
+                                                        <s.icon className="w-4 h-4 text-slate-400" />
+                                                        <span className="text-[13px] font-bold text-slate-200">{s.name}</span>
+                                                    </div>
+                                                    <span className="text-[12px] font-black tracking-tight">{Math.round(pct)}%</span>
+                                                </div>
+                                                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                                                    <motion.div
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${pct}%` }}
+                                                        transition={{ duration: 1, delay: 0.5 + i * 0.1 }}
+                                                        className={`h-full rounded-full ${pct < 40 ? 'bg-red-500' : 'bg-emerald-500'}`}
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Hotline Box */}
+                            <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-8">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="p-2 rounded-xl bg-red-50 text-red-600 border border-red-100">
+                                        <Phone className="w-5 h-5" />
+                                    </div>
+                                    <h4 className="text-[15px] font-black text-slate-900 tracking-tight leading-none uppercase">Response Hotlines</h4>
+                                </div>
+                                <div className="space-y-4">
+                                    {[
+                                        { name: 'NDRF Base', num: '011-24363260' },
+                                        { name: 'BMC Command', num: '1916' },
+                                        { name: 'Medical Heli', num: '108' }
+                                    ].map((c, i) => (
+                                        <div key={i} className="flex justify-between items-center py-3 border-b border-slate-50 last:border-0 hover:translate-x-1 transition-transform cursor-pointer">
+                                            <span className="text-[13px] font-bold text-slate-400">{c.name}</span>
+                                            <span className="text-[15px] font-black text-slate-800 tabular-nums">{c.num}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* VEHICLES TAB */}
+                {activeTab === 'vehicles' && (
+                    <motion.div
+                        key="vehicles"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    >
+                        {vehicles.map((v, i) => {
+                            const pct = (v.deployed / v.total) * 100;
+                            return (
+                                <div key={i} className="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm group">
+                                    <div className="flex items-start justify-between mb-6">
+                                        <div className="p-4 rounded-3xl bg-slate-50 text-slate-700 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                                            <v.icon className="w-8 h-8" />
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[28px] font-black text-slate-900 leading-none mb-1">{v.deployed}</p>
+                                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">In Operation / {v.total}</p>
+                                        </div>
+                                    </div>
+                                    <h4 className="text-[17px] font-black text-slate-900 tracking-tight mb-2">{v.type}</h4>
+                                    <p className="text-[12px] font-bold text-slate-400 leading-relaxed min-h-[48px] line-clamp-2">{v.locations}</p>
+                                    <div className="mt-6 flex flex-col gap-2">
+                                        <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                            <span>Deployment Depth</span>
+                                            <span>{Math.round(pct)}%</span>
+                                        </div>
+                                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${pct}%` }}
+                                                className="h-full bg-blue-600"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </motion.div>
+                )}
+
+                {/* SUPPLIES TAB */}
+                {activeTab === 'supplies' && (
+                    <motion.div
+                        key="supplies"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6"
+                    >
+                        {supplies.map((s, i) => (
+                            <div key={i} className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 group-hover:bg-blue-50 transition-colors" />
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-4 mb-8">
+                                        <div className="p-3 rounded-2xl bg-white shadow-sm border border-slate-100 group-hover:border-blue-200 transition-colors">
+                                            <s.icon className="w-6 h-6 text-slate-500 group-hover:text-blue-600 transition-colors" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-[17px] font-black text-slate-900 tracking-tight">{s.name}</h4>
+                                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Global Stockpile</p>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1 mb-8">
+                                        <p className="text-[42px] font-black text-slate-900 leading-none tracking-tighter">{s.available.toLocaleString()}</p>
+                                        <p className="text-[13px] font-bold text-slate-400">{s.unit.toUpperCase()} READY FOR DISPATCH</p>
+                                    </div>
+                                    <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                            <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Surplus</span>
+                                        </div>
+                                        <span className="text-[15px] font-black text-slate-900">{Math.round((s.available / s.needed) * 100)}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </motion.div>
+                )}
+
+                {/* PERSONNEL TAB */}
+                {activeTab === 'personnel' && (
+                    <motion.div
+                        key="personnel"
+                        className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm"
+                    >
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {teams.map((t, i) => (
+                                <div key={i} className="flex gap-6 p-6 rounded-[24px] bg-slate-50/50 hover:bg-white border border-transparent hover:border-slate-200 hover:shadow-sm transition-all group">
+                                    <div className="w-20 h-20 rounded-[20px] bg-white border border-slate-100 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
+                                        <Users className="w-10 h-10 text-slate-300 group-hover:text-blue-600 transition-colors" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <h4 className="text-[17px] font-black text-slate-900 tracking-tight">{t.name}</h4>
+                                            <StatusPill status={t.status} />
+                                        </div>
+                                        <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-4">
+                                            <MapPin className="w-3 h-3" />
+                                            Active in {t.location}
+                                        </p>
+                                        <div className="flex items-center gap-8">
+                                            <div>
+                                                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">STRENGTH</p>
+                                                <p className="text-[18px] font-black text-slate-800 leading-none">{t.members} <span className="text-[11px] text-slate-400">PAX</span></p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">DISCIPLINE</p>
+                                                <p className="text-[13px] font-black text-blue-600 transition-colors bg-blue-50 px-2 py-0.5 rounded-md leading-none">{t.type.toUpperCase()}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
         </div>
     );
 };

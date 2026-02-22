@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import {
     CloudRain, CloudLightning, Cloud, Sun, AlertTriangle, RefreshCw,
-    Wifi, WifiOff, Droplets, Eye, Wind, Thermometer
+    Wifi, WifiOff, Droplets, Eye, Wind, Thermometer, ChevronRight,
+    Activity, Gauge, Calendar, Sparkles, MapPin, ExternalLink, AlertCircle
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     fetchCurrentWeather, fetchForecast,
     generateAISummary, generateAlerts
@@ -16,274 +18,163 @@ const weatherIcons = {
     sunny: Sun,
 };
 
-const riskPill = {
-    HIGH: { bg: '#fef2f2', color: '#dc2626', border: '#fecaca' },
-    MEDIUM: { bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
-    LOW: { bg: '#f0fdf4', color: '#16a34a', border: '#bbf7d0' },
+const riskPillColors = {
+    HIGH: 'bg-red-50 text-red-600 border-red-200',
+    MEDIUM: 'bg-amber-50 text-amber-600 border-amber-200',
+    LOW: 'bg-emerald-50 text-emerald-600 border-emerald-200',
 };
 
 // ===========================================================
 //  Forecast Card
 // ===========================================================
-const ForecastCard = ({ data, isToday }) => {
+const ForecastCard = ({ data, isToday, index }) => {
     const Icon = weatherIcons[data.icon] || Sun;
-    const pill = riskPill[data.risk] || riskPill.LOW;
+    const colorClass = riskPillColors[data.risk] || riskPillColors.LOW;
 
     return (
-        <div style={{
-            minWidth: '150px', padding: '18px 16px', borderRadius: '14px',
-            background: isToday ? 'linear-gradient(135deg, #eff6ff, #dbeafe)' : 'white',
-            border: isToday ? '1.5px solid #93c5fd' : '1px solid #f1f5f9',
-            boxShadow: isToday ? '0 4px 16px rgba(37,99,235,0.08)' : '0 1px 3px rgba(0,0,0,0.03)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-            fontFamily: 'Outfit, sans-serif', cursor: 'default',
-            transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-            flexShrink: 0,
-        }}>
-            <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: '15px', fontWeight: 700, color: isToday ? '#2563eb' : '#0f172a', margin: 0 }}>
-                    {isToday ? 'Today' : data.day}
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className={`
+                min-w-[170px] p-5 rounded-[24px] border border-slate-100 flex flex-col items-center gap-4 transition-all group
+                ${isToday ? 'bg-blue-50/50 border-blue-200 shadow-lg shadow-blue-500/5' : 'bg-white hover:border-slate-300 hover:shadow-sm'}
+            `}
+        >
+            <div className="text-center">
+                <p className={`text-[15px] font-black tracking-tight ${isToday ? 'text-blue-600' : 'text-slate-900'}`}>
+                    {isToday ? 'TODAY' : data.day.toUpperCase()}
                 </p>
-                <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>{data.date}</p>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{data.date}</p>
             </div>
 
-            <Icon style={{ width: '32px', height: '32px', color: isToday ? '#2563eb' : '#64748b', strokeWidth: 1.6 }} />
-            <p style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{data.temp}°</p>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Droplets style={{ width: '13px', height: '13px', color: '#3b82f6' }} />
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>{data.rainfall}mm</span>
+            <div className={`p-4 rounded-2xl ${isToday ? 'bg-white shadow-sm' : 'bg-slate-50'}`}>
+                <Icon className={`w-8 h-8 ${isToday ? 'text-blue-600' : 'text-slate-400'} group-hover:scale-110 transition-transform`} strokeWidth={2} />
             </div>
 
-            {/* Extra: wind + humidity */}
-            <div style={{ display: 'flex', gap: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <Wind style={{ width: '12px', height: '12px', color: '#94a3b8' }} />
-                    <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>{data.wind}km/h</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <Thermometer style={{ width: '12px', height: '12px', color: '#94a3b8' }} />
-                    <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>{data.humidity}%</span>
+            <div className="text-center">
+                <p className="text-[28px] font-black text-slate-900 leading-none">{data.temp}°</p>
+                <div className="flex items-center justify-center gap-1.5 mt-2">
+                    <Droplets className="w-3.5 h-3.5 text-blue-500" />
+                    <span className="text-[13px] font-bold text-slate-500">{data.rainfall}mm</span>
                 </div>
             </div>
 
-            <span style={{
-                fontSize: '12px', fontWeight: 700, padding: '4px 12px', borderRadius: '999px',
-                background: pill.bg, color: pill.color, border: `1px solid ${pill.border}`,
-                textTransform: 'uppercase', letterSpacing: '0.05em',
-            }}>
+            <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border ${colorClass}`}>
                 {data.risk}
             </span>
-        </div>
+        </motion.div>
     );
 };
 
 // ===========================================================
-//  Alert Banner
+//  Rainfall Trend Chart Component
 // ===========================================================
-const AlertBanner = ({ alert }) => (
-    <div style={{
-        padding: '14px 18px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px',
-        background: alert.bg, border: `1px solid ${alert.border}`,
-        fontFamily: 'Outfit, sans-serif',
-    }}>
-        <div style={{
-            width: '10px', height: '10px', borderRadius: '50%', background: alert.color,
-            boxShadow: `0 0 6px ${alert.color}40`, flexShrink: 0,
-        }} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: '14px', fontWeight: 700, color: alert.color, margin: 0, marginBottom: '2px' }}>
-                {alert.title}
-            </p>
-            <p style={{ fontSize: '13px', color: '#64748b', margin: 0, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {alert.summary}
-            </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>{alert.time}</span>
-            <span style={{
-                fontSize: '12px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px',
-                background: '#f8fafc', color: '#94a3b8', border: '1px solid #e2e8f0',
-            }}>LIVE</span>
-        </div>
-    </div>
-);
-
-// ===========================================================
-//  Rainfall Mini-Chart
-// ===========================================================
-const RainfallChart = ({ forecast }) => {
+const RainfallTrend = ({ forecast }) => {
     const maxRain = Math.max(...forecast.map(d => d.rainfall), 1);
 
     return (
-        <div style={{
-            background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-            padding: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
-        }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div className="bg-white rounded-[24px] border border-slate-100 p-6 shadow-sm overflow-hidden relative">
+            <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Rainfall Trend</h3>
-                    <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>5-day forecast (mm)</p>
+                    <h3 className="text-[16px] font-black text-slate-900 tracking-tight">Rainfall Trajectory</h3>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">5-Day Volume Distribution</p>
                 </div>
-                <Droplets style={{ width: '18px', height: '18px', color: '#3b82f6' }} />
+                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600">
+                    <Gauge className="w-5 h-5" />
+                </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px', height: '120px' }}>
+            <div className="flex items-end gap-4 h-[140px] px-2">
                 {forecast.map((d, i) => {
-                    const height = maxRain > 0 ? (d.rainfall / maxRain) * 100 : 5;
-                    const barColor = d.risk === 'HIGH' ? '#ef4444' : d.risk === 'MEDIUM' ? '#f59e0b' : '#22c55e';
+                    const height = (d.rainfall / maxRain) * 100;
+                    const barColor = d.risk === 'HIGH' ? 'bg-red-500' : d.risk === 'MEDIUM' ? 'bg-amber-500' : 'bg-emerald-500';
                     return (
-                        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ fontSize: '12px', fontWeight: 600, color: '#94a3b8' }}>{d.rainfall}</span>
-                            <div style={{
-                                width: '100%', maxWidth: '36px', height: `${Math.max(height, 4)}%`, minHeight: '4px',
-                                borderRadius: '6px 6px 4px 4px',
-                                background: `linear-gradient(180deg, ${barColor}90, ${barColor}50)`,
-                                transition: 'height 0.5s ease',
-                            }} />
-                            <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>{d.day}</span>
+                        <div key={i} className="flex-1 flex flex-col items-center gap-3 h-full justify-end group">
+                            <span className="text-[11px] font-bold text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1">{d.rainfall}mm</span>
+                            <motion.div
+                                initial={{ height: 0 }}
+                                animate={{ height: `${Math.max(height, 8)}%` }}
+                                transition={{ duration: 1, delay: i * 0.1, ease: "easeOut" }}
+                                className={`w-full max-w-[40px] rounded-t-xl rounded-b-md ${barColor} shadow-sm relative overflow-hidden`}
+                            >
+                                <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                            </motion.div>
+                            <span className="text-[11px] font-black text-slate-600 uppercase tracking-tighter">{d.day}</span>
                         </div>
                     );
                 })}
             </div>
+
+            {/* Background Lines */}
+            <div className="absolute bottom-16 left-6 right-6 h-[100px] -z-10 border-b border-slate-50 border-t border-t-slate-50/50 pointer-events-none" />
         </div>
     );
 };
 
 // ===========================================================
-//  IMD Status Widget
+//  Alert Center Component
 // ===========================================================
-const IMDStatusWidget = ({ apiOnline, lastUpdated, onRefresh, refreshing }) => (
-    <div style={{
-        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-        padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
-    }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Weather Data Source</h3>
-            <Eye style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <div style={{
-                width: '10px', height: '10px', borderRadius: '50%',
-                background: apiOnline ? '#22c55e' : '#ef4444',
-                boxShadow: apiOnline ? '0 0 6px rgba(34,197,94,0.4)' : '0 0 6px rgba(239,68,68,0.4)',
-            }} />
-            <span style={{ fontSize: '14px', fontWeight: 600, color: apiOnline ? '#16a34a' : '#dc2626' }}>
-                {apiOnline ? 'API Online' : 'API Offline — Using Cache'}
-            </span>
-            {apiOnline ? <Wifi style={{ width: '14px', height: '14px', color: '#16a34a' }} /> : <WifiOff style={{ width: '14px', height: '14px', color: '#dc2626' }} />}
-        </div>
-
-        <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, marginBottom: '4px', fontWeight: 500 }}>
-            Source: OpenWeatherMap API (Mumbai, IN)
-        </p>
-        <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, marginBottom: '14px', fontWeight: 500 }}>
-            Last updated: {lastUpdated}
-        </p>
-
-        <button
-            onClick={onRefresh}
-            disabled={refreshing}
-            style={{
-                width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0',
-                background: refreshing ? '#f8fafc' : 'white', cursor: refreshing ? 'wait' : 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                fontSize: '13px', fontWeight: 600, color: '#64748b', fontFamily: 'Outfit, sans-serif',
-                transition: 'all 0.15s ease',
-            }}
-        >
-            <RefreshCw style={{
-                width: '14px', height: '14px',
-                animation: refreshing ? 'spin 1s linear infinite' : 'none',
-            }} />
-            {refreshing ? 'Refreshing...' : 'Refresh Data'}
-        </button>
-    </div>
-);
-
-// ===========================================================
-//  AI Interpretation Card
-// ===========================================================
-const AIInterpretation = ({ summary, timestamp }) => (
-    <div style={{
-        background: 'linear-gradient(135deg, #eff6ff, #f0f9ff)',
-        borderRadius: '14px', border: '1px solid #bfdbfe', padding: '18px',
-        fontFamily: 'Outfit, sans-serif',
-    }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-            <div style={{
-                width: '28px', height: '28px', borderRadius: '8px',
-                background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '14px', color: 'white',
-            }}>✦</div>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                AI Risk Analysis
-            </span>
-        </div>
-        <p style={{ fontSize: '15px', fontWeight: 600, color: '#1e3a5f', margin: 0, lineHeight: 1.6 }}>
-            {summary}
-        </p>
-        <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0, marginTop: '10px', fontWeight: 500 }}>
-            Based on live OpenWeatherMap data • {timestamp}
-        </p>
-    </div>
-);
-
-// ===========================================================
-//  Current Weather Banner
-// ===========================================================
-const CurrentWeatherBanner = ({ current }) => (
-    <div style={{
-        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-        padding: '18px 22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-        fontFamily: 'Outfit, sans-serif', marginBottom: '16px',
-        display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap',
-    }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{
-                width: '52px', height: '52px', borderRadius: '14px',
-                background: current.isRaining ? 'linear-gradient(135deg, #dbeafe, #bfdbfe)' : 'linear-gradient(135deg, #fef3c7, #fde68a)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-                {current.isRaining
-                    ? <CloudRain style={{ width: '28px', height: '28px', color: '#2563eb' }} />
-                    : <Sun style={{ width: '28px', height: '28px', color: '#f59e0b' }} />
-                }
-            </div>
+const AlertCenter = ({ alerts }) => (
+    <div className="bg-white rounded-[24px] border border-slate-100 p-6 shadow-sm h-full">
+        <div className="flex items-center justify-between mb-6">
             <div>
-                <p style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', margin: 0 }}>{current.temp}°C</p>
-                <p style={{ fontSize: '14px', color: '#64748b', margin: 0, fontWeight: 500, textTransform: 'capitalize' }}>{current.description}</p>
+                <h3 className="text-[16px] font-black text-slate-900 tracking-tight">Official Advisories</h3>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">IMD Meteorological Directives</p>
+            </div>
+            <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600">
+                <AlertCircle className="w-5 h-5" />
             </div>
         </div>
 
-        {/* Stats pills */}
-        {[
-            { icon: Droplets, label: 'Humidity', value: `${current.humidity}%`, color: '#3b82f6' },
-            { icon: Wind, label: 'Wind', value: `${current.wind} km/h`, color: '#64748b' },
-            { icon: Eye, label: 'Visibility', value: `${current.visibility} km`, color: '#8b5cf6' },
-            { icon: CloudRain, label: 'Rain (1h)', value: `${current.rain1h}mm`, color: '#0ea5e9' },
-        ].map((s, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                <s.icon style={{ width: '16px', height: '16px', color: s.color }} />
-                <div>
-                    <p style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600, margin: 0, textTransform: 'uppercase' }}>{s.label}</p>
-                    <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{s.value}</p>
+        <div className="space-y-3">
+            {alerts.length > 0 ? alerts.map((alert, idx) => (
+                <motion.div
+                    key={alert.id}
+                    initial={{ x: -10, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="p-4 rounded-2xl border flex items-center gap-4 group transition-all"
+                    style={{ backgroundColor: alert.bg, borderColor: alert.border }}
+                >
+                    <div className="relative flex-shrink-0">
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: alert.color }} />
+                        <div className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ backgroundColor: alert.color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[14px] font-black text-slate-900 leading-tight mb-0.5" style={{ color: alert.color }}>{alert.title}</p>
+                        <p className="text-[12px] font-bold text-slate-500 truncate">{alert.summary}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{alert.time}</span>
+                    </div>
+                </motion.div>
+            )) : (
+                <div className="py-12 text-center">
+                    <p className="text-[13px] font-bold text-slate-400 italic">No critical weather anomalies detected.</p>
                 </div>
-            </div>
-        ))}
-
-        {/* Live badge */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }} />
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#16a34a' }}>LIVE</span>
+            )}
         </div>
     </div>
 );
 
 // ===========================================================
-//  MAIN PAGE
+//  Weather Stats Pill
+// ===========================================================
+const WeatherStat = ({ icon: Icon, label, value, color }) => (
+    <div className="flex items-center gap-3.5 px-5 py-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+        <div className={`p-2 rounded-xl border border-slate-100 ${color} bg-slate-50/50`}>
+            <Icon className="w-4 h-4" />
+        </div>
+        <div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] leading-none mb-1">{label}</p>
+            <p className="text-[15px] font-black text-slate-900 leading-none">{value}</p>
+        </div>
+    </div>
+);
+
+// ===========================================================
+//  MAIN COMPONENT: RiskMonitoring
 // ===========================================================
 const RiskMonitoring = () => {
     const { t } = useLanguage();
@@ -303,9 +194,7 @@ const RiskMonitoring = () => {
             setApiOnline(true);
             setLastUpdated(new Date().toLocaleTimeString('en-IN', {
                 hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata',
-            }) + ' IST, ' + new Date().toLocaleDateString('en-IN', {
-                day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata',
-            }));
+            }) + ' IST');
         } else {
             setApiOnline(false);
         }
@@ -322,112 +211,183 @@ const RiskMonitoring = () => {
 
     if (loading) {
         return (
-            <div style={{
-                padding: '20px', fontFamily: 'Outfit, sans-serif',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                height: '100%', color: '#94a3b8', fontSize: '16px', fontWeight: 600,
-            }}>
-                <RefreshCw style={{ width: '20px', height: '20px', animation: 'spin 1s linear infinite', marginRight: '10px' }} />
-                Fetching live weather data from OpenWeatherMap...
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-100px)] gap-6">
+                <div className="relative">
+                    <div className="w-20 h-20 rounded-full border-4 border-slate-100 border-t-blue-600 animate-spin" />
+                    <CloudRain className="w-8 h-8 text-blue-600 absolute inset-0 m-auto animate-pulse" />
+                </div>
+                <div className="text-center">
+                    <p className="text-[17px] font-black text-slate-900 tracking-tight">Syncing with OpenWeatherMap</p>
+                    <p className="text-[13px] font-bold text-slate-400 mt-1">Retrieving live atmospheric data for Mumbai...</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div style={{
-            padding: '24px', maxWidth: '1400px', margin: '0 auto',
-            fontFamily: 'Outfit, sans-serif',
-        }}>
-            {/* Page Header */}
-            <div style={{ marginBottom: '22px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                    {t('imd.page.title')}
-                </h1>
-                <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0, marginTop: '4px', fontWeight: 500 }}>
-                    {apiOnline ? 'Live data from OpenWeatherMap API • Mumbai, Maharashtra' : 'API offline — showing cached data'}
-                </p>
+        <div className="p-8 max-w-[1600px] mx-auto space-y-8 animate-fadeInUp">
+
+            {/* Page Header — Pro Header Style */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
+                        <h1 className="text-[28px] font-black text-slate-900 tracking-tight leading-none">
+                            Atmospheric Intelligence
+                        </h1>
+                    </div>
+                    <p className="text-[14px] font-bold text-slate-400 flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        Mumbai, Maharashtra • Station ID: OWM-400001
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-end">
+                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">LAST TELEMETRY SYNC</p>
+                        <p className="text-[14px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100 mt-1">
+                            {lastUpdated}
+                        </p>
+                    </div>
+                    <button
+                        onClick={loadData}
+                        disabled={refreshing}
+                        className="p-3.5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all active:scale-95 group"
+                    >
+                        <RefreshCw className={`w-5 h-5 text-slate-600 ${refreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
+                    </button>
+                </div>
             </div>
 
-            {/* Current Weather Banner */}
-            {current && <CurrentWeatherBanner current={current} />}
+            {/* Top Grid: Hero Weather + Stats */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            {/* 5-Day Forecast */}
-            {forecast && (
-                <div style={{
-                    background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                    padding: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', marginBottom: '16px',
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                        <div>
-                            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                                {t('imd.forecast.title')}
-                            </h2>
-                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                                5-day forecast • OpenWeatherMap
-                            </p>
+                {/* Current Hero — Large & Premium */}
+                <div className="lg:col-span-12 xl:col-span-8 flex flex-col md:flex-row gap-8 bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm">
+                    <div className="flex items-center gap-8">
+                        <div className={`
+                            w-32 h-32 rounded-[32px] flex items-center justify-center shadow-lg transition-all
+                            ${current.isRaining ? 'bg-blue-600 shadow-blue-200' : 'bg-amber-400 shadow-amber-100'}
+                        `}>
+                            {current.isRaining
+                                ? <CloudRain className="w-16 h-16 text-white" strokeWidth={1.5} />
+                                : <Sun className="w-16 h-16 text-white" strokeWidth={1.5} />
+                            }
                         </div>
-                        <span style={{
-                            fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px',
-                            background: apiOnline ? '#f0fdf4' : '#fef2f2',
-                            color: apiOnline ? '#16a34a' : '#dc2626',
-                            border: `1px solid ${apiOnline ? '#bbf7d0' : '#fecaca'}`,
-                        }}>{apiOnline ? 'LIVE DATA' : 'CACHED'}</span>
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <p className="text-[64px] font-black text-slate-900 leading-none tracking-tighter">{current.temp}°</p>
+                                <div className="h-10 w-px bg-slate-100 mx-4" />
+                                <div>
+                                    <p className="text-[18px] font-black text-slate-900 uppercase tracking-tight leading-none">{current.description}</p>
+                                    <p className="text-[12px] font-bold text-slate-400 mt-1 flex items-center gap-1.5">
+                                        <Thermometer className="w-3.5 h-3.5" />
+                                        Feels like {current.feelsLike}°C
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px' }} className="custom-scrollbar">
+                    <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-4 h-full content-center">
+                        <WeatherStat icon={Droplets} label="Humidity" value={`${current.humidity}%`} color="text-blue-500" />
+                        <WeatherStat icon={Wind} label="Wind Speed" value={`${current.wind} km/h`} color="text-slate-500" />
+                        <WeatherStat icon={Eye} label="Visibility" value={`${current.visibility} km`} color="text-violet-500" />
+                        <WeatherStat icon={CloudRain} label="Precip (1h)" value={`${current.rain1h}mm`} color="text-cyan-500" />
+                    </div>
+                </div>
+
+                {/* AI Risk Analysis — High Glossy Strategic Aesthetic */}
+                <div className="lg:col-span-12 xl:col-span-4 bg-blue-600 rounded-[32px] p-8 text-white shadow-xl shadow-blue-100 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl opacity-50" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-400 rounded-full -ml-16 -mb-16 blur-2xl opacity-20" />
+
+                    <div className="relative z-10 flex flex-col h-full">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                                <Sparkles className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-[17px] font-black tracking-tight leading-none">Strategic AI Summary</h3>
+                                <p className="text-[11px] font-bold text-blue-200/80 uppercase tracking-widest mt-1">Real-time Interpretation</p>
+                            </div>
+                        </div>
+
+                        <p className="text-[19px] font-bold leading-relaxed tracking-tight flex-1">
+                            {aiSummary}
+                        </p>
+
+                        <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                <span className="text-[11px] font-black text-blue-100 uppercase tracking-widest">Active Intelligence Mode</span>
+                            </div>
+                            <Activity className="w-4 h-4 text-blue-200/50" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Middle Grid: Forecast + Trend */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                {/* 5-Day Forecast Panel */}
+                <div className="lg:col-span-12 xl:col-span-8 bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-[16px] font-black text-slate-900 tracking-tight">Weather Propagation</h3>
+                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">5-Day Temporal Forecast</p>
+                        </div>
+                        <Calendar className="w-5 h-5 text-slate-300" />
+                    </div>
+
+                    <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
                         {forecast.map((d, i) => (
-                            <ForecastCard key={i} data={d} isToday={i === 0} />
+                            <ForecastCard key={i} data={d} isToday={i === 0} index={i} />
                         ))}
                     </div>
                 </div>
-            )}
 
-            {/* Alerts + Side Column */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-                {/* Alerts */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                        padding: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', height: '100%',
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                            <div>
-                                <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                                    {t('imd.alerts.title')}
-                                </h2>
-                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                                    Auto-generated from live weather data
-                                </p>
+                {/* Vertical Side Stats / Data Health */}
+                <div className="lg:col-span-12 xl:col-span-4 space-y-6 flex flex-col justify-between">
+                    <RainfallTrend forecast={forecast} />
+
+                    {/* API Status Widget — Integrated look */}
+                    <div className="bg-slate-900 rounded-[24px] p-6 text-white shadow-lg overflow-hidden relative">
+                        <div className="flex items-center justify-between mb-4 relative z-10">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-3 h-3 rounded-full ${apiOnline ? 'bg-emerald-500' : 'bg-red-500'} shadow-[0_0_12px_rgba(16,185,129,0.5)]`} />
+                                <span className={`text-[13px] font-black tracking-tight ${apiOnline ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {apiOnline ? "NETWORK ONLINE" : "OFFLINE / CACHED"}
+                                </span>
                             </div>
-                            <AlertTriangle style={{ width: '18px', height: '18px', color: '#f59e0b' }} />
+                            <Wifi className={`w-4 h-4 ${apiOnline ? 'text-white/40' : 'text-red-400'}`} />
                         </div>
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">TELEMETRY SOURCE</p>
+                        <p className="text-[13px] font-bold text-slate-200">National Weather API Gateway (Mumbai)</p>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {alerts.length > 0 ? alerts.map(alert => (
-                                <AlertBanner key={alert.id} alert={alert} />
-                            )) : (
-                                <p style={{ fontSize: '14px', color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
-                                    No active alerts
-                                </p>
-                            )}
+                        <div className="absolute bottom-0 right-0 p-4 opacity-5">
+                            <RefreshCw className="w-24 h-24 rotate-12" />
                         </div>
                     </div>
                 </div>
-
-                {/* Side column */}
-                <div style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <IMDStatusWidget
-                        apiOnline={apiOnline}
-                        lastUpdated={lastUpdated}
-                        onRefresh={loadData}
-                        refreshing={refreshing}
-                    />
-                    <AIInterpretation summary={aiSummary} timestamp={lastUpdated} />
-                </div>
             </div>
 
-            {/* Rainfall Chart */}
-            {forecast && <RainfallChart forecast={forecast} />}
+            {/* Bottom: Alert Center */}
+            <div className="grid grid-cols-1 gap-6 pb-8">
+                <AlertCenter alerts={alerts} />
+            </div>
+
+            {/* Footer Attribution */}
+            <div className="flex items-center justify-center gap-8 py-6 opacity-30">
+                <div className="flex items-center gap-2">
+                    <ExternalLink className="w-4 h-4" />
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">OpenWeatherMap Core</span>
+                </div>
+                <div className="w-1 h-1 bg-slate-400 rounded-full" />
+                <span className="text-[11px] font-black uppercase tracking-[0.2em]">Suraksha Setu Intel</span>
+            </div>
+
         </div>
     );
 };

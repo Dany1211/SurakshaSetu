@@ -3,6 +3,7 @@ import PlanPanel from '../components/PlanPanel';
 import FloodMap from '../components/FloodMap';
 import SOSPanel from '../components/SOSPanel';
 import ResourcePanel from '../components/ResourcePanel';
+import { motion } from 'framer-motion';
 
 const Dashboard = () => {
     const mockWards = [
@@ -14,83 +15,75 @@ const Dashboard = () => {
     ];
 
     return (
-        <div style={{
-            padding: '20px', height: '100%', maxWidth: '1600px', margin: '0 auto',
-            overflow: 'hidden', display: 'flex', gap: '16px', fontFamily: 'Outfit, sans-serif',
-        }}>
-            {/* Left: Map + Plan */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0, overflowY: 'auto' }}
-                className="custom-scrollbar"
-            >
-                {/* Flood Map */}
-                <div style={{
-                    background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden', flexShrink: 0,
-                }}>
-                    <div style={{ height: '380px' }}>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="p-6 h-full max-w-[1800px] mx-auto flex gap-6 overflow-hidden"
+            style={{ fontFamily: 'Outfit, sans-serif' }}
+        >
+            {/* Left: Map + Plan — Flexible Main Area */}
+            <div className="flex-1 flex flex-col gap-6 min-w-0 overflow-y-auto no-scrollbar pb-6">
+
+                {/* Flood Map Glass Container */}
+                <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden flex-shrink-0 group transition-all">
+                    <div className="h-[420px] relative">
                         <FloodMap />
                     </div>
                 </div>
 
-                {/* AI Evacuation Plan */}
-                <div style={{ flexShrink: 0 }}>
+                {/* AI Evacuation Plan Panel */}
+                <div className="flex-shrink-0">
                     <PlanPanel />
                 </div>
             </div>
 
-            {/* Right: SOS + Resources + Ward Monitoring */}
-            <div style={{ width: '320px', flexShrink: 0, height: '100%' }}
-                className="hidden xl:block"
-            >
-                <div style={{
-                    background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                    height: '100%', boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                    display: 'flex', flexDirection: 'column', overflow: 'hidden',
-                }}>
-                    {/* SOS Alerts */}
-                    <SOSPanel />
+            {/* Right: Operational Sidebar — Fixed Width */}
+            <div className="w-[380px] flex-shrink-0 hidden xl:flex flex-col h-full bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
 
-                    {/* Resources Available */}
-                    <ResourcePanel />
+                {/* SOS Alerts Section */}
+                <SOSPanel />
 
-                    {/* Ward Monitoring Header */}
-                    <div style={{
-                        padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    }}>
+                {/* Resource Allocation View */}
+                <ResourcePanel />
+
+                {/* Ward Monitoring Section */}
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="px-6 py-5 flex items-center justify-between border-b border-slate-50">
                         <div>
-                            <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: 0, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                                Ward Monitoring
+                            <h2 className="text-[14px] font-black text-slate-900 tracking-[0.1em] uppercase">
+                                Ward Telemetry
                             </h2>
-                            <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>Live Updates</p>
+                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Live Zone Monitoring</p>
                         </div>
-                        <div style={{
-                            display: 'flex', alignItems: 'center', gap: '5px',
-                            padding: '4px 10px', background: '#fef2f2', borderRadius: '6px',
-                        }}>
-                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444', animation: 'pulse 2s infinite' }} />
-                            <span style={{ fontSize: '12px', fontWeight: 700, color: '#dc2626' }}>LIVE</span>
+                        <div className="flex items-center gap-2 px-2.5 py-1 bg-red-50 rounded-lg border border-red-100">
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+                            <span className="text-[10px] font-black text-red-600 tracking-widest uppercase">Live</span>
                         </div>
                     </div>
 
-                    {/* Ward Cards */}
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 14px 14px' }}
-                        className="custom-scrollbar"
-                    >
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {mockWards.map((ward) => (
-                                <RiskCard
+                    {/* Ward Cards Scrollable Area */}
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div className="space-y-4 pb-4">
+                            {mockWards.map((ward, idx) => (
+                                <motion.div
                                     key={ward.id}
-                                    wardName={ward.name}
-                                    rainfall={ward.rainfall}
-                                    riverLevel={ward.riverLevel}
-                                    riskLevel={ward.riskLevel}
-                                />
+                                    initial={{ x: 20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.1 + idx * 0.05 }}
+                                >
+                                    <RiskCard
+                                        wardName={ward.name}
+                                        rainfall={ward.rainfall}
+                                        riverLevel={ward.riverLevel}
+                                        riskLevel={ward.riskLevel}
+                                    />
+                                </motion.div>
                             ))}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

@@ -3,8 +3,10 @@ import { useLanguage } from '../context/LanguageContext';
 import PlanPanel from '../components/PlanPanel';
 import {
     MapPin, Users, Clock, Shield, Sparkles, AlertTriangle,
-    Building2, Navigation, Phone, CheckCircle2
+    Building2, Navigation, Phone, CheckCircle2, ChevronRight,
+    Map, Activity, Info
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ---- Shelter Data ----
 const shelters = [
@@ -25,227 +27,226 @@ const evacuationRoutes = [
     { id: 5, from: 'Bandra East', to: 'Bandra Community Hall', distance: '2.0 km', time: '7 min', road: 'Swami Vivekanand Rd', status: 'Clear' },
 ];
 
-
-
 // ===========================================================
 //  Shelter Card
 // ===========================================================
-const ShelterCard = ({ shelter }) => {
+const ShelterCard = ({ shelter, index }) => {
     const occupancy = shelter.capacity > 0 ? Math.round((shelter.current / shelter.capacity) * 100) : 0;
-    const statusColor = shelter.status === 'Open' ? '#16a34a' : shelter.status === 'Filling' ? '#d97706' : '#3b82f6';
-    const barColor = occupancy > 80 ? '#ef4444' : occupancy > 50 ? '#f59e0b' : '#22c55e';
+    const statusConfig = {
+        Open: 'text-emerald-600 bg-emerald-50 border-emerald-100',
+        Filling: 'text-amber-600 bg-amber-50 border-amber-100',
+        Ready: 'text-blue-600 bg-blue-50 border-blue-100',
+    };
+    const barColor = occupancy > 80 ? 'bg-red-500' : occupancy > 50 ? 'bg-amber-500' : 'bg-emerald-500';
 
     return (
-        <div style={{
-            padding: '14px 16px', borderRadius: '12px', background: 'white',
-            border: '1px solid #f1f5f9', fontFamily: 'Outfit, sans-serif',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-        }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Building2 style={{ width: '18px', height: '18px', color: '#64748b' }} />
-                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>{shelter.name}</span>
+        <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="p-5 rounded-[24px] bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all group"
+        >
+            <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-2xl bg-slate-50 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                        <Building2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h4 className="text-[15px] font-black text-slate-900 tracking-tight leading-tight">{shelter.name}</h4>
+                        <div className="flex items-center gap-1.5 mt-1">
+                            <MapPin className="w-3 h-3 text-slate-400" />
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{shelter.area}</span>
+                        </div>
+                    </div>
                 </div>
-                <span style={{
-                    fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '6px',
-                    color: statusColor, background: `${statusColor}10`, border: `1px solid ${statusColor}30`,
-                    textTransform: 'uppercase', letterSpacing: '0.05em'
-                }}>
+                <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${statusConfig[shelter.status]}`}>
                     {shelter.status}
                 </span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                <MapPin style={{ width: '14px', height: '14px', color: '#94a3b8' }} />
-                <span style={{ fontSize: '13px', color: '#94a3b8', fontWeight: 500 }}>{shelter.area}</span>
-                <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 600, marginLeft: 'auto' }}>
-                    {shelter.current} / {shelter.capacity} people
-                </span>
+            <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Occupancy Depth</span>
+                <span className="text-[13px] font-black text-slate-900 tabular-nums">{occupancy}%</span>
             </div>
 
-            {/* Capacity bar */}
-            <div style={{ height: '4px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden', marginBottom: '8px' }}>
-                <div style={{
-                    height: '100%', width: `${occupancy}%`, borderRadius: '999px',
-                    background: barColor, transition: 'width 0.5s ease',
-                }} />
+            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mb-4">
+                <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${occupancy}%` }}
+                    className={`h-full ${barColor}`}
+                />
             </div>
 
-            {/* Tags */}
-            <div style={{ display: 'flex', gap: '8px' }}>
-                {shelter.supplies && (
-                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', textTransform: 'uppercase' }}>
-                        ✓ Supplies
-                    </span>
-                )}
-                {shelter.medical && (
-                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', textTransform: 'uppercase' }}>
-                        ✓ Medical
-                    </span>
-                )}
+            <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                    <Users className="w-3.5 h-3.5 text-slate-300" />
+                    <span className="text-[13px] font-black text-slate-700">{shelter.current} <span className="text-slate-400 font-bold">/ {shelter.capacity}</span></span>
+                </div>
+                <div className="flex gap-2 ml-auto">
+                    {shelter.supplies && <div title="Supplies Available" className="w-6 h-6 rounded-md bg-amber-50 flex items-center justify-center text-amber-600 border border-amber-100 text-[10px] uppercase font-black">S</div>}
+                    {shelter.medical && <div title="Medical Onsite" className="w-6 h-6 rounded-md bg-red-50 flex items-center justify-center text-red-600 border border-red-100 text-[10px] uppercase font-black">M</div>}
+                </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
 // ===========================================================
 //  Route Card
 // ===========================================================
-const RouteCard = ({ route }) => {
+const RouteCard = ({ route, index }) => {
     const isBlocked = route.status === 'Waterlogged';
     return (
-        <div style={{
-            padding: '12px 16px', borderRadius: '10px',
-            background: isBlocked ? '#fffbeb' : 'white',
-            border: `1px solid ${isBlocked ? '#fde68a' : '#f1f5f9'}`,
-            fontFamily: 'Outfit, sans-serif', display: 'flex', alignItems: 'center', gap: '12px',
-        }}>
-            {/* Route arrow */}
-            <div style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flexShrink: 0,
-            }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', border: '2px solid white', boxShadow: '0 0 0 1px #fecaca' }} />
-                <div style={{ width: '1.5px', height: '20px', background: isBlocked ? '#f59e0b' : '#22c55e' }} />
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', border: '2px solid white', boxShadow: '0 0 0 1px #bbf7d0' }} />
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 + index * 0.05 }}
+            className={`
+                p-4 rounded-2xl border transition-all flex items-center gap-4 group
+                ${isBlocked ? 'bg-amber-50 border-amber-100' : 'bg-white border-slate-100 hover:border-slate-300 shadow-sm'}
+            `}
+        >
+            <div className="flex flex-col items-center gap-1 shrink-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                <div className={`w-0.5 h-6 ${isBlocked ? 'bg-amber-300' : 'bg-emerald-500'} rounded-full`} />
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             </div>
 
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>{route.from} → {route.to}</span>
-                </div>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, fontWeight: 500 }}>
-                    via {route.road} • {route.distance} • ~{route.time}
-                </p>
+            <div className="flex-1 min-w-0">
+                <p className="text-[14px] font-black text-slate-900 truncate tracking-tight">{route.from} ➔ {route.to}</p>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate">{route.road}</p>
             </div>
 
-            <span style={{
-                fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '6px',
-                textTransform: 'uppercase', flexShrink: 0, letterSpacing: '0.04em',
-                background: isBlocked ? '#fef3c7' : '#f0fdf4',
-                color: isBlocked ? '#d97706' : '#16a34a',
-                border: `1px solid ${isBlocked ? '#fde68a' : '#bbf7d0'}`,
-            }}>
-                {isBlocked ? '⚠ Waterlogged' : '✓ Clear'}
-            </span>
-        </div>
+            <div className="text-right shrink-0">
+                <span className={`
+                    px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border
+                    ${isBlocked ? 'text-amber-600 border-amber-200 bg-white' : 'text-emerald-600 border-emerald-100 bg-emerald-50'}
+                `}>
+                    {route.status}
+                </span>
+                <p className="text-[11px] font-black text-slate-400 mt-2 uppercase tracking-tighter">~{route.time} • {route.distance}</p>
+            </div>
+        </motion.div>
     );
 };
 
-
-
 // ===========================================================
-//  Emergency Contacts
-// ===========================================================
-const EmergencyContacts = () => (
-    <div style={{
-        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-        padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
-    }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <Phone style={{ width: '18px', height: '18px', color: '#dc2626' }} />
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Emergency Helplines</h3>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {[
-                { name: 'NDRF Control Room', number: '011-24363260' },
-                { name: 'Mumbai BMC Disaster', number: '1916' },
-                { name: 'Police Emergency', number: '100' },
-                { name: 'Ambulance', number: '108' },
-            ].map((c, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>{c.name}</span>
-                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{c.number}</span>
-                </div>
-            ))}
-        </div>
-    </div>
-);
-
-// ===========================================================
-//  MAIN PAGE
+//  MAIN PAGE: EvacuationPlanning
 // ===========================================================
 const EvacuationPlanning = () => {
     const { t } = useLanguage();
 
     return (
-        <div style={{
-            padding: '20px', maxWidth: '1400px', margin: '0 auto',
-            fontFamily: 'Outfit, sans-serif',
-        }}>
+        <div className="p-8 max-w-[1700px] mx-auto space-y-8 animate-fadeInUp">
+
             {/* Page Header */}
-            <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Sparkles style={{ width: '28px', height: '28px', color: '#2563eb' }} />
-                    {t('menu.evacuation_planning')}
-                </h1>
-                <p style={{ fontSize: '15px', color: '#94a3b8', margin: 0, marginTop: '8px', fontWeight: 500 }}>
-                    AI-generated evacuation plans, shelter status, routes & resource deployment
-                </p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
+                        <h1 className="text-[28px] font-black text-slate-900 tracking-tight leading-none">
+                            Evacuation Directives
+                        </h1>
+                    </div>
+                    <p className="text-[14px] font-bold text-slate-400 flex items-center gap-2">
+                        <Map className="w-4 h-4" />
+                        Tactical Exit Mapping & Shelter Logistics
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-4 bg-white px-5 py-2.5 rounded-[20px] border border-slate-100 shadow-sm">
+                    <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-emerald-500" />
+                        <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">System Readiness: Optimal</span>
+                    </div>
+                </div>
             </div>
 
-            {/* ---- AI Plan (main component) ---- */}
-            <div style={{ marginBottom: '16px' }}>
+            {/* AI Generated Intelligence Section */}
+            <div className="relative">
+                <div className="absolute -top-4 -left-4 p-3 bg-blue-600 rounded-2xl shadow-lg z-10">
+                    <Sparkles className="w-5 h-5 text-white" />
+                </div>
                 <PlanPanel />
             </div>
 
-            {/* ---- ROW: Shelters + Routes side by side ---- */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-                {/* Shelters */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                        padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', height: '100%',
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                            <div>
-                                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                                    Designated Shelters
-                                </h2>
-                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                                    {shelters.length} shelters • {shelters.reduce((a, s) => a + s.capacity, 0)} total capacity
-                                </p>
-                            </div>
-                            <Building2 style={{ width: '20px', height: '20px', color: '#64748b' }} />
+            {/* Row Content: Shelters and Tactical Routes */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                {/* Shelters Intelligence */}
+                <div className="lg:col-span-12 xl:col-span-7 space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-[18px] font-black text-slate-900 tracking-tight uppercase tracking-[0.05em]">Safe Zones & Shelters</h3>
+                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{shelters.length} Operations Relief Points Identified</p>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {shelters.map(s => (
-                                <ShelterCard key={s.id} shelter={s} />
-                            ))}
-                        </div>
+                        <button className="text-[11px] font-black text-blue-600 uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all">
+                            View All <ChevronRight className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {shelters.map((s, i) => (
+                            <ShelterCard key={s.id} shelter={s} index={i} />
+                        ))}
                     </div>
                 </div>
 
-                {/* Routes + Resources side column */}
-                <div style={{ width: '420px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {/* Evacuation Routes */}
-                    <div style={{
-                        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                        padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                            <div>
-                                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                                    Evacuation Routes
-                                </h2>
-                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                                    Road status for each ward → shelter path
-                                </p>
+                {/* Tactical Routes Sidebar */}
+                <div className="lg:col-span-12 xl:col-span-5 space-y-8">
+
+                    {/* Routes Directive */}
+                    <div className="bg-slate-900 rounded-[32px] p-8 text-white shadow-xl shadow-slate-200">
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-3">
+                                <Navigation className="w-5 h-5 text-blue-400" />
+                                <h3 className="text-[16px] font-black tracking-tight uppercase">Tactical Corridors</h3>
                             </div>
-                            <Navigation style={{ width: '20px', height: '20px', color: '#64748b' }} />
+                            <div className="px-2 py-0.5 rounded-lg bg-blue-500/20 border border-blue-500/30 text-[9px] font-black uppercase tracking-widest text-blue-300">
+                                Live Traffic Intel
+                            </div>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {evacuationRoutes.map(r => (
-                                <RouteCard key={r.id} route={r} />
+
+                        <div className="space-y-4">
+                            {evacuationRoutes.map((r, i) => (
+                                <RouteCard key={r.id} route={r} index={i} />
+                            ))}
+                        </div>
+
+                        <div className="mt-8 p-4 bg-white/5 border border-white/10 rounded-2xl flex items-start gap-3">
+                            <Info className="w-5 h-5 text-blue-300 shrink-0 mt-0.5" />
+                            <p className="text-[11px] font-bold text-blue-100 leading-relaxed uppercase tracking-tight">
+                                Routes are dynamically recalculated based on waterlogging reports and police checkpoints.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Quick Contacts Integration */}
+                    <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 rounded-xl bg-red-50 text-red-600 border border-red-100">
+                                <Phone className="w-5 h-5" />
+                            </div>
+                            <h4 className="text-[15px] font-black text-slate-900 tracking-tight leading-none uppercase">Response Hotlines</h4>
+                        </div>
+                        <div className="space-y-4">
+                            {[
+                                { name: 'NDRF Base', num: '011-24363260' },
+                                { name: 'BMC Command', num: '1916' },
+                                { name: 'Medical Heli', num: '108' }
+                            ].map((c, i) => (
+                                <div key={i} className="flex justify-between items-center py-3 border-b border-slate-50 last:border-0 hover:translate-x-1 transition-transform cursor-pointer">
+                                    <span className="text-[13px] font-bold text-slate-400">{c.name}</span>
+                                    <span className="text-[15px] font-black text-slate-800 tabular-nums">{c.num}</span>
+                                </div>
                             ))}
                         </div>
                     </div>
 
-
-
-                    {/* Emergency Contacts */}
-                    <EmergencyContacts />
                 </div>
+
             </div>
+
         </div>
     );
 };
