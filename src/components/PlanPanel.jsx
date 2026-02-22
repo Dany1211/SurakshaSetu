@@ -2,12 +2,26 @@ import React, { useState } from 'react';
 import { Target, RefreshCw, Sparkles, Languages } from 'lucide-react';
 import { generateActionPlan } from '../services/geminiService';
 import { useLanguage } from '../context/LanguageContext';
+import { archiveActionPlan } from '../services/firebaseService';
 
 const PlanPanel = ({ onPlanChange }) => {
     const { t, language } = useLanguage();
     const [adminPrompt, setAdminPrompt] = useState('');
     const [targetLanguage, setTargetLanguage] = useState(language || 'en');
     const [isGenerating, setIsGenerating] = useState(false);
+
+    // Load last plan from local storage on mount
+    React.useEffect(() => {
+        const savedPlan = localStorage.getItem('last_suraksha_plan');
+        if (savedPlan) {
+            try {
+                const parsed = JSON.parse(savedPlan);
+                if (onPlanChange) onPlanChange(parsed);
+            } catch (e) {
+                console.error("Error parsing saved plan", e);
+            }
+        }
+    }, []);
 
     const handleGenerateAIPlan = async () => {
         setIsGenerating(true);
@@ -21,7 +35,7 @@ const PlanPanel = ({ onPlanChange }) => {
 
             // Shape the API response to fit our UI
             const processedPlan = {
-                id: newAiPlan.id || 'ai-plan',
+                id: newAiPlan.id || `plan-${Date.now()}`,
                 title: newAiPlan.title || 'Executive Disaster Briefing',
                 executiveSummary: newAiPlan.executiveSummary || 'Awaiting summary...',
                 criticalBottlenecks: newAiPlan.criticalBottlenecks || 'Awaiting bottleneck analysis...',
@@ -31,6 +45,16 @@ const PlanPanel = ({ onPlanChange }) => {
                 broadcastDraft: newAiPlan.broadcastDraft || 'Emergency alert draft pending...',
             };
 
+            // Save to LocalStorage to avoid wasting API credits on refresh
+            localStorage.setItem('last_suraksha_plan', JSON.stringify(processedPlan));
+
+            // Archive to Firebase immediately for coordination history
+            try {
+                await archiveActionPlan(processedPlan);
+            } catch (archiveError) {
+                console.warn("Could not archive plan to Firebase, but it is saved locally.", archiveError);
+            }
+
             if (onPlanChange) onPlanChange(processedPlan);
         } catch (error) {
             console.error(error);
@@ -38,6 +62,11 @@ const PlanPanel = ({ onPlanChange }) => {
         } finally {
             setIsGenerating(false);
         }
+    };
+
+    const handleClearPlan = () => {
+        localStorage.removeItem('last_suraksha_plan');
+        if (onPlanChange) onPlanChange(null);
     };
 
     return (
@@ -94,7 +123,7 @@ const PlanPanel = ({ onPlanChange }) => {
                     </select>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
                     <button
                         onClick={handleGenerateAIPlan}
                         disabled={isGenerating}
@@ -111,6 +140,20 @@ const PlanPanel = ({ onPlanChange }) => {
                         {isGenerating ? <RefreshCw style={{ width: '18px', height: '18px', animation: 'spin 1s linear infinite' }} /> : <Sparkles style={{ width: '18px', height: '18px', color: '#fbbf24' }} />}
                         {isGenerating ? 'Analyzing Intelligence...' : 'Generate Strategic Briefing'}
                     </button>
+
+                    {localStorage.getItem('last_suraksha_plan') && !isGenerating && (
+                        <button
+                            onClick={handleClearPlan}
+                            style={{
+                                width: '100%', background: 'transparent',
+                                color: '#94a3b8', padding: '10px', borderRadius: '8px', border: '1px dashed #e2e8f0',
+                                fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            CLEAR CURRENT DIRECTIVE
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

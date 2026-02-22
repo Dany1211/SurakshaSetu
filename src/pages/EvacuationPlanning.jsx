@@ -3,8 +3,9 @@ import { useLanguage } from '../context/LanguageContext';
 import PlanPanel from '../components/PlanPanel';
 import {
     Sparkles, Briefcase, AlertOctagon, TextSearch,
-    AlertTriangle, Clock, Zap, Activity, Truck, Radio, Send, PackageSearch
+    AlertTriangle, Clock, Zap, Activity, Truck, Radio, Send, PackageSearch, CheckCircle2
 } from 'lucide-react';
+import { broadcastActionPlan } from '../services/firebaseService';
 
 // ===========================================================
 //  Helper UI Components for the Intelligence Report
@@ -62,6 +63,24 @@ const DeficitCard = ({ label, required, current }) => {
 const EvacuationPlanning = () => {
     const { t, language } = useLanguage();
     const [activePlan, setActivePlan] = useState(null);
+    const [isBroadcasting, setIsBroadcasting] = useState(false);
+    const [broadcastSuccess, setBroadcastSuccess] = useState(false);
+
+    const handleBroadcast = async () => {
+        if (!activePlan) return;
+        setIsBroadcasting(true);
+        setBroadcastSuccess(false);
+        try {
+            await broadcastActionPlan(activePlan);
+            setBroadcastSuccess(true);
+            setTimeout(() => setBroadcastSuccess(false), 3000);
+        } catch (error) {
+            console.error("Failed to broadcast plan", error);
+            alert("Failed to broadcast. Check connection.");
+        } finally {
+            setIsBroadcasting(false);
+        }
+    };
 
     return (
         <div style={{
@@ -190,8 +209,18 @@ const EvacuationPlanning = () => {
                                     "{activePlan.broadcastDraft}"
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-                                    <button style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 20px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' }}>
-                                        <Send style={{ width: '16px', height: '16px' }} /> Distribute Warning via SMS
+                                    <button
+                                        onClick={handleBroadcast}
+                                        disabled={isBroadcasting || broadcastSuccess}
+                                        style={{ background: broadcastSuccess ? '#16a34a' : '#2563eb', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 20px', fontSize: '14px', fontWeight: 700, cursor: (isBroadcasting || broadcastSuccess) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' }}
+                                    >
+                                        {broadcastSuccess ? (
+                                            <><CheckCircle2 style={{ width: '16px', height: '16px' }} /> Broadcast Successful</>
+                                        ) : isBroadcasting ? (
+                                            <><Activity style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> Broadcasting...</>
+                                        ) : (
+                                            <><Send style={{ width: '16px', height: '16px' }} /> Broadcast to Mobile Units</>
+                                        )}
                                     </button>
                                 </div>
                             </div>

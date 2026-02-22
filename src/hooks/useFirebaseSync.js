@@ -11,6 +11,7 @@ export const useFirebaseSync = () => {
     const [globalAlerts, setGlobalAlerts] = useState([]);
     const [telemetry, setTelemetry] = useState({ wards: [], systemRisk: 'LOW' });
     const [resources, setResources] = useState(null);
+    const [rescuers, setRescuers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -47,6 +48,12 @@ export const useFirebaseSync = () => {
             }
         });
 
+        // 5. Listen to rescuers (Mobile App)
+        const unsubRescuers = onSnapshot(collection(db, COLLECTIONS.RESCUERS), (snapshot) => {
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setRescuers(data);
+        });
+
         // Set initial loading complete after attaching listeners
         // (In a real app, might wait for first snapshots, but this is fine)
         setTimeout(() => setLoading(false), 500);
@@ -56,6 +63,7 @@ export const useFirebaseSync = () => {
             unsubAlerts();
             unsubTelemetry();
             unsubResources();
+            unsubRescuers();
         };
     }, []);
 
@@ -65,6 +73,7 @@ export const useFirebaseSync = () => {
         telemetry,
         systemRisk: telemetry.systemRisk,
         resources,
+        rescuers,
         loading
     };
 };

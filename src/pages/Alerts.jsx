@@ -132,11 +132,22 @@ const Alerts = ({ initialTab = 'sos' }) => {
                                     </div>
 
                                     <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{alert.caller}</h3>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                                                    {alert.caller || `User ${alert.id.slice(0, 5)}`}
+                                                </h3>
+                                                <span style={{
+                                                    fontSize: '11px', fontWeight: 800, padding: '2px 8px', borderRadius: '4px',
+                                                    background: '#ebf5ff', color: '#2563eb', border: '1px solid #dbeafe',
+                                                    textTransform: 'uppercase'
+                                                }}>
+                                                    {alert.role || 'Personnel'}
+                                                </span>
+                                            </div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                                 <span style={{ fontSize: '13px', color: '#94a3b8', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                    <Clock style={{ width: '14px', height: '14px' }} /> {alert.time}
+                                                    <Clock style={{ width: '14px', height: '14px' }} /> {alert.time || 'New'}
                                                 </span>
                                                 {alert.urgent && (
                                                     <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '6px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', textTransform: 'uppercase' }}>URGENT</span>
@@ -144,19 +155,23 @@ const Alerts = ({ initialTab = 'sos' }) => {
                                             </div>
                                         </div>
 
-                                        <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginBottom: '12px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                 <MapPin style={{ width: '15px', height: '15px', color: '#64748b' }} />
-                                                <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>{alert.location}</span>
+                                                <span style={{ fontSize: '14px', color: '#334155', fontWeight: 600 }}>
+                                                    {alert.location || (alert.lat ? `${alert.lat.toFixed(4)}, ${alert.lng.toFixed(4)}` : 'Location Unavailable')}
+                                                </span>
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                 <Phone style={{ width: '15px', height: '15px', color: '#64748b' }} />
-                                                <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>{alert.phone}</span>
+                                                <span style={{ fontSize: '14px', color: '#334155', fontWeight: 600 }}>
+                                                    {alert.phone || 'No Contact Available'}
+                                                </span>
                                             </div>
                                         </div>
 
-                                        <p style={{ fontSize: '16px', color: '#334155', margin: '0 0 20px', fontWeight: 500, lineHeight: 1.5 }}>
-                                            {alert.issue}
+                                        <p style={{ fontSize: '16px', color: '#475569', margin: '0 0 20px', fontWeight: 500, lineHeight: 1.5, background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                                            "{alert.issue || 'Emergency SOS Triggered'}"
                                         </p>
 
                                         <div style={{ display: 'flex', gap: '10px' }}>

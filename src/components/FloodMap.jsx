@@ -44,6 +44,43 @@ const createShelterIcon = () => {
     });
 };
 
+// ---- Rescuer marker (blue pulse) ----
+const createRescuerIcon = (role) => {
+    const isMedical = role === 'Medical';
+    const bg = isMedical ? '#ec4899' : '#3b82f6';
+    const icon = isMedical ? '⚕️' : '🚑';
+    return L.divIcon({
+        className: 'rescuer-marker',
+        html: `<div style="
+            width: 26px; height: 26px; background: ${bg};
+            border: 2.5px solid white; border-radius: 50%;
+            box-shadow: 0 0 10px ${bg}80;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: white;
+            animation: pulse-ring 2s infinite;
+        ">${icon}</div>`,
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+    });
+};
+
+// ---- SOS marker (red pulsing emergency) ----
+const createSOSIcon = () => {
+    return L.divIcon({
+        className: 'sos-marker',
+        html: `<div style="
+            width: 32px; height: 32px; background: #ef4444;
+            border: 3px solid white; border-radius: 50%;
+            box-shadow: 0 0 15px #ef4444;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: white;
+            animation: pulse-ring 1.5s infinite;
+        ">🆘</div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+    });
+};
+
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
 
 // ---- COORDS MAP ----
@@ -81,7 +118,7 @@ const FloodMap = () => {
     const controlsRef = useRef(null);
     const legendRef = useRef(null);
 
-    const { telemetry } = useFirebaseSync();
+    const { telemetry, rescuers, sosTickets } = useFirebaseSync();
     const floodZones = (telemetry?.wards || []).map((w, i) => ({
         ...w,
         id: w.id || i,
@@ -93,6 +130,8 @@ const FloodMap = () => {
     const [activeFilter, setActiveFilter] = useState('ALL');
     const [showShelters, setShowShelters] = useState(true);
     const [showRainfall, setShowRainfall] = useState(false);
+    const [showRescuers, setShowRescuers] = useState(true);
+    const [showSOS, setShowSOS] = useState(true);
 
     useEffect(() => {
         if (controlsRef.current) {
@@ -154,6 +193,14 @@ const FloodMap = () => {
 
                 <button onClick={() => setShowRainfall(!showRainfall)} style={btnStyle(showRainfall, '#7c3aed', '#6d28d9')}>
                     🌧️ RAINFALL {showRainfall ? 'ON' : 'OFF'}
+                </button>
+
+                <button onClick={() => setShowRescuers(!showRescuers)} style={btnStyle(showRescuers, '#3b82f6', '#2563eb')}>
+                    🚑 LIVE UNITS {showRescuers ? 'ON' : 'OFF'}
+                </button>
+
+                <button onClick={() => setShowSOS(!showSOS)} style={btnStyle(showSOS, '#ef4444', '#dc2626')}>
+                    🆘 SOS ALERTS {showSOS ? 'ON' : 'OFF'}
                 </button>
             </div>
 
@@ -228,6 +275,45 @@ const FloodMap = () => {
                         </Popup>
                     </Marker>
                 ))}
+
+                {/* Live Rescuers Markers */}
+                {showRescuers && rescuers.map((rescuer) => (
+                    <Marker key={rescuer.id} position={[rescuer.lat, rescuer.lng]} icon={createRescuerIcon(rescuer.role)}>
+                        <Popup>
+                            <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '160px', fontSize: '14px' }}>
+                                <p style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px', marginBottom: '4px' }}>
+                                    {rescuer.role === 'Medical' ? '⚕️' : '🚑'} {rescuer.role} Unit
+                                </p>
+                                <p style={{ fontSize: '12px', fontWeight: 600, color: rescuer.status === 'Busy' ? '#dc2626' : '#16a34a', textTransform: 'uppercase', marginBottom: '6px' }}>
+                                    STATUS: {rescuer.status || 'Active'}
+                                </p>
+                                <p style={{ color: '#64748b', fontSize: '12px' }}>
+                                    ID: <span style={{ fontFamily: 'monospace' }}>{rescuer.id.slice(0, 8)}</span>
+                                </p>
+                            </div>
+                        </Popup>
+                    </Marker>
+                ))}
+
+                {/* SOS Emergency Markers */}
+                {showSOS && sosTickets.filter(s => s.status !== 'Resolved' && s.lat && s.lng).map((sos) => (
+                    <Marker key={sos.id} position={[sos.lat, sos.lng]} icon={createSOSIcon()}>
+                        <Popup>
+                            <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '180px' }}>
+                                <p style={{ fontWeight: 800, color: '#dc2626', fontSize: '16px', marginBottom: '4px' }}>🆘 EMERGENCY SOS</p>
+                                <p style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>
+                                    TYPE: {sos.role} Unit Request
+                                </p>
+                                <div style={{ background: '#fef2f2', padding: '8px', borderRadius: '6px', border: '1px solid #fecaca', marginBottom: '8px' }}>
+                                    <p style={{ fontSize: '12px', color: '#991b1b', margin: 0, fontWeight: 600 }}>{sos.issue || 'Silent Alarm Triggered'}</p>
+                                </div>
+                                <p style={{ color: '#64748b', fontSize: '11px', margin: 0 }}>
+                                    TIME: {sos.createdAt?.toDate ? sos.createdAt.toDate().toLocaleTimeString() : 'Just now'}
+                                </p>
+                            </div>
+                        </Popup>
+                    </Marker>
+                ))}
             </MapContainer>
 
             {/* ---- Legend ---- */}
@@ -264,6 +350,24 @@ const FloodMap = () => {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'rgba(109,40,217,0.2)', border: '1px solid rgba(109,40,217,0.3)', flexShrink: 0 }} />
                                 <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Rainfall Intensity</span>
+                            </div>
+                        </>
+                    )}
+                    {showRescuers && (
+                        <>
+                            <div style={{ height: '1px', background: '#f1f5f9', margin: '2px 0' }} />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#3b82f6', border: '2px solid white', boxShadow: '0 0 4px #3b82f6', flexShrink: 0 }} />
+                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Live Rescuer</span>
+                            </div>
+                        </>
+                    )}
+                    {showSOS && (
+                        <>
+                            <div style={{ height: '1px', background: '#f1f5f9', margin: '2px 0' }} />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ef4444', border: '2px solid white', boxShadow: '0 0 8px #ef4444', flexShrink: 0 }} />
+                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#dc2626' }}>SOS Emergency</span>
                             </div>
                         </>
                     )}

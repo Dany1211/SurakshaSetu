@@ -1,11 +1,34 @@
 import { collection, addDoc, getDocs, updateDoc, doc, serverTimestamp, setDoc, query, orderBy, limit, onSnapshot } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { db, auth } from "../config/firebase";
 
 export const COLLECTIONS = {
     TELEMETRY: 'telemetry_logs',
-    ALERTS: 'active_alerts',
+    ALERTS: 'alerts',
     SOS: 'sos_dispatch',
-    RESOURCES: 'resources'
+    RESOURCES: 'resources',
+    RESCUERS: 'rescuers',
+    ACTION_PLANS: 'action_plans'
+};
+
+// --- AUTH METHDOS ---
+export const loginUser = async (email, password) => {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return userCredential.user;
+    } catch (error) {
+        console.error("Error logging in:", error);
+        throw error;
+    }
+};
+
+export const logoutUser = async () => {
+    try {
+        await signOut(auth);
+    } catch (error) {
+        console.error("Error logging out:", error);
+        throw error;
+    }
 };
 
 /**
@@ -35,6 +58,43 @@ export const updateActiveAlerts = async (alerts) => {
         });
     } catch (error) {
         console.error("Error updating alerts:", error);
+    }
+};
+
+/**
+ * Broadcast an AI-generated Action Plan to Mobile Users
+ */
+export const broadcastActionPlan = async (plan) => {
+    try {
+        await setDoc(doc(db, COLLECTIONS.ALERTS, 'global'), {
+            alerts: [{
+                id: plan.id || Date.now().toString(),
+                message: `URGENT ACTION PLAN: ${plan.title}\n${plan.broadcastDraft}`,
+                targetRole: 'All',
+                timestamp: new Date().toISOString(),
+                fullPlan: plan // Optional: if mobile app wants to show the full phase breakdown
+            }],
+            updatedAt: serverTimestamp()
+        }, { merge: true });
+    } catch (error) {
+        console.error("Error broadcasting action plan:", error);
+        throw error;
+    }
+};
+
+/**
+ * Archive an AI-generated Action Plan to Firestore
+ */
+export const archiveActionPlan = async (plan) => {
+    try {
+        await addDoc(collection(db, COLLECTIONS.ACTION_PLANS), {
+            ...plan,
+            timestamp: serverTimestamp(),
+            status: 'Archived'
+        });
+    } catch (error) {
+        console.error("Error archiving action plan:", error);
+        throw error;
     }
 };
 
