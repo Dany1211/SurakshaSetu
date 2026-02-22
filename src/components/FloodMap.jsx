@@ -20,28 +20,30 @@ const createRiskIcon = (riskLevel) => {
     return L.divIcon({
         className: 'custom-marker',
         html: `<div style="
-            width: 16px; height: 16px; background: ${color};
-            border: 2.5px solid white; border-radius: 50%;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            width: 12px; height: 12px; background: ${color};
+            border: 2px solid white; border-radius: 50%;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
         "></div>`,
-        iconSize: [16, 16],
-        iconAnchor: [8, 8],
+        iconSize: [12, 12],
+        iconAnchor: [6, 6],
     });
 };
 
-// ---- Shelter marker (green square) ----
+// ---- Shelter marker (green square with Lucide icon) ----
 const createShelterIcon = () => {
     return L.divIcon({
         className: 'shelter-marker',
         html: `<div style="
-            width: 24px; height: 24px; background: #22c55e;
-            border: 2.5px solid white; border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(34,197,94,0.4);
+            width: 24px; height: 24px; background: #16a34a;
+            border: 2px solid white; border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(22,163,74,0.25);
             display: flex; align-items: center; justify-content: center;
-            font-size: 13px; color: white;
-        ">🏠</div>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+            color: white; transform: translate(-50%, -50%);
+        ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </div>`,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
     });
 };
 
@@ -84,19 +86,21 @@ const riskColors = {
 const filterOptions = ['ALL', 'HIGH', 'MEDIUM', 'LOW'];
 
 
-// ---- Hospital marker (blue square) ----
+// ---- Hospital marker (blue building with Lucide icon) ----
 const createHospitalIcon = () => {
     return L.divIcon({
         className: 'hospital-marker',
         html: `<div style="
             width: 24px; height: 24px; background: #2563eb;
-            border: 2.5px solid white; border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(37,99,235,0.4);
+            border: 2px solid white; border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.25);
             display: flex; align-items: center; justify-content: center;
-            font-size: 13px; color: white;
-        ">🏥</div>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+            color: white; transform: translate(-50%, -50%);
+        ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>
+        </div>`,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
     });
 };
 
@@ -135,23 +139,25 @@ const FloodMap = () => {
 
     const filterLabel = {
         ALL: 'All Zones',
-        HIGH: '🔴 High Only',
-        MEDIUM: '🟡 Medium Only',
-        LOW: '🟢 Low Only',
+        HIGH: '🔴 High',
+        MEDIUM: '🟡 Medium',
+        LOW: '🟢 Low',
     };
 
     // Shared button style helper
     const btnStyle = (active, activeColor, activeBorder) => ({
         display: 'flex', alignItems: 'center', gap: '6px',
-        padding: '8px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: 700,
-        background: active ? activeColor : 'rgba(255,255,255,0.95)',
-        color: active ? 'white' : '#334155',
+        padding: '6px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: 800,
+        background: active ? activeColor : 'rgba(255,255,255,0.9)',
+        color: active ? 'white' : '#475569',
         backdropFilter: 'blur(8px)',
         border: active ? `1px solid ${activeBorder}` : '1px solid #e2e8f0',
         cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
-        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-        transition: 'all 0.15s ease',
-        whiteSpace: 'nowrap',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        width: '115px',
+        textTransform: 'uppercase',
+        letterSpacing: '0.04em'
     });
 
     return (
@@ -169,7 +175,7 @@ const FloodMap = () => {
                         >
                             <button onClick={() => setShowZones(!showZones)} style={btnStyle(showZones, '#2563eb', '#1d4ed8')}>
                                 <Layers style={{ width: '14px', height: '14px' }} />
-                                ZONES {showZones ? 'ON' : 'OFF'}
+                                Zones
                             </button>
 
                             <button onClick={cycleFilter} style={btnStyle(activeFilter !== 'ALL', '#0f172a', '#0f172a')}>
@@ -178,15 +184,15 @@ const FloodMap = () => {
                             </button>
 
                             <button onClick={() => setShowShelters(!showShelters)} style={btnStyle(showShelters, '#16a34a', '#15803d')}>
-                                🏠 SHELTERS {showShelters ? 'ON' : 'OFF'}
+                                🏠 Shelters
                             </button>
 
                             <button onClick={() => setShowHospitals(!showHospitals)} style={btnStyle(showHospitals, '#2563eb', '#1d4ed8')}>
-                                🏥 HOSPITALS {showHospitals ? 'ON' : 'OFF'}
+                                🏥 Hospitals
                             </button>
 
                             <button onClick={() => setShowRainfall(!showRainfall)} style={btnStyle(showRainfall, '#7c3aed', '#6d28d9')}>
-                                🌧️ RAINFALL {showRainfall ? 'ON' : 'OFF'}
+                                🌧️ Rainfall
                             </button>
                         </motion.div>
                     )}
@@ -269,63 +275,79 @@ const FloodMap = () => {
                         <Popup>
                             <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '160px', fontSize: '14px' }}>
                                 <p style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px', marginBottom: '4px' }}>🏠 {shelter.name}</p>
-                                <p style={{ fontSize: '12px', fontWeight: 600, color: shelter.status === 'Open' ? '#16a34a' : '#d97706', textTransform: 'uppercase', marginBottom: '6px' }}>
-                                    SAFE SHELTER — {shelter.status}
+                                <p style={{ fontSize: '11px', fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', marginBottom: '8px' }}>
+                                    SAFE SHELTER ZONE
                                 </p>
-                                <p style={{ color: '#64748b', fontSize: '14px' }}>Capacity: <strong style={{ color: '#0f172a' }}>{shelter.capacity} people</strong></p>
+                                <p style={{ color: '#64748b', fontSize: '13px', margin: '0 0 4px' }}>Status: <strong style={{ color: '#16a34a' }}>{shelter.status}</strong></p>
+                                <p style={{ color: '#64748b', fontSize: '13px' }}>Capacity: <strong style={{ color: '#0f172a' }}>{shelter.capacity} people</strong></p>
                             </div>
                         </Popup>
                     </Marker>
                 ))}
 
                 {/* Hospital Markers */}
-                {showHospitals && hospitals.map((hosp, idx) => (
-                    <Marker key={`hosp-${idx}`} position={[hosp.lat, hosp.lng]} icon={createHospitalIcon()}>
-                        <Popup>
-                            <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '180px', fontSize: '14px' }}>
-                                <p style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px', marginBottom: '4px' }}>🏥 {hosp.name}</p>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                    <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-                                        <div style={{
-                                            width: `${(hosp.current / hosp.capacity) * 100}%`,
-                                            height: '100%',
-                                            background: (hosp.current / hosp.capacity) > 0.8 ? '#ef4444' : '#2563eb'
-                                        }} />
+                {showHospitals && hospitals.map((hosp, i) => {
+                    const occupancy = Math.round((hosp.current / hosp.capacity) * 100);
+                    return (
+                        <Marker key={`hosp-${i}`} position={[hosp.lat, hosp.lng]} icon={createHospitalIcon()}>
+                            <Popup>
+                                <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '180px' }}>
+                                    <p style={{ fontWeight: 800, color: '#0f172a', fontSize: '14px', margin: '0 0 2px' }}>🏥 {hosp.name}</p>
+                                    <p style={{ fontSize: '10px', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.02em', marginBottom: '10px' }}>Medical Emergency Center</p>
+
+                                    <div style={{ marginBottom: '8px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, marginBottom: '4px' }}>
+                                            <span style={{ color: '#64748b' }}>Occupancy</span>
+                                            <span style={{ color: occupancy > 85 ? '#ef4444' : '#2563eb' }}>{occupancy}%</span>
+                                        </div>
+                                        <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '10px', overflow: 'hidden' }}>
+                                            <div style={{ width: `${occupancy}%`, height: '100%', background: occupancy > 85 ? '#ef4444' : '#2563eb', borderRadius: '10px' }} />
+                                        </div>
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                                        <span style={{ color: '#64748b', fontWeight: 600 }}>Occupancy</span>
-                                        <span style={{ fontWeight: 700, color: '#0f172a' }}>{Math.round((hosp.current / hosp.capacity) * 100)}%</span>
-                                    </div>
-                                    <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>
-                                        Beds: <strong>{hosp.current}/{hosp.capacity}</strong>
+
+                                    <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>
+                                        Beds: <strong style={{ color: '#0f172a' }}>{hosp.capacity - hosp.current}</strong> available
                                     </p>
                                 </div>
-                            </div>
-                        </Popup>
-                    </Marker>
-                ))}
+                            </Popup>
+                        </Marker>
+                    );
+                })}
             </MapContainer>
 
-            {/* ---- Legend ---- */}
+            {/* ---- Legend (Compact - Bottom Right) ---- */}
             <div ref={legendRef} style={{
-                position: 'absolute', bottom: '12px', left: '12px', zIndex: 1000,
-                background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)',
-                borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 12px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)', fontFamily: 'Outfit, sans-serif',
-                width: 'fit-content', pointerEvents: 'auto', outline: 'none',
+                position: 'absolute', bottom: '16px', right: '16px', zIndex: 1000,
+                background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(10px)',
+                borderRadius: '8px', border: '1px solid #e2e8f0', padding: '8px 10px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.05)', fontFamily: 'Outfit, sans-serif',
+                minWidth: '100px'
             }}>
-                <p style={{ fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px', pointerEvents: 'none' }}>Legend</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', pointerEvents: 'none' }}>
+                <p style={{ fontSize: '9px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>Legend</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {[
-                        { label: 'High Risk', color: '#ef4444' },
-                        { label: 'Medium Risk', color: '#f59e0b' },
-                        { label: 'Low Risk', color: '#22c55e' },
+                        { label: 'High', color: '#ef4444' },
+                        { label: 'Medium', color: '#f59e0b' },
+                        { label: 'Low', color: '#22c55e' },
                     ].map((item) => (
                         <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color, border: '1px solid white', flexShrink: 0 }} />
-                            <span style={{ fontSize: '11px', fontWeight: 600, color: '#334155' }}>{item.label}</span>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: item.color, flexShrink: 0 }} />
+                            <span style={{ fontSize: '10px', fontWeight: 700, color: '#475569' }}>{item.label}</span>
                         </div>
                     ))}
+                    {(showShelters || showHospitals || showRainfall) && <div style={{ height: '1px', background: '#f1f5f9', margin: '3px 0' }} />}
+                    {showShelters && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontSize: '9px' }}>🏠</span>
+                            <span style={{ fontSize: '10px', fontWeight: 700, color: '#475569' }}>Shelter</span>
+                        </div>
+                    )}
+                    {showHospitals && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontSize: '9px' }}>🏥</span>
+                            <span style={{ fontSize: '10px', fontWeight: 700, color: '#475569' }}>Hospital</span>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
