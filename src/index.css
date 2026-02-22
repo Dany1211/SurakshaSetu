@@ -127,3 +127,8 @@ button[class*="bg-red"],
 button[class*="bg-white"] {
   font-family: 'Outfit', sans-serif;
 }
+
+/* Hide Leaflet Routing Machine default text box */
+.leaflet-routing-container {
+  display: none !important;
+}

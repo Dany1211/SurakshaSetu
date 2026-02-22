@@ -11,58 +11,68 @@ const ai = new GoogleGenerativeAI(apiKey);
  * Generates an evacuation action plan using Gemini Flash.
  *
  * @param {Object} data Context about the disaster scenario
- * @param {string} data.zone Name of the endangered active zone (e.g. Andheri West)
- * @param {string} data.riskLevel Severe, High, Medium, etc.
- * @param {string} data.shelterName Name of nearest shelter to route to
- * @param {string} data.shelterDistance Approximate string distance/time
+ * @param {string} adminPrompt Custom instructions from the admin
+ * @param {string} targetLanguage The language to generate the response in (en, hi, mr)
  * @returns {Promise<Object>} An action plan object to populate the UI
  */
-export const generateActionPlan = async ({ zone, riskLevel, shelterName, shelterDistance }) => {
+export const generateActionPlan = async (data = {}, adminPrompt = '', targetLanguage = 'en') => {
     try {
         const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
 
+        const langMap = {
+            'en': 'English',
+            'hi': 'Hindi (देवानागरी लिपि)',
+            'mr': 'Marathi (मराठी)'
+        };
+        const outputLanguage = langMap[targetLanguage] || 'English';
+
         const prompt = `
-You are an Emergency Response AI for the "Suraksha Setu" local disaster management dashboard in Mumbai.
-Generate an emergency action plan for a disaster response team and citizens.
+You are the Chief AI Intelligence Officer for the "Suraksha Setu" Disaster Command Center in Mumbai, advising the Governor directly.
+Your task is to generate a highly strategic, high-level Executive Evacuation Briefing.
+You MUST write all textual content in the following language: ${outputLanguage}. This is an absolute requirement.
 
-CURRENT SITUATION:
-- Affected Zone: ${zone}
-- Threat Level: ${riskLevel}
-- Designated Shelter: ${shelterName}
-- Distance/Time to Shelter: ${shelterDistance}
+DO NOT include any markdown formatting like \`\`\`json or \`\`\` in your response. Return ONLY raw valid JSON.
 
-Return ONLY a valid, minified JSON object with the following exact keys for the UI to consume:
+GOVERNOR'S DIRECTIVES (CRITICAL - MUST OBEY):
+"${adminPrompt ? adminPrompt : 'No specific constraints provided. Analyze standard operating procedures.'}"
+
+SYSTEM CONTEXT:
+- Affected Zone: ${data.zone || 'Multiple Wards in Mumbai'}
+- Risk Level: ${data.riskLevel || 'SEVERE'}
+
+Based on the directives and context, extrapolate realistic bottlenecks and generate a highly specific Executive Intelligence Report matching this EXACT JSON structure:
+
 {
-  "title": "A short, urgent title for the response plan (e.g. 'Critical Evacuation: Andheri West')",
-  "severity": "Must be exactly HIGH, MEDIUM, or LOW based on the threat level",
-  "priorityOrder": "1-sentence summary of who evacuates first",
-  "shelters": "Name of the designated shelter for this zone",
-  "resources": "Number of buses/ambulances needed (make a realistic guess based on severity)",
-  "estimatedTime": "Estimated response or evacuation time",
-  "routes": "Identify realistic major roads in Mumbai to avoid waterlogging from the zone to the shelter",
-  "medicalTeams": "Deployment instructions for medical units",
-  "foodSupply": "Amount of MREs/food packets needed based on severity",
-  "communication": "How to alert the public (e.g. SMS, Sirens)"
+  "title": "A strong, brief title for the operation (e.g. Operation Safe Haven: Andheri West - in ${outputLanguage})",
+  "executiveSummary": "A 2-sentence highly professional assessment of the immediate threat and required overarching strategy, written for a Governor.",
+  "criticalBottlenecks": "Identify 1 or 2 specific things that will fail or block the evacuation based on the context (e.g. 'SV Road bridge capacity exceeded by 200%').",
+  "phase1": "What MUST happen in the next 0-2 hours (bullet points or short paragraph).",
+  "phase2": "What MUST happen in the next 2-12 hours (bullet points or short paragraph).",
+  "resourceAnalysis": {
+     "busesRequired": 50,
+     "boatsRequired": 10,
+     "ambulancesRequired": 15
+  },
+  "broadcastDraft": "Draft a short, urgent SMS broadcast warning to be sent to the affected residents. MUST BE IN ${outputLanguage}."
 }
 
-Do not include markdown blocks like \`\`\`json. Return pure JSON.
+Ensure the response is extremely professional, strictly adheres to the requested JSON schema, directly solves the problem described in the Governor's directives, and is written entirely in ${outputLanguage}.
 `;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const rawText = response.text();
-        // Clean up markdown payload if the model wraps it (sometimes rules are ignored)
+
+        // Clean up markdown payload if the model wraps it
         const cleanedText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
         const plan = JSON.parse(cleanedText);
-        // Ensure id is present for React keys
         plan.id = `gen_${Date.now()}`;
 
         return plan;
 
     } catch (error) {
         console.error("Gemini Plan Generation Error:", error);
-        throw new Error("Failed to generate action plan. Please fallback to manual planning.");
+        throw new Error("Failed to generate strategic briefing. Please review inputs.");
     }
 };
-

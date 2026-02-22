@@ -1,188 +1,67 @@
 import { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import PlanPanel from '../components/PlanPanel';
-import ActionPlanMap from '../components/ActionPlanMap'; // Added
 import {
-    MapPin, Users, Clock, Shield, Sparkles, AlertTriangle,
-    Building2, Navigation, Phone, CheckCircle2
+    Sparkles, Briefcase, AlertOctagon, TextSearch,
+    AlertTriangle, Clock, Zap, Activity, Truck, Radio, Send, PackageSearch
 } from 'lucide-react';
 
-// ---- Shelter Data ----
-const shelters = [
-    { id: 1, name: 'Town Hall Community Center', area: 'Kurla', capacity: 500, current: 87, status: 'Open', supplies: true, medical: true },
-    { id: 2, name: 'Primary School #3', area: 'Andheri', capacity: 300, current: 0, status: 'Ready', supplies: true, medical: false },
-    { id: 3, name: 'District Sports Complex', area: 'Sion', capacity: 800, current: 234, status: 'Open', supplies: true, medical: true },
-    { id: 4, name: 'Municipal School #7', area: 'Dadar', capacity: 250, current: 0, status: 'Ready', supplies: true, medical: false },
-    { id: 5, name: 'Bandra Community Hall', area: 'Bandra', capacity: 350, current: 145, status: 'Filling', supplies: true, medical: true },
-    { id: 6, name: 'Borivali Relief Camp', area: 'Borivali', capacity: 200, current: 0, status: 'Ready', supplies: false, medical: false },
-];
-
-// ---- Route Data ----
-const evacuationRoutes = [
-    { id: 1, from: 'Kurla West', to: 'Town Hall Community Center', distance: '2.3 km', time: '8 min', road: 'LBS Marg → CST Road', status: 'Clear' },
-    { id: 2, from: 'Andheri West', to: 'Primary School #3', distance: '1.8 km', time: '6 min', road: 'SV Road → Link Road', status: 'Clear' },
-    { id: 3, from: 'Sion', to: 'District Sports Complex', distance: '1.5 km', time: '5 min', road: 'Eastern Express Hwy', status: 'Clear' },
-    { id: 4, from: 'Dadar', to: 'Municipal School #7', distance: '1.1 km', time: '4 min', road: 'Tilak Bridge Road', status: 'Waterlogged' },
-    { id: 5, from: 'Bandra East', to: 'Bandra Community Hall', distance: '2.0 km', time: '7 min', road: 'Swami Vivekanand Rd', status: 'Clear' },
-];
-
-
-
 // ===========================================================
-//  Shelter Card
+//  Helper UI Components for the Intelligence Report
 // ===========================================================
-const ShelterCard = ({ shelter }) => {
-    const occupancy = shelter.capacity > 0 ? Math.round((shelter.current / shelter.capacity) * 100) : 0;
-    const statusColor = shelter.status === 'Open' ? '#16a34a' : shelter.status === 'Filling' ? '#d97706' : '#3b82f6';
-    const barColor = occupancy > 80 ? '#ef4444' : occupancy > 50 ? '#f59e0b' : '#22c55e';
-
-    return (
-        <div style={{
-            padding: '14px 16px', borderRadius: '12px', background: 'white',
-            border: '1px solid #f1f5f9', fontFamily: 'Outfit, sans-serif',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-        }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Building2 style={{ width: '18px', height: '18px', color: '#64748b' }} />
-                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>{shelter.name}</span>
-                </div>
-                <span style={{
-                    fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: '6px',
-                    color: statusColor, background: `${statusColor}10`, border: `1px solid ${statusColor}30`,
-                    textTransform: 'uppercase', letterSpacing: '0.05em'
-                }}>
-                    {shelter.status}
-                </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                <MapPin style={{ width: '14px', height: '14px', color: '#94a3b8' }} />
-                <span style={{ fontSize: '13px', color: '#94a3b8', fontWeight: 500 }}>{shelter.area}</span>
-                <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 600, marginLeft: 'auto' }}>
-                    {shelter.current} / {shelter.capacity} people
-                </span>
-            </div>
-
-            {/* Capacity bar */}
-            <div style={{ height: '4px', borderRadius: '999px', background: '#f1f5f9', overflow: 'hidden', marginBottom: '8px' }}>
-                <div style={{
-                    height: '100%', width: `${occupancy}%`, borderRadius: '999px',
-                    background: barColor, transition: 'width 0.5s ease',
-                }} />
-            </div>
-
-            {/* Tags */}
-            <div style={{ display: 'flex', gap: '8px' }}>
-                {shelter.supplies && (
-                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', textTransform: 'uppercase' }}>
-                        ✓ Supplies
-                    </span>
-                )}
-                {shelter.medical && (
-                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', textTransform: 'uppercase' }}>
-                        ✓ Medical
-                    </span>
-                )}
-            </div>
-        </div>
-    );
-};
-
-// ===========================================================
-//  Route Card
-// ===========================================================
-const RouteCard = ({ route }) => {
-    const isBlocked = route.status === 'Waterlogged';
-    return (
-        <div style={{
-            padding: '12px 16px', borderRadius: '10px',
-            background: isBlocked ? '#fffbeb' : 'white',
-            border: `1px solid ${isBlocked ? '#fde68a' : '#f1f5f9'}`,
-            fontFamily: 'Outfit, sans-serif', display: 'flex', alignItems: 'center', gap: '12px',
-        }}>
-            {/* Route arrow */}
-            <div style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flexShrink: 0,
-            }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', border: '2px solid white', boxShadow: '0 0 0 1px #fecaca' }} />
-                <div style={{ width: '1.5px', height: '20px', background: isBlocked ? '#f59e0b' : '#22c55e' }} />
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', border: '2px solid white', boxShadow: '0 0 0 1px #bbf7d0' }} />
-            </div>
-
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>{route.from} → {route.to}</span>
-                </div>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, fontWeight: 500 }}>
-                    via {route.road} • {route.distance} • ~{route.time}
-                </p>
-            </div>
-
-            <span style={{
-                fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '6px',
-                textTransform: 'uppercase', flexShrink: 0, letterSpacing: '0.04em',
-                background: isBlocked ? '#fef3c7' : '#f0fdf4',
-                color: isBlocked ? '#d97706' : '#16a34a',
-                border: `1px solid ${isBlocked ? '#fde68a' : '#bbf7d0'}`,
-            }}>
-                {isBlocked ? '⚠ Waterlogged' : '✓ Clear'}
-            </span>
-        </div>
-    );
-};
-
-
-
-// ===========================================================
-//  Emergency Contacts
-// ===========================================================
-const EmergencyContacts = () => (
-    <div style={{
-        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-        padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', fontFamily: 'Outfit, sans-serif',
-    }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <Phone style={{ width: '18px', height: '18px', color: '#dc2626' }} />
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: 0 }}>Emergency Helplines</h3>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {[
-                { name: 'NDRF Control Room', number: '011-24363260' },
-                { name: 'Mumbai BMC Disaster', number: '1916' },
-                { name: 'Police Emergency', number: '100' },
-                { name: 'Ambulance', number: '108' },
-            ].map((c, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>{c.name}</span>
-                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>{c.number}</span>
-                </div>
-            ))}
-        </div>
+const SectionTitle = ({ icon: Icon, title, color = '#1e293b' }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', marginTop: '32px' }}>
+        <Icon style={{ width: '20px', height: '20px', color: color, strokeWidth: 2.5 }} />
+        <h4 style={{ fontSize: '18px', fontWeight: 800, color: color, margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {title}
+        </h4>
+        <div style={{ flex: 1, height: '1px', background: '#f1f5f9', marginLeft: '16px' }} />
     </div>
 );
+
+const ParagraphText = ({ text }) => (
+    <p style={{ fontSize: '16px', color: '#334155', lineHeight: 1.7, margin: '0 0 16px', fontWeight: 500 }}>
+        {text}
+    </p>
+);
+
+const DeficitCard = ({ label, required, current }) => {
+    const deficit = required - current;
+    const hasDeficit = deficit > 0;
+
+    return (
+        <div style={{
+            flex: 1, padding: '20px', borderRadius: '12px',
+            background: hasDeficit ? '#fef2f2' : '#f8fafc',
+            border: `1px solid ${hasDeficit ? '#fecaca' : '#e2e8f0'}`,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
+        }}>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: hasDeficit ? '#991b1b' : '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+                {label}
+            </span>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginBottom: '8px' }}>
+                <span style={{ fontSize: '32px', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{required}</span>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#94a3b8', paddingBottom: '4px' }}>Req.</span>
+            </div>
+            {hasDeficit ? (
+                <div style={{ padding: '4px 10px', background: '#dc2626', color: 'white', borderRadius: '99px', fontSize: '12px', fontWeight: 800 }}>
+                    SHORTFALL: {deficit}
+                </div>
+            ) : (
+                <div style={{ padding: '4px 10px', background: '#16a34a', color: 'white', borderRadius: '99px', fontSize: '12px', fontWeight: 800 }}>
+                    SUFFICIENT
+                </div>
+            )}
+        </div>
+    );
+}
 
 // ===========================================================
 //  MAIN PAGE
 // ===========================================================
 const EvacuationPlanning = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [activePlan, setActivePlan] = useState(null);
-
-    // Mock geocoder for the hackathon
-    const getCoords = (locationStr) => {
-        if (!locationStr) return null;
-        const s = locationStr.toLowerCase();
-        if (s.includes('andheri')) return { lat: 19.1365, lng: 72.8296 };
-        if (s.includes('kurla')) return { lat: 19.0726, lng: 72.8845 };
-        if (s.includes('dadar')) return { lat: 19.0178, lng: 72.8478 };
-        if (s.includes('sports')) return { lat: 19.0500, lng: 72.8550 };
-        // Default to Town Hall / Kurla area
-        return { lat: 19.0800, lng: 72.8780 };
-    };
-
-    const startCoord = activePlan ? getCoords(activePlan.priorityOrder) : null;
-    const endCoord = activePlan ? getCoords(activePlan.shelters) : null;
 
     return (
         <div style={{
@@ -192,88 +71,133 @@ const EvacuationPlanning = () => {
             {/* Page Header */}
             <div style={{ marginBottom: '24px' }}>
                 <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Sparkles style={{ width: '28px', height: '28px', color: '#2563eb' }} />
-                    {t('menu.evacuation_planning')}
+                    <Briefcase style={{ width: '28px', height: '28px', color: '#2563eb' }} />
+                    Strategic Evacuation Planning
                 </h1>
                 <p style={{ fontSize: '15px', color: '#94a3b8', margin: 0, marginTop: '8px', fontWeight: 500 }}>
-                    AI-generated evacuation plans, shelter status, routes & resource deployment
+                    Governor's Intelligence Sandbox: AI-generated bottlenecks, strategic phasing, and resource analysis.
                 </p>
             </div>
 
-            {/* ---- ROW: Plan + Map side by side ---- */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', height: '500px' }}>
-                <div style={{ flex: '0 0 55%', minWidth: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ flex: 1, overflow: 'auto' }}>
-                        <PlanPanel onPlanChange={setActivePlan} />
+            {/* ---- ROW: Strategic Executive Dashboard ---- */}
+            <div style={{ display: 'flex', gap: '20px', minHeight: '600px' }}>
+
+                {/* LEFT: Command Console (Inputs & Resources) */}
+                <div style={{ flex: '0 0 380px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                    {/* The Action Generator */}
+                    <PlanPanel onPlanChange={setActivePlan} />
+
+                    {/* Quick Resource Overview / Deficit Visualizer */}
+                    <div style={{
+                        background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0',
+                        padding: '24px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)',
+                    }}>
+                        <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <PackageSearch style={{ width: '18px', height: '18px', color: '#64748b' }} />
+                            Current Capacity
+                        </h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #f1f5f9' }}>
+                                <span style={{ fontSize: '14px', fontWeight: 600, color: '#475569' }}>Transport Buses</span>
+                                <span style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a' }}>142 <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>Active</span></span>
+                            </div>
+                            <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #f1f5f9' }}>
+                                <span style={{ fontSize: '14px', fontWeight: 600, color: '#475569' }}>NDRF Boats</span>
+                                <span style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a' }}>34 <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>Active</span></span>
+                            </div>
+                            <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #f1f5f9' }}>
+                                <span style={{ fontSize: '14px', fontWeight: 600, color: '#475569' }}>Ambulances</span>
+                                <span style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a' }}>85 <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>Active</span></span>
+                            </div>
+                            <p style={{ fontSize: '12px', color: '#94a3b8', margin: '8px 0 0', textAlign: 'center', fontWeight: 500 }}>
+                                AI automatically contrasts required vs current capacity in the report.
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div style={{ flex: '0 0 45%', minWidth: 0, height: '100%' }}>
-                    {/* Real map component that we just built */}
-                    <ActionPlanMap
-                        startCoord={startCoord}
-                        endCoord={endCoord}
-                        startName={activePlan ? activePlan.priorityOrder.split('→')[0] : "Origin"}
-                        endName={activePlan ? activePlan.shelters.split(',')[0] : "Shelter"}
-                    />
-                </div>
-            </div>
 
-            {/* ---- ROW: Shelters side by side ---- */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-                {/* Shelters */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                        padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', height: '100%',
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                            <div>
-                                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                                    Designated Shelters
-                                </h2>
-                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                                    {shelters.length} shelters • {shelters.reduce((a, s) => a + s.capacity, 0)} total capacity
+                {/* RIGHT: The Intelligence Report Document */}
+                <div style={{
+                    flex: 1, background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)', padding: '50px',
+                    position: 'relative', overflowY: 'auto', display: 'flex', flexDirection: 'column'
+                }} className="custom-scrollbar">
+
+                    {/* Standard Header overlaying the report */}
+                    <div style={{ position: 'absolute', top: '24px', right: '32px', display: 'flex', gap: '12px' }}>
+                        <div style={{ padding: '6px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '12px', fontWeight: 700, color: '#475569', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                            Confidential Briefing
+                        </div>
+                        <div style={{ padding: '6px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', fontSize: '12px', fontWeight: 800, color: '#dc2626', letterSpacing: '0.05em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <AlertOctagon style={{ width: '14px', height: '14px' }} /> Executive Eyes Only
+                        </div>
+                    </div>
+
+                    {!activePlan ? (
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', opacity: 0.5 }}>
+                            <Briefcase style={{ width: '64px', height: '64px', color: '#cbd5e1', marginBottom: '24px' }} />
+                            <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#475569', margin: '0 0 8px' }}>Awaiting Directive</h3>
+                            <p style={{ fontSize: '15px', color: '#64748b', maxWidth: '300px', textAlign: 'center' }}>
+                                Use the Command Console to specify constraints and generate a strategic execution report.
+                            </p>
+                        </div>
+                    ) : (
+                        <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%', animation: 'fadeInUp 0.5s ease-out' }}>
+
+                            {/* Report Header */}
+                            <div style={{ borderBottom: '2px solid #0f172a', paddingBottom: '24px', marginBottom: '32px' }}>
+                                <h2 style={{ fontSize: '32px', fontWeight: 900, color: '#0f172a', margin: '0 0 16px', lineHeight: 1.2 }}>{activePlan.title}</h2>
+                                <div style={{ display: 'flex', gap: '24px', color: '#64748b', fontSize: '14px', fontWeight: 600 }}>
+                                    <span>DATE: {new Date().toLocaleDateString('en-IN').toUpperCase()}</span>
+                                    <span>TIME: {new Date().toLocaleTimeString('en-IN').toUpperCase()}</span>
+                                    <span>AUTHOR: SURAKSHA SETU AI</span>
+                                </div>
+                            </div>
+
+                            <SectionTitle icon={TextSearch} title="Executive Summary" />
+                            <ParagraphText text={activePlan.executiveSummary} />
+
+                            <SectionTitle icon={AlertTriangle} title="Critical Bottlenecks" color="#dc2626" />
+                            <div style={{ background: '#fef2f2', borderLeft: '4px solid #dc2626', padding: '20px', borderRadius: '0 8px 8px 0', marginBottom: '32px' }}>
+                                <p style={{ fontSize: '16px', color: '#991b1b', margin: 0, fontWeight: 600, lineHeight: 1.6 }}>
+                                    {activePlan.criticalBottlenecks}
                                 </p>
                             </div>
-                            <Building2 style={{ width: '20px', height: '20px', color: '#64748b' }} />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {shelters.map(s => (
-                                <ShelterCard key={s.id} shelter={s} />
-                            ))}
-                        </div>
-                    </div>
-                </div>
 
-                {/* Routes + Resources side column */}
-                <div style={{ width: '420px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {/* Evacuation Routes */}
-                    <div style={{
-                        background: 'white', borderRadius: '14px', border: '1px solid #f1f5f9',
-                        padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                            <div>
-                                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                                    Evacuation Routes
-                                </h2>
-                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                                    Road status for each ward → shelter path
-                                </p>
+                            <SectionTitle icon={Clock} title="Strategic Phasing" />
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+                                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px' }}>
+                                    <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}><Zap style={{ width: '16px', height: '16px', color: '#f59e0b' }} /> Phase 1 (0-2 Hrs)</h4>
+                                    <p style={{ fontSize: '15px', color: '#334155', margin: 0, lineHeight: 1.6 }}>{activePlan.phase1}</p>
+                                </div>
+                                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px' }}>
+                                    <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}><Activity style={{ width: '16px', height: '16px', color: '#3b82f6' }} /> Phase 2 (2-12 Hrs)</h4>
+                                    <p style={{ fontSize: '15px', color: '#334155', margin: 0, lineHeight: 1.6 }}>{activePlan.phase2}</p>
+                                </div>
                             </div>
-                            <Navigation style={{ width: '20px', height: '20px', color: '#64748b' }} />
+
+                            <SectionTitle icon={Truck} title="Resource Deficit Analysis" />
+                            <div style={{ display: 'flex', gap: '16px', marginBottom: '40px' }}>
+                                <DeficitCard label="Buses" required={activePlan.resourceAnalysis?.busesRequired || 0} current={142} />
+                                <DeficitCard label="Boats" required={activePlan.resourceAnalysis?.boatsRequired || 0} current={34} />
+                                <DeficitCard label="Ambulances" required={activePlan.resourceAnalysis?.ambulancesRequired || 0} current={85} />
+                            </div>
+
+                            <SectionTitle icon={Radio} title="Public Broadcast Directive" />
+                            <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '24px', position: 'relative' }}>
+                                <p style={{ fontSize: '18px', color: '#1e3a8a', margin: 0, lineHeight: 1.6, fontWeight: 500, fontStyle: 'italic' }}>
+                                    "{activePlan.broadcastDraft}"
+                                </p>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+                                    <button style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 20px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' }}>
+                                        <Send style={{ width: '16px', height: '16px' }} /> Distribute Warning via SMS
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {evacuationRoutes.map(r => (
-                                <RouteCard key={r.id} route={r} />
-                            ))}
-                        </div>
-                    </div>
-
-
-
-                    {/* Emergency Contacts */}
-                    <EmergencyContacts />
+                    )}
                 </div>
             </div>
         </div>
