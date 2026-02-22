@@ -2,7 +2,8 @@ import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import { useState, useRef, useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Layers, Filter } from 'lucide-react';
+import { Layers, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Fix default marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -65,6 +66,15 @@ const shelters = [
     { id: 's6', name: 'Borivali Relief Camp', lat: 19.2250, lng: 72.8500, capacity: 200, status: 'Open' },
 ];
 
+const hospitals = [
+    { name: "City Central Hospital", lat: 19.0760, lng: 72.8777, capacity: 250, current: 120 },
+    { name: "Riverbank Medical Center", lat: 19.0650, lng: 72.9000, capacity: 180, current: 95 },
+    { name: "Mumbai North General Hospital", lat: 19.1400, lng: 72.8500, capacity: 300, current: 176 },
+    { name: "Holy Cross Community Hospital", lat: 19.0300, lng: 72.8600, capacity: 120, current: 87 },
+    { name: "Bandra Care Center", lat: 19.0544, lng: 72.8402, capacity: 90, current: 55 },
+    { name: "Sion Emergency Hospital", lat: 19.0470, lng: 72.8656, capacity: 200, current: 142 }
+];
+
 const riskColors = {
     HIGH: { fill: '#ef4444', opacity: 0.15, border: '#ef4444' },
     MEDIUM: { fill: '#f59e0b', opacity: 0.12, border: '#f59e0b' },
@@ -73,7 +83,24 @@ const riskColors = {
 
 const filterOptions = ['ALL', 'HIGH', 'MEDIUM', 'LOW'];
 
-// ---- Component ----
+
+// ---- Hospital marker (blue square) ----
+const createHospitalIcon = () => {
+    return L.divIcon({
+        className: 'hospital-marker',
+        html: `<div style="
+            width: 24px; height: 24px; background: #2563eb;
+            border: 2.5px solid white; border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; color: white;
+        ">🏥</div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+    });
+};
+
+
 const FloodMap = () => {
     const center = [19.076, 72.8777];
     const controlsRef = useRef(null);
@@ -82,7 +109,9 @@ const FloodMap = () => {
     const [showZones, setShowZones] = useState(true);
     const [activeFilter, setActiveFilter] = useState('ALL');
     const [showShelters, setShowShelters] = useState(true);
+    const [showHospitals, setShowHospitals] = useState(true);
     const [showRainfall, setShowRainfall] = useState(false);
+    const [showControls, setShowControls] = useState(true);
 
     useEffect(() => {
         if (controlsRef.current) {
@@ -122,28 +151,58 @@ const FloodMap = () => {
         cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
         boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
         transition: 'all 0.15s ease',
+        whiteSpace: 'nowrap',
     });
 
     return (
         <div className="map-wrapper w-full h-full" style={{ position: 'relative', overflow: 'clip', isolation: 'isolate', zIndex: 1 }}>
-            {/* ---- Controls ---- */}
-            <div ref={controlsRef} style={{ position: 'absolute', top: '14px', left: '14px', zIndex: 1000, display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                <button onClick={() => setShowZones(!showZones)} style={btnStyle(showZones, '#2563eb', '#1d4ed8')}>
-                    <Layers style={{ width: '14px', height: '14px' }} />
-                    ZONES {showZones ? 'ON' : 'OFF'}
-                </button>
+            {/* ---- Controls Panel ---- */}
+            <div style={{ position: 'absolute', top: '14px', left: '14px', zIndex: 1000, display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <AnimatePresence>
+                    {showControls && (
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            ref={controlsRef}
+                            style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+                        >
+                            <button onClick={() => setShowZones(!showZones)} style={btnStyle(showZones, '#2563eb', '#1d4ed8')}>
+                                <Layers style={{ width: '14px', height: '14px' }} />
+                                ZONES {showZones ? 'ON' : 'OFF'}
+                            </button>
 
-                <button onClick={cycleFilter} style={btnStyle(activeFilter !== 'ALL', '#0f172a', '#0f172a')}>
-                    <Filter style={{ width: '14px', height: '14px' }} />
-                    {filterLabel[activeFilter]}
-                </button>
+                            <button onClick={cycleFilter} style={btnStyle(activeFilter !== 'ALL', '#0f172a', '#0f172a')}>
+                                <Filter style={{ width: '14px', height: '14px' }} />
+                                {filterLabel[activeFilter]}
+                            </button>
 
-                <button onClick={() => setShowShelters(!showShelters)} style={btnStyle(showShelters, '#16a34a', '#15803d')}>
-                    🏠 SHELTERS {showShelters ? 'ON' : 'OFF'}
-                </button>
+                            <button onClick={() => setShowShelters(!showShelters)} style={btnStyle(showShelters, '#16a34a', '#15803d')}>
+                                🏠 SHELTERS {showShelters ? 'ON' : 'OFF'}
+                            </button>
 
-                <button onClick={() => setShowRainfall(!showRainfall)} style={btnStyle(showRainfall, '#7c3aed', '#6d28d9')}>
-                    🌧️ RAINFALL {showRainfall ? 'ON' : 'OFF'}
+                            <button onClick={() => setShowHospitals(!showHospitals)} style={btnStyle(showHospitals, '#2563eb', '#1d4ed8')}>
+                                🏥 HOSPITALS {showHospitals ? 'ON' : 'OFF'}
+                            </button>
+
+                            <button onClick={() => setShowRainfall(!showRainfall)} style={btnStyle(showRainfall, '#7c3aed', '#6d28d9')}>
+                                🌧️ RAINFALL {showRainfall ? 'ON' : 'OFF'}
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Hide/Show Toggle Button */}
+                <button
+                    onClick={() => setShowControls(!showControls)}
+                    style={{
+                        padding: '8px', background: 'white', border: '1px solid #e2e8f0',
+                        borderRadius: '8px', cursor: 'pointer', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center', color: '#64748b',
+                        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+                    }}
+                >
+                    {showControls ? <ChevronLeft style={{ width: '16px', height: '16px' }} /> : <ChevronRight style={{ width: '16px', height: '16px' }} />}
                 </button>
             </div>
 
@@ -218,45 +277,55 @@ const FloodMap = () => {
                         </Popup>
                     </Marker>
                 ))}
+
+                {/* Hospital Markers */}
+                {showHospitals && hospitals.map((hosp, idx) => (
+                    <Marker key={`hosp-${idx}`} position={[hosp.lat, hosp.lng]} icon={createHospitalIcon()}>
+                        <Popup>
+                            <div style={{ fontFamily: 'Outfit, sans-serif', padding: '4px', minWidth: '180px', fontSize: '14px' }}>
+                                <p style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px', marginBottom: '4px' }}>🏥 {hosp.name}</p>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                                        <div style={{
+                                            width: `${(hosp.current / hosp.capacity) * 100}%`,
+                                            height: '100%',
+                                            background: (hosp.current / hosp.capacity) > 0.8 ? '#ef4444' : '#2563eb'
+                                        }} />
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                                        <span style={{ color: '#64748b', fontWeight: 600 }}>Occupancy</span>
+                                        <span style={{ fontWeight: 700, color: '#0f172a' }}>{Math.round((hosp.current / hosp.capacity) * 100)}%</span>
+                                    </div>
+                                    <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>
+                                        Beds: <strong>{hosp.current}/{hosp.capacity}</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </Popup>
+                    </Marker>
+                ))}
             </MapContainer>
 
             {/* ---- Legend ---- */}
             <div ref={legendRef} style={{
-                position: 'absolute', bottom: '16px', left: '16px', zIndex: 1000,
+                position: 'absolute', bottom: '12px', left: '12px', zIndex: 1000,
                 background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)',
-                borderRadius: '10px', border: '1px solid #e2e8f0', padding: '14px 16px',
+                borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 12px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.08)', fontFamily: 'Outfit, sans-serif',
+                width: 'fit-content', pointerEvents: 'auto', outline: 'none',
             }}>
-                <p style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Legend</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px', pointerEvents: 'none' }}>Legend</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', pointerEvents: 'none' }}>
                     {[
-                        { label: 'High Risk', color: '#ef4444', shape: 'circle' },
-                        { label: 'Medium Risk', color: '#f59e0b', shape: 'circle' },
-                        { label: 'Low Risk', color: '#22c55e', shape: 'circle' },
+                        { label: 'High Risk', color: '#ef4444' },
+                        { label: 'Medium Risk', color: '#f59e0b' },
+                        { label: 'Low Risk', color: '#22c55e' },
                     ].map((item) => (
-                        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: item.color, border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.15)', flexShrink: 0 }} />
-                            <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>{item.label}</span>
+                        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color, border: '1px solid white', flexShrink: 0 }} />
+                            <span style={{ fontSize: '11px', fontWeight: 600, color: '#334155' }}>{item.label}</span>
                         </div>
                     ))}
-                    {showShelters && (
-                        <>
-                            <div style={{ height: '1px', background: '#f1f5f9', margin: '2px 0' }} />
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#22c55e', flexShrink: 0 }} />
-                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Safe Shelter</span>
-                            </div>
-                        </>
-                    )}
-                    {showRainfall && (
-                        <>
-                            <div style={{ height: '1px', background: '#f1f5f9', margin: '2px 0' }} />
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'rgba(109,40,217,0.2)', border: '1px solid rgba(109,40,217,0.3)', flexShrink: 0 }} />
-                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Rainfall Intensity</span>
-                            </div>
-                        </>
-                    )}
                 </div>
             </div>
         </div>
