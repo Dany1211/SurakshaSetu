@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { LayoutDashboard, Activity, Map, Users, AlertTriangle, X, Radio, Flame, CloudRain, AlertCircle, CheckCircle2, Phone } from 'lucide-react';
+import { LayoutDashboard, Activity, Map, Users, AlertTriangle, X, Radio, Flame, CloudRain, AlertCircle, CheckCircle2, Phone, LogOut } from 'lucide-react';
 import Logo from './Logo';
 import { AnimatePresence, motion } from 'framer-motion';
+import { logoutUser } from '../services/firebaseService';
 
 // ---- Emergency Broadcast Modal ----
 const EmergencyBroadcastModal = ({ onClose }) => {
@@ -355,9 +356,22 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
                         <Radio style={{ width: '14px', height: '14px' }} />
                         Emergency Broadcast
                     </button>
-                    <p style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center', marginTop: '6px', fontWeight: 500 }}>
+                    <p style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center', marginTop: '6px', marginBottom: '16px', fontWeight: 500 }}>
                         Sends mass SMS to all residents
                     </p>
+
+                    <button
+                        onClick={logoutUser}
+                        style={{
+                            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                            padding: '10px 18px', borderRadius: '10px', border: '1px solid #e2e8f0', cursor: 'pointer',
+                            background: '#f8fafc', color: '#475569', fontSize: '13px', fontWeight: 700, fontFamily: 'Outfit, sans-serif',
+                            textTransform: 'uppercase', letterSpacing: '0.04em', transition: 'all 0.2s',
+                        }}
+                    >
+                        <LogOut style={{ width: '15px', height: '15px', color: '#64748b' }} />
+                        Secure Logout
+                    </button>
                 </div>
             </aside>
 

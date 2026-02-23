@@ -9,13 +9,26 @@ import ResourceAllocation from './pages/ResourceAllocation';
 import Alerts from './pages/Alerts';
 import CycloneMonitoring from './pages/CycloneMonitoring';
 import WildfireMonitoring from './pages/WildfireMonitoring';
+import Login from './pages/Login';
 import { initializeResources, createSOSTicket } from './services/firebaseService';
 import { useFirebaseSync } from './hooks/useFirebaseSync';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './config/firebase';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
+  const [user, setUser] = useState(null);
+  const [loadingAuth, setLoadingAuth] = useState(true);
   const { systemRisk } = useFirebaseSync();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoadingAuth(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     // EWS Auditory and System Notification trigger
@@ -90,6 +103,24 @@ function App() {
   };
 
   const isRedAlert = systemRisk === 'HIGH';
+
+  if (loadingAuth) {
+    return (
+      <LanguageProvider>
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center font-sans">
+          <div style={{ width: 40, height: 40, border: '4px solid #3b82f6', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+        </div>
+      </LanguageProvider>
+    );
+  }
+
+  if (!user) {
+    return (
+      <LanguageProvider>
+        <Login />
+      </LanguageProvider>
+    );
+  }
 
   return (
     <LanguageProvider>
