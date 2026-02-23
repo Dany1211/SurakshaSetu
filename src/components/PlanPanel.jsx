@@ -28,7 +28,19 @@ const PlanPanel = ({ onPlanChange }) => {
         try {
             // Include admin instructions in the generation request
             const newAiPlan = await generateActionPlan(
-                { zone: 'Mumbai Region', riskLevel: 'CRITICAL' },
+                {
+                    zone: 'Ward H/E - Andheri East',
+                    riskLevel: 'RED',
+                    rainLast6h: '180 mm',
+                    forecast6h: '120 mm',
+                    highTide: 'Within 2 hours',
+                    rescueTeams: 8,
+                    boats: 12,
+                    buses: 40,
+                    ambulances: 18,
+                    shelters: 5,
+                    population: 125000
+                },
                 adminPrompt,
                 targetLanguage
             );
@@ -37,12 +49,15 @@ const PlanPanel = ({ onPlanChange }) => {
             const processedPlan = {
                 id: newAiPlan.id || `plan-${Date.now()}`,
                 title: newAiPlan.title || 'Executive Disaster Briefing',
-                executiveSummary: newAiPlan.executiveSummary || 'Awaiting summary...',
-                criticalBottlenecks: newAiPlan.criticalBottlenecks || 'Awaiting bottleneck analysis...',
-                phase1: newAiPlan.phase1 || 'Awaiting phase 1 strategy...',
-                phase2: newAiPlan.phase2 || 'Awaiting phase 2 strategy...',
-                resourceAnalysis: newAiPlan.resourceAnalysis || { busesRequired: 0, boatsRequired: 0, ambulancesRequired: 0 },
-                broadcastDraft: newAiPlan.broadcastDraft || 'Emergency alert draft pending...',
+                riskAssessment: newAiPlan.riskAssessment || 'Awaiting assessment...',
+                immediatePriorities_0_2_hours: newAiPlan.immediatePriorities_0_2_hours || [],
+                stabilizationPlan_2_12_hours: newAiPlan.stabilizationPlan_2_12_hours || [],
+                resourceDeployment: newAiPlan.resourceDeployment || {
+                    teamsAssigned: 0, boatsAssigned: 0, busesAssigned: 0, ambulancesAssigned: 0,
+                    remainingReserve: { teams: 0, boats: 0, buses: 0, ambulances: 0 }
+                },
+                citizenBroadcast: newAiPlan.citizenBroadcast || 'Emergency alert draft pending...',
+                assumptions: newAiPlan.assumptions || 'No specific assumptions recorded.'
             };
 
             // Save to LocalStorage to avoid wasting API credits on refresh

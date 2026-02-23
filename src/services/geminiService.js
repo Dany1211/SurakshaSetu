@@ -27,36 +27,87 @@ export const generateActionPlan = async (data = {}, adminPrompt = '', targetLang
         const outputLanguage = langMap[targetLanguage] || 'English';
 
         const prompt = `
-You are the Chief AI Intelligence Officer for the "Suraksha Setu" Disaster Command Center in Mumbai, advising the Governor directly.
-Your task is to generate a highly strategic, high-level Executive Evacuation Briefing.
-You MUST write all textual content in the following language: ${outputLanguage}. This is an absolute requirement.
+You are a Disaster Operations Planning Officer for the Suraksha Setu Command Center.
 
-DO NOT include any markdown formatting like \`\`\`json or \`\`\` in your response. Return ONLY raw valid JSON.
+You are generating a STRICTLY OPERATIONAL evacuation and response plan based ONLY on the data provided below.
+You are NOT allowed to invent infrastructure statistics, water depths, or numeric metrics that are not explicitly provided.
+If data is missing, state reasonable operational assumptions instead of fabricating numbers.
 
-GOVERNOR'S DIRECTIVES (CRITICAL - MUST OBEY):
-"${adminPrompt ? adminPrompt : 'No specific constraints provided. Analyze standard operating procedures.'}"
+All text MUST be written entirely in ${outputLanguage}.
+Return ONLY raw valid JSON (no markdown formatting).
 
-SYSTEM CONTEXT:
-- Affected Zone: ${data.zone || 'Multiple Wards in Mumbai'}
-- Risk Level: ${data.riskLevel || 'SEVERE'}
+====================================
+REAL-TIME SYSTEM INPUT DATA
+====================================
 
-Based on the directives and context, extrapolate realistic bottlenecks and generate a highly specific Executive Intelligence Report matching this EXACT JSON structure:
+City: Mumbai
+Affected Zone: ${data.zone || 'Ward H/E - Andheri East'}
+Current Risk Level: ${data.riskLevel || 'RED'}
+Rainfall (Last 6 Hours): ${data.rainLast6h || '180 mm'}
+Rainfall (Forecast Next 6 Hours): ${data.forecast6h || '120 mm'}
+High Tide Timing: ${data.highTide || 'Within 2 hours'}
+Available Rescue Teams: ${data.rescueTeams || 8}
+Available Boats: ${data.boats || 12}
+Available Buses: ${data.buses || 40}
+Available Ambulances: ${data.ambulances || 18}
+Active Shelters: ${data.shelters || 5}
+Estimated Population in Zone: ${data.population || 125000}
+
+Governor’s Directives:
+"${adminPrompt || 'Prioritize elderly evacuation and hospital access continuity.'}"
+
+====================================
+OPERATIONAL CONSTRAINTS
+====================================
+
+- Assume severe waterlogging in low-lying zones.
+- Assume drainage stress due to high tide.
+- Assume mobile network congestion.
+- Do NOT fabricate exact water depth numbers unless provided.
+- Use realistic Mumbai geography (e.g., SV Road, WEH, JVLR, Milan Subway, Andheri Station).
+- Keep recommendations operationally executable.
+
+====================================
+REQUIRED OUTPUT STRUCTURE
+====================================
 
 {
-  "title": "A strong, brief title for the operation (e.g. Operation Safe Haven: Andheri West - in ${outputLanguage})",
-  "executiveSummary": "A 2-sentence highly professional assessment of the immediate threat and required overarching strategy, written for a Governor.",
-  "criticalBottlenecks": "Identify 1 or 2 specific things that will fail or block the evacuation based on the context (e.g. 'SV Road bridge capacity exceeded by 200%').",
-  "phase1": "What MUST happen in the next 0-2 hours (bullet points or short paragraph).",
-  "phase2": "What MUST happen in the next 2-12 hours (bullet points or short paragraph).",
-  "resourceAnalysis": {
-     "busesRequired": 50,
-     "boatsRequired": 10,
-     "ambulancesRequired": 15
+  "title": "Concise operation name including ward name",
+  "riskAssessment": "3-4 sentence realistic assessment based ONLY on rainfall, tide timing, and population density.",
+  "immediatePriorities_0_2_hours": [
+     "Specific road closures",
+     "Specific deployment orders",
+     "Specific traffic diversion routes",
+     "Hospital protection measures"
+  ],
+  "stabilizationPlan_2_12_hours": [
+     "Shelter activation strategy",
+     "Resource redistribution",
+     "Medical triage placement",
+     "Crowd management"
+  ],
+  "resourceDeployment": {
+     "teamsAssigned": number,
+     "boatsAssigned": number,
+     "busesAssigned": number,
+     "ambulancesAssigned": number,
+     "remainingReserve": {
+        "teams": number,
+        "boats": number,
+        "buses": number,
+        "ambulances": number
+     }
   },
-  "broadcastDraft": "Draft a short, urgent SMS broadcast warning to be sent to the affected residents. MUST BE IN ${outputLanguage}."
+  "citizenBroadcast": "Short, precise SMS advisory naming specific roads and shelter directions.",
+  "assumptions": "Clearly list any assumptions made due to missing data."
 }
 
-Ensure the response is extremely professional, strictly adheres to the requested JSON schema, directly solves the problem described in the Governor's directives, and is written entirely in ${outputLanguage}.
+The response must:
+- Use only provided resources.
+- Not exceed available resource counts.
+- Be logically consistent.
+- Be operationally realistic.
+- Avoid fictional precision.
 `;
 
         const result = await model.generateContent(prompt);

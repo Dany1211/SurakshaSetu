@@ -26,33 +26,24 @@ const ParagraphText = ({ text }) => (
     </p>
 );
 
-const DeficitCard = ({ label, required, current }) => {
-    const deficit = required - current;
-    const hasDeficit = deficit > 0;
-
+const ResourceAllocationCard = ({ label, assigned, reserve }) => {
     return (
         <div style={{
             flex: 1, padding: '20px', borderRadius: '12px',
-            background: hasDeficit ? '#fef2f2' : '#f8fafc',
-            border: `1px solid ${hasDeficit ? '#fecaca' : '#e2e8f0'}`,
+            background: '#f8fafc',
+            border: `1px solid #e2e8f0`,
             display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
         }}>
-            <span style={{ fontSize: '14px', fontWeight: 700, color: hasDeficit ? '#991b1b' : '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
                 {label}
             </span>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginBottom: '8px' }}>
-                <span style={{ fontSize: '32px', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{required}</span>
-                <span style={{ fontSize: '14px', fontWeight: 600, color: '#94a3b8', paddingBottom: '4px' }}>Req.</span>
+                <span style={{ fontSize: '32px', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{assigned}</span>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#94a3b8', paddingBottom: '4px' }}>Deploy</span>
             </div>
-            {hasDeficit ? (
-                <div style={{ padding: '4px 10px', background: '#dc2626', color: 'white', borderRadius: '99px', fontSize: '12px', fontWeight: 800 }}>
-                    SHORTFALL: {deficit}
-                </div>
-            ) : (
-                <div style={{ padding: '4px 10px', background: '#16a34a', color: 'white', borderRadius: '99px', fontSize: '12px', fontWeight: 800 }}>
-                    SUFFICIENT
-                </div>
-            )}
+            <div style={{ padding: '4px 10px', background: '#e2e8f0', color: '#334155', borderRadius: '99px', fontSize: '12px', fontWeight: 700 }}>
+                {reserve} IN RESERVE
+            </div>
         </div>
     );
 }
@@ -174,39 +165,48 @@ const EvacuationPlanning = () => {
                                 </div>
                             </div>
 
-                            <SectionTitle icon={TextSearch} title="Executive Summary" />
-                            <ParagraphText text={activePlan.executiveSummary} />
+                            <SectionTitle icon={TextSearch} title="Risk Assessment" />
+                            <ParagraphText text={activePlan.riskAssessment} />
 
-                            <SectionTitle icon={AlertTriangle} title="Critical Bottlenecks" color="#dc2626" />
+                            <SectionTitle icon={AlertTriangle} title="Operational Assumptions" color="#dc2626" />
                             <div style={{ background: '#fef2f2', borderLeft: '4px solid #dc2626', padding: '20px', borderRadius: '0 8px 8px 0', marginBottom: '32px' }}>
-                                <p style={{ fontSize: '16px', color: '#991b1b', margin: 0, fontWeight: 600, lineHeight: 1.6 }}>
-                                    {activePlan.criticalBottlenecks}
+                                <p style={{ fontSize: '15px', color: '#991b1b', margin: 0, fontWeight: 500, lineHeight: 1.6 }}>
+                                    {activePlan.assumptions}
                                 </p>
                             </div>
 
                             <SectionTitle icon={Clock} title="Strategic Phasing" />
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
                                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px' }}>
-                                    <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}><Zap style={{ width: '16px', height: '16px', color: '#f59e0b' }} /> Phase 1 (0-2 Hrs)</h4>
-                                    <p style={{ fontSize: '15px', color: '#334155', margin: 0, lineHeight: 1.6 }}>{activePlan.phase1}</p>
+                                    <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}><Zap style={{ width: '16px', height: '16px', color: '#f59e0b' }} /> Immediate Priorities (0-2 Hrs)</h4>
+                                    <ul style={{ paddingLeft: '20px', margin: 0, fontSize: '15px', color: '#334155', lineHeight: 1.6 }}>
+                                        {(activePlan.immediatePriorities_0_2_hours || []).map((item, i) => (
+                                            <li key={i} style={{ marginBottom: '8px' }}>{item}</li>
+                                        ))}
+                                    </ul>
                                 </div>
                                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px' }}>
-                                    <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}><Activity style={{ width: '16px', height: '16px', color: '#3b82f6' }} /> Phase 2 (2-12 Hrs)</h4>
-                                    <p style={{ fontSize: '15px', color: '#334155', margin: 0, lineHeight: 1.6 }}>{activePlan.phase2}</p>
+                                    <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}><Activity style={{ width: '16px', height: '16px', color: '#3b82f6' }} /> Stabilization Plan (2-12 Hrs)</h4>
+                                    <ul style={{ paddingLeft: '20px', margin: 0, fontSize: '15px', color: '#334155', lineHeight: 1.6 }}>
+                                        {(activePlan.stabilizationPlan_2_12_hours || []).map((item, i) => (
+                                            <li key={i} style={{ marginBottom: '8px' }}>{item}</li>
+                                        ))}
+                                    </ul>
                                 </div>
                             </div>
 
-                            <SectionTitle icon={Truck} title="Resource Deficit Analysis" />
+                            <SectionTitle icon={Truck} title="Resource Deployment" />
                             <div style={{ display: 'flex', gap: '16px', marginBottom: '40px' }}>
-                                <DeficitCard label="Buses" required={activePlan.resourceAnalysis?.busesRequired || 0} current={142} />
-                                <DeficitCard label="Boats" required={activePlan.resourceAnalysis?.boatsRequired || 0} current={34} />
-                                <DeficitCard label="Ambulances" required={activePlan.resourceAnalysis?.ambulancesRequired || 0} current={85} />
+                                <ResourceAllocationCard label="Rescue Teams" assigned={activePlan.resourceDeployment?.teamsAssigned || 0} reserve={activePlan.resourceDeployment?.remainingReserve?.teams || 0} />
+                                <ResourceAllocationCard label="Boats" assigned={activePlan.resourceDeployment?.boatsAssigned || 0} reserve={activePlan.resourceDeployment?.remainingReserve?.boats || 0} />
+                                <ResourceAllocationCard label="Buses" assigned={activePlan.resourceDeployment?.busesAssigned || 0} reserve={activePlan.resourceDeployment?.remainingReserve?.buses || 0} />
+                                <ResourceAllocationCard label="Ambulances" assigned={activePlan.resourceDeployment?.ambulancesAssigned || 0} reserve={activePlan.resourceDeployment?.remainingReserve?.ambulances || 0} />
                             </div>
 
-                            <SectionTitle icon={Radio} title="Public Broadcast Directive" />
+                            <SectionTitle icon={Radio} title="Citizen Broadcast Advisory" />
                             <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '24px', position: 'relative' }}>
                                 <p style={{ fontSize: '18px', color: '#1e3a8a', margin: 0, lineHeight: 1.6, fontWeight: 500, fontStyle: 'italic' }}>
-                                    "{activePlan.broadcastDraft}"
+                                    "{activePlan.citizenBroadcast}"
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
                                     <button
