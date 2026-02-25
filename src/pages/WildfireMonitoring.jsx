@@ -173,6 +173,237 @@
 // export default WildfireMonitoring;
 
 
+// import React, { useState, useEffect } from 'react';
+// import { 
+//     Flame, Wind, Droplets, ShieldAlert, AlertTriangle, 
+//     MapPin, Navigation, Info, Activity, ShieldCheck,
+//     Clock, Bell, Settings, ChevronRight, XCircle, Search
+// } from 'lucide-react';
+
+// const WildfireMonitoring = () => {
+//     const [lastUpdated, setLastUpdated] = useState('--');
+
+//     useEffect(() => {
+//         setLastUpdated(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' IST');
+//     }, []);
+
+//     const wildfireStats = [
+//         { label: 'Active Hotspots', value: '14', sub: 'Aarey Forest', status: 'High Risk', icon: Flame, color: '#ef4444', bg: '#fef2f2' },
+//         { label: 'AQI Level', value: '342', sub: 'Hazardous', status: 'Warning', icon: Wind, color: '#ec4899', bg: '#fdf2f8' },
+//         { label: 'Fire Spread', value: '4.2', unit: 'km/h', sub: 'NE Direction', status: 'Active', icon: Navigation, color: '#f97316', bg: '#fff7ed' },
+//         { label: 'Humidity', value: '12%', sub: 'Critically Dry', status: 'Danger', icon: Droplets, color: '#eab308', bg: '#fffbeb' },
+//     ];
+
+//     const hotspots = [
+//         { name: 'Sanjay Gandhi NP (North)', status: 'Vigorous', risk: 'High', color: '#ef4444' },
+//         { name: 'Aarey West Boundary', status: 'Moderate', risk: 'Medium', color: '#f97316' },
+//         { name: 'Yeoor Hills Patch #3', status: 'Smoldering', risk: 'Low', color: '#eab308' },
+//     ];
+
+//     const equipment = [
+//         { name: 'Fire Engines', count: 18, status: 'DEPLOYED', color: '#ef4444', bg: '#fee2e2' },
+//         { name: 'NDRF Fire Teams', count: 12, status: 'ACTIVE', color: '#16a34a', bg: '#dcfce7' },
+//         { name: 'Aerial Tenders', count: 2, status: 'IN SERVICE', color: '#2563eb', bg: '#dbeafe' },
+//     ];
+
+//     return (
+//         <div style={{ 
+//             backgroundColor: '#f8fafc', 
+//             minHeight: '100vh', 
+//             color: '#1e293b', 
+//             fontFamily: 'Outfit, sans-serif',
+//             padding: '20px'
+//         }}>
+//             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                
+//                 {/* --- HEADER --- */}
+//                 <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+//                     <div>
+//                         <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
+//                             <Flame color="#ef4444" fill="#ef4444" size={30} />
+//                             Safety Dashboard
+//                         </h1>
+//                         <p style={{ color: '#64748b', fontSize: '15px', margin: '6px 0 0', fontWeight: 500 }}>
+//                             Real-time Satellite & Thermal Intelligence Feed
+//                         </p>
+//                     </div>
+//                     <div style={{ display: 'flex', gap: '12px' }}>
+//                         <div style={{ background: '#fff', padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+//                             <Bell size={22} color="#64748b" />
+//                         </div>
+//                         <div style={{ background: '#fff', padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+//                             <Settings size={22} color="#64748b" />
+//                         </div>
+//                     </div>
+//                 </header>
+
+//                 {/* --- CRITICAL ALERT BANNER (LIGHT) --- */}
+//                 <div style={{ 
+//                     background: '#fff',
+//                     border: '2px solid #fee2e2',
+//                     borderRadius: '20px',
+//                     padding: '20px',
+//                     display: 'flex',
+//                     alignItems: 'center',
+//                     justifyContent: 'space-between',
+//                     marginBottom: '25px',
+//                     boxShadow: '0 10px 15px -3px rgba(239, 68, 68, 0.05)'
+//                 }}>
+//                     <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+//                         <div style={{ background: '#ef4444', padding: '12px', borderRadius: '14px', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)' }}>
+//                             <Flame color="white" size={24} />
+//                         </div>
+//                         <div>
+//                             <h2 style={{ fontSize: '19px', fontWeight: 800, color: '#991b1b', margin: 0 }}>Severe Fire Warning</h2>
+//                             <p style={{ margin: '2px 0 0', fontSize: '14px', color: '#b91c1c', fontWeight: 600 }}>
+//                                 Heat signature detected: Warehouse Zone 3 (Aarey Sector)
+//                             </p>
+//                         </div>
+//                     </div>
+//                     <div style={{ display: 'flex', gap: '10px' }}>
+//                          <button style={{ background: '#ef4444', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Call 112</button>
+//                          <button style={{ background: '#f8fafc', color: '#ef4444', border: '1px solid #fee2e2', padding: '10px 20px', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Evacuate</button>
+//                     </div>
+//                 </div>
+
+//                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '25px' }}>
+                    
+//                     {/* --- MAIN COLUMN --- */}
+//                     <section>
+//                         {/* STATS TILES */}
+//                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '25px' }}>
+//                             {wildfireStats.map((stat, i) => (
+//                                 <div key={i} style={{ backgroundColor: '#fff', borderRadius: '22px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+//                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+//                                         <div style={{ background: stat.bg, padding: '10px', borderRadius: '12px' }}>
+//                                             <stat.icon color={stat.color} size={22} />
+//                                         </div>
+//                                         <span style={{ fontSize: '12px', fontWeight: 800, color: stat.color, background: stat.bg, padding: '5px 10px', borderRadius: '8px', border: `1px solid ${stat.color}22` }}>
+//                                             {stat.status}
+//                                         </span>
+//                                     </div>
+//                                     <h3 style={{ fontSize: '32px', color: '#0f172a', margin: 0, fontWeight: 800 }}>{stat.value}<span style={{fontSize: '15px', color: '#64748b', fontWeight: 500, marginLeft: '4px'}}>{stat.unit || ''}</span></h3>
+//                                     <p style={{ color: '#475569', fontSize: '15px', margin: '6px 0 0', fontWeight: 600 }}>{stat.label}</p>
+//                                     <p style={{ color: stat.color, fontSize: '13px', margin: '2px 0 0', fontWeight: 700 }}>{stat.sub}</p>
+//                                 </div>
+//                             ))}
+//                         </div>
+
+//                         {/* MAP AREA (LIGHT) */}
+//                         <div style={{ backgroundColor: '#fff', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+//                             <div style={{ padding: '20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+//                                 <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '10px' }}>
+//                                     <Activity size={20} color="#2563eb" /> Live Analytics
+//                                 </h3>
+//                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+//                                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }} />
+//                                     <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Updated {lastUpdated}</span>
+//                                 </div>
+//                             </div>
+//                             <div style={{ height: '380px', position: 'relative', background: '#f1f5f9' }}>
+//                                 <div style={{ 
+//                                     width: '100%', height: '100%', opacity: 0.8,
+//                                     background: 'radial-gradient(circle at 40% 45%, #fecaca 0%, transparent 35%), radial-gradient(circle at 65% 55%, #fed7aa 0%, transparent 40%)'
+//                                 }} />
+//                                 <div style={{ position: 'absolute', top: '20px', left: '20px', background: '#fff', padding: '12px 18px', borderRadius: '14px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+//                                     <p style={{ fontSize: '12px', color: '#64748b', fontWeight: 600, margin: 0 }}>Active Sensor Feed</p>
+//                                     <p style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a', margin: '2px 0 0' }}>Thermal Hotspots: Zone B</p>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </section>
+
+//                     {/* --- SIDEBAR (LIGHT) --- */}
+//                     <aside style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        
+//                         {/* HOTSPOTS CARD */}
+//                         <div style={{ backgroundColor: '#fff', borderRadius: '24px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+//                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+//                                 <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>Forest Status</h3>
+//                                 <Navigation size={18} color="#94a3b8" />
+//                             </div>
+//                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+//                                 {hotspots.map((spot, i) => (
+//                                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '14px', backgroundColor: '#f8fafc', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
+//                                         <div style={{ background: spot.risk === 'High' ? '#fee2e2' : '#fef3c7', padding: '10px', borderRadius: '12px' }}>
+//                                             {spot.risk === 'High' ? <XCircle color="#ef4444" size={20} /> : <AlertTriangle color="#d97706" size={20} />}
+//                                         </div>
+//                                         <div style={{ flex: 1 }}>
+//                                             <p style={{ fontSize: '14px', fontWeight: 700, color: '#334155', margin: 0 }}>{spot.name}</p>
+//                                             <p style={{ fontSize: '12px', color: spot.color, margin: 0, fontWeight: 700, textTransform: 'uppercase' }}>{spot.status}</p>
+//                                         </div>
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                         </div>
+
+//                         {/* EQUIPMENT STATUS */}
+//                         <div style={{ backgroundColor: '#fff', borderRadius: '24px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+//                             <h3 style={{ margin: '0 0 20px 0', fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>Unit Deployment</h3>
+//                             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+//                                 {equipment.map((item, i) => (
+//                                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: i !== 2 ? '1px solid #f1f5f9' : 'none' }}>
+//                                         <div>
+//                                             <p style={{ fontSize: '14px', fontWeight: 700, color: '#334155', margin: 0 }}>{item.name}</p>
+//                                             <p style={{ fontSize: '12px', color: '#64748b', margin: 0, fontWeight: 500 }}>{item.count} Units active</p>
+//                                         </div>
+//                                         <span style={{ fontSize: '11px', fontWeight: 800, color: item.color, background: item.bg, padding: '6px 10px', borderRadius: '8px', border: `1px solid ${item.color}22` }}>
+//                                             {item.status}
+//                                         </span>
+//                                     </div>
+//                                 ))}
+//                             </div>
+//                         </div>
+
+//                         {/* FORECAST BOX */}
+//                         <div style={{ background: '#eff6ff', borderRadius: '24px', padding: '24px', border: '1px solid #dbeafe' }}>
+//                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+//                                 <Wind size={20} color="#2563eb" />
+//                                 <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#1e40af' }}>Conditions Alert</h4>
+//                             </div>
+//                             <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#1e40af', margin: 0, fontWeight: 500 }}>
+//                                 Increasing NE winds and low humidity forecast for the next 12 hours. Reignite risk: <b style={{fontWeight: 800}}>CRITICAL</b>.
+//                             </p>
+//                         </div>
+
+//                     </aside>
+//                 </div>
+
+//                 {/* --- BOTTOM NAVIGATION (LIGHT) --- */}
+//                 <nav style={{ 
+//                     marginTop: '40px', 
+//                     backgroundColor: '#fff', 
+//                     borderRadius: '24px', 
+//                     padding: '16px 40px', 
+//                     display: 'flex', 
+//                     justifyContent: 'space-around',
+//                     border: '1px solid #e2e8f0',
+//                     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)'
+//                 }}>
+//                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', color: '#ef4444', cursor: 'pointer' }}>
+//                         <Activity size={24} />
+//                         <span style={{ fontSize: '11px', fontWeight: 800 }}>Dashboard</span>
+//                     </div>
+//                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', color: '#94a3b8', cursor: 'pointer' }}>
+//                         <ShieldAlert size={24} />
+//                         <span style={{ fontSize: '11px', fontWeight: 800 }}>Equipment</span>
+//                     </div>
+//                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', color: '#94a3b8', cursor: 'pointer' }}>
+//                         <MapPin size={24} />
+//                         <span style={{ fontSize: '11px', fontWeight: 800 }}>Locations</span>
+//                     </div>
+//                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', color: '#94a3b8', cursor: 'pointer' }}>
+//                         <Search size={24} />
+//                         <span style={{ fontSize: '11px', fontWeight: 800 }}>Search</span>
+//                     </div>
+//                 </nav>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default WildfireMonitoring;
+
 import React, { useState, useEffect } from 'react';
 import { 
     Flame, Wind, Droplets, ShieldAlert, AlertTriangle, 
