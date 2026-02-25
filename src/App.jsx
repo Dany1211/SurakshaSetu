@@ -9,6 +9,7 @@ import ResourceAllocation from './pages/ResourceAllocation';
 import Alerts from './pages/Alerts';
 import CycloneMonitoring from './pages/CycloneMonitoring';
 import WildfireMonitoring from './pages/WildfireMonitoring';
+import Profile from './pages/Profile';
 import Login from './pages/Login';
 import { initializeResources, createSOSTicket } from './services/firebaseService';
 import { useFirebaseSync } from './hooks/useFirebaseSync';
@@ -96,6 +97,8 @@ function App() {
       case 'alerts':
       case 'sos':
         return <Alerts initialTab={activePage === 'alerts' ? 'weather' : 'sos'} />;
+      case 'profile':
+        return <Profile />;
       case 'dashboard':
       default:
         return <Dashboard />;
@@ -134,7 +137,11 @@ function App() {
             ⚠️ RED ALERT: Critical Flood Risk Detected. Enact Evacuation Protocols. ⚠️
           </div>
         )}
-        <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} isRedAlert={isRedAlert} />
+        <Navbar
+          toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          isRedAlert={isRedAlert}
+          onPageChange={setActivePage}
+        />
         <div className="flex overflow-hidden relative" style={{ height: `calc(100vh - 52px ${isRedAlert ? '- 36px' : ''})` }}>
           <Sidebar
             isOpen={sidebarOpen}

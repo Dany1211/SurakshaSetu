@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { User, Bell, Menu, ChevronDown, Globe } from 'lucide-react';
 import Logo from './Logo';
 
-const Navbar = ({ toggleSidebar, isRedAlert }) => {
+const Navbar = ({ toggleSidebar, isRedAlert, onPageChange }) => {
     const { language, setLanguage } = useLanguage();
     const [simulationTimeline, setSimulationTimeline] = useState(() => localStorage.getItem('SIMULATION_TIMELINE') || 'live');
     const [scrolled, setScrolled] = useState(false);
@@ -43,8 +43,8 @@ const Navbar = ({ toggleSidebar, isRedAlert }) => {
 
                 {/* Simulation Timeline Selector */}
                 <div className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 shadow-sm hover:shadow-md ${simulationTimeline !== 'live'
-                        ? 'bg-red-50/80 border-red-200/60 hover:border-red-300 text-red-600'
-                        : 'bg-slate-50 border-slate-200/60 hover:border-slate-300 text-slate-600'
+                    ? 'bg-red-50/80 border-red-200/60 hover:border-red-300 text-red-600'
+                    : 'bg-slate-50 border-slate-200/60 hover:border-slate-300 text-slate-600'
                     }`}>
                     <span className="text-sm sm:text-base">{simulationTimeline === 'live' ? '🌤️' : '⛈️'}</span>
                     <div className="relative flex items-center">
@@ -109,7 +109,10 @@ const Navbar = ({ toggleSidebar, isRedAlert }) => {
                 <div className="w-[1px] h-6 bg-slate-200/80 hidden sm:block" />
 
                 {/* Profile */}
-                <div className="flex items-center gap-2 sm:gap-3 p-1.5 pr-2 sm:pr-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200/60 cursor-pointer transition-all active:scale-95 group">
+                <div
+                    onClick={() => onPageChange && onPageChange('profile')}
+                    className="flex items-center gap-2 sm:gap-3 p-1.5 pr-2 sm:pr-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-200/60 cursor-pointer transition-all active:scale-95 group"
+                >
                     <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-blue-100/50 shadow-sm group-hover:shadow group-hover:from-blue-100 group-hover:to-indigo-100 transition-all">
                         <User className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                     </div>
