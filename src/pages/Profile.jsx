@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import {
     User, Mail, Phone, MapPin, Shield,
     Bell, Globe, Moon, Lock, LogOut,
-    Camera, ChevronRight, Edit3
+    Camera, ChevronRight, Edit3, Check, X
 } from 'lucide-react';
 import { auth } from '../config/firebase';
-import { signOut } from 'firebase/auth';
+import { signOut, updateProfile } from 'firebase/auth';
 
 const Profile = () => {
     const { language, setLanguage } = useLanguage();
@@ -18,6 +18,39 @@ const Profile = () => {
     });
 
     const user = auth.currentUser;
+
+    const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [isEditingContact, setIsEditingContact] = useState(false);
+
+    const [profileData, setProfileData] = useState({
+        displayName: user?.displayName || 'System Admin',
+        phone: '+91 98765 43210',
+        location: 'HQ - Mumbai Control Room'
+    });
+
+    useEffect(() => {
+        if (user) {
+            setProfileData(prev => ({
+                ...prev,
+                displayName: user.displayName || prev.displayName
+            }));
+        }
+    }, [user]);
+
+    const handleProfileSave = async () => {
+        try {
+            if (user && profileData.displayName !== user.displayName) {
+                await updateProfile(user, { displayName: profileData.displayName });
+            }
+            setIsEditingProfile(false);
+        } catch (error) {
+            console.error('Error updating profile:', error);
+        }
+    };
+
+    const handleContactSave = () => {
+        setIsEditingContact(false);
+    };
 
     const handleLogout = async () => {
         try {
@@ -69,14 +102,43 @@ const Profile = () => {
                                 </div>
 
                                 {/* User Details */}
-                                <div className="text-center mt-6">
-                                    <h2 className="text-2xl font-bold text-slate-800 mb-1">{user?.displayName || 'System Admin'}</h2>
-                                    <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-widest border border-emerald-100 mb-4">
-                                        <Shield className="w-3.5 h-3.5" /> Superuser
-                                    </div>
-                                    <p className="text-slate-500 text-sm flex items-center justify-center gap-2">
-                                        <Mail className="w-4 h-4" /> {user?.email || 'admin@surakshasetu.org'}
-                                    </p>
+                                <div className="text-center mt-6 w-full px-4">
+                                    {isEditingProfile ? (
+                                        <div className="flex flex-col items-center gap-3 mb-4">
+                                            <input
+                                                type="text"
+                                                value={profileData.displayName}
+                                                onChange={(e) => setProfileData({ ...profileData, displayName: e.target.value })}
+                                                className="text-center text-xl font-bold text-slate-800 border bg-slate-50 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 px-3 py-1.5 rounded-xl w-full max-w-[220px] shadow-inner transition-all"
+                                                autoFocus
+                                            />
+                                            <div className="flex items-center gap-2">
+                                                <button onClick={handleProfileSave} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm font-medium text-sm">
+                                                    <Check className="w-4 h-4" /> Save
+                                                </button>
+                                                <button onClick={() => { setIsEditingProfile(false); setProfileData(prev => ({ ...prev, displayName: user?.displayName || 'System Admin' })); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm">
+                                                    <X className="w-4 h-4" /> Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="group/name relative inline-flex items-center justify-center gap-2 mb-1">
+                                            <h2 className="text-2xl font-bold text-slate-800">{profileData.displayName}</h2>
+                                            <button onClick={() => setIsEditingProfile(true)} className="opacity-0 group-hover/name:opacity-100 p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all absolute -right-10">
+                                                <Edit3 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    )}
+                                    {!isEditingProfile && (
+                                        <>
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-widest border border-emerald-100 mb-4 mt-2">
+                                                <Shield className="w-3.5 h-3.5" /> Superuser
+                                            </div>
+                                            <p className="text-slate-500 text-sm flex items-center justify-center gap-2">
+                                                <Mail className="w-4 h-4" /> {user?.email || 'admin@surakshasetu.org'}
+                                            </p>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -85,28 +147,57 @@ const Profile = () => {
                         <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-lg font-bold text-slate-800">Contact Information</h3>
-                                <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
-                                    <Edit3 className="w-4 h-4" />
-                                </button>
+                                {!isEditingContact ? (
+                                    <button onClick={() => setIsEditingContact(true)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
+                                        <Edit3 className="w-4 h-4" />
+                                    </button>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <button onClick={handleContactSave} className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors tooltip" title="Save">
+                                            <Check className="w-4 h-4" />
+                                        </button>
+                                        <button onClick={() => { setIsEditingContact(false); setProfileData(prev => ({ ...prev, phone: '+91 98765 43210', location: 'HQ - Mumbai Control Room' })); }} className="p-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors" title="Cancel">
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-5">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
-                                        <Phone className="w-5 h-5 text-slate-500" />
+                                <div className="flex items-center gap-4 group/item">
+                                    <div className="w-10 h-10 rounded-xl bg-slate-50 group-hover/item:bg-blue-50 flex items-center justify-center shrink-0 transition-colors">
+                                        <Phone className="w-5 h-5 text-slate-500 group-hover/item:text-blue-500 transition-colors" />
                                     </div>
-                                    <div>
+                                    <div className="flex-1">
                                         <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-0.5">Phone Number</p>
-                                        <p className="font-semibold text-slate-700">+91 98765 43210</p>
+                                        {isEditingContact ? (
+                                            <input
+                                                type="text"
+                                                value={profileData.phone}
+                                                onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                                                className="w-full font-semibold text-slate-800 bg-white border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
+                                            />
+                                        ) : (
+                                            <p className="font-semibold text-slate-700">{profileData.phone}</p>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
-                                        <MapPin className="w-5 h-5 text-slate-500" />
+                                <div className="flex items-center gap-4 group/item">
+                                    <div className="w-10 h-10 rounded-xl bg-slate-50 group-hover/item:bg-purple-50 flex items-center justify-center shrink-0 transition-colors">
+                                        <MapPin className="w-5 h-5 text-slate-500 group-hover/item:text-purple-500 transition-colors" />
                                     </div>
-                                    <div>
+                                    <div className="flex-1">
                                         <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-0.5">Location Base</p>
-                                        <p className="font-semibold text-slate-700">HQ - Mumbai Control Room</p>
+                                        {isEditingContact ? (
+                                            <input
+                                                type="text"
+                                                value={profileData.location}
+                                                onChange={(e) => setProfileData({ ...profileData, location: e.target.value })}
+                                                className="w-full font-semibold text-slate-800 bg-white border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
+                                            />
+                                        ) : (
+                                            <p className="font-semibold text-slate-700">{profileData.location}</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
